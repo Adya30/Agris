@@ -9,16 +9,15 @@ class Desa extends Model
 {
     use HasUlids;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-
-    protected $fillable = [
-        'namaDesa',
-        'kecamatanId'
-    ];
+    protected $fillable = ['kecamatanId', 'namaDesa'];
 
     public function kecamatan()
     {
         return $this->belongsTo(Kecamatan::class, 'kecamatanId');
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'desaId');
     }
 }

@@ -9,13 +9,7 @@ class Kecamatan extends Model
 {
     use HasUlids;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-
-    protected $fillable = [
-        'namaKecamatan',
-        'kabupatenId'
-    ];
+    protected $fillable = ['kabupatenId', 'namaKecamatan'];
 
     public function kabupaten()
     {

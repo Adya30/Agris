@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+
+class Blog extends Model
+{
+    use HasUlids;
+
+    protected $fillable = [
+        'userId',
+        'judulBlog',
+        'isiBlog',
+        'fotoBlog',
+        'tanggalBlog'
+    ];
+
+    protected $casts = [
+        'tanggalBlog' => 'date'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId');
+    }
+}
