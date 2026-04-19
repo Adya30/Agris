@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('riwayat_transaksis', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->ulid('id')->primary();
+            $table->foreignUlid('userId')->constrained('users')->cascadeOnDelete();
+            $table->foreignUlid('pembayaranId')->constrained('pembayarans')->cascadeOnDelete();
+            $table->enum('kategoriRiwayat', ['pemasukan', 'pengeluaran']);
+            $table->dateTime('tanggalRiwayat')->useCurrent();
+            $table->text('deskripsi')->nullable();
+            $table->timestamps();
+            $table->index('userId');
+            $table->index('pembayaranId');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('riwayat_transaksis');
+    }
+};
