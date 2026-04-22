@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 class User extends Authenticatable
 {
     use HasUlids, Notifiable;
+
+    protected $table = 'users';
 
     protected $fillable = [
         'username',
@@ -16,21 +18,22 @@ class User extends Authenticatable
         'namaLengkap',
         'email',
         'noTelp',
+        'fotoProfil',
         'detailAlamat',
         'isAdmin',
         'isActive',
-        'desaId'
+        'desaId',
     ];
 
     protected $hidden = [
         'password',
-        'remember_token'
+        'remember_token',
     ];
 
     protected $casts = [
         'isAdmin' => 'boolean',
         'isActive' => 'boolean',
-        'email_verified_at' => 'datetime'
+        'email_verified_at' => 'datetime',
     ];
 
     public function desa()
@@ -61,5 +64,15 @@ class User extends Authenticatable
     public function riwayatTransaksis()
     {
         return $this->hasMany(RiwayatTransaksi::class, 'userId');
+    }
+
+    public function chatTerkirim()
+    {
+        return $this->hasMany(Chat::class, 'id_pengirim');
+    }
+
+    public function chatDiterima()
+    {
+        return $this->hasMany(Chat::class, 'id_penerima');
     }
 }

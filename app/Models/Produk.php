@@ -9,16 +9,18 @@ class Produk extends Model
 {
     use HasUlids;
 
+    protected $table = 'produks';
+
     protected $fillable = [
         'kategoriId',
         'namaProduk',
         'stok',
         'harga',
-        'deskripsi'
+        'deskripsi',
     ];
 
     protected $casts = [
-        'harga' => 'decimal:2'
+        'harga' => 'decimal:2',
     ];
 
     public function kategori()

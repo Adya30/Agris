@@ -9,7 +9,13 @@ class KategoriProduk extends Model
 {
     use HasUlids;
 
-    protected $fillable = ['jenisKategori', 'mutu', 'deskripsi'];
+    protected $table = 'kategori_produks';
+
+    protected $fillable = [
+        'jenisKategori',
+        'mutu',
+        'deskripsi',
+    ];
 
     public function produks()
     {

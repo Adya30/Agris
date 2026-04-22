@@ -9,17 +9,19 @@ class DetailPesanan extends Model
 {
     use HasUlids;
 
+    protected $table = 'detail_pesanans';
+
     protected $fillable = [
         'pesananId',
         'produkId',
         'jumlahPesanan',
         'harga_satuan',
-        'subtotal'
+        'subtotal',
     ];
 
     protected $casts = [
         'harga_satuan' => 'decimal:2',
-        'subtotal' => 'decimal:2'
+        'subtotal' => 'decimal:2',
     ];
 
     public function pesanan()

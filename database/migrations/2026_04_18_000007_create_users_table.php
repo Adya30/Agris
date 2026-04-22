@@ -18,13 +18,14 @@ return new class extends Migration
             $table->string('namaLengkap', 300);
             $table->string('email', 255)->unique();
             $table->string('noTelp', 20)->unique();
+            $table->string('fotoProfil', 255)->nullable();
             $table->text('detailAlamat')->nullable();
             $table->boolean('isAdmin')->default(false);
             $table->boolean('isActive')->default(false);
             $table->foreignUlid('desaId')->nullable()->constrained('desas')->nullOnDelete();
             $table->rememberToken();
             $table->timestamps();
-            // $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

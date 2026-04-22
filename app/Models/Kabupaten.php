@@ -9,7 +9,12 @@ class Kabupaten extends Model
 {
     use HasUlids;
 
-    protected $fillable = ['provinsiId', 'namaKabupaten'];
+    protected $table = 'kabupatens';
+
+    protected $fillable = [
+        'provinsiId',
+        'namaKabupaten',
+    ];
 
     public function provinsi()
     {

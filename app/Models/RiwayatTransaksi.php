@@ -9,16 +9,18 @@ class RiwayatTransaksi extends Model
 {
     use HasUlids;
 
+    protected $table = 'riwayat_transaksis';
+
     protected $fillable = [
         'userId',
         'pembayaranId',
         'kategoriRiwayat',
         'tanggalRiwayat',
-        'deskripsi'
+        'deskripsi',
     ];
 
     protected $casts = [
-        'tanggalRiwayat' => 'datetime'
+        'tanggalRiwayat' => 'datetime',
     ];
 
     public function user()

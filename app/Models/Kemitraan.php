@@ -9,15 +9,17 @@ class Kemitraan extends Model
 {
     use HasUlids;
 
+    protected $table = 'kemitraans';
+
     protected $fillable = [
         'userId',
         'tanggalPengajuan',
         'statusPengajuan',
-        'fileKemitraan'
+        'fileKemitraan',
     ];
 
     protected $casts = [
-        'tanggalPengajuan' => 'date'
+        'tanggalPengajuan' => 'date',
     ];
 
     public function user()

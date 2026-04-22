@@ -9,20 +9,29 @@ class Pesanan extends Model
 {
     use HasUlids;
 
+    protected $table = 'pesanans';
+
     protected $fillable = [
         'userId',
         'tanggal_pesanan',
+        'alamat_pengiriman',
+        'desaId',
         'status_pesanan',
-        'deskripsi'
+        'deskripsi',
     ];
 
     protected $casts = [
-        'tanggal_pesanan' => 'date'
+        'tanggal_pesanan' => 'date',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'userId');
+    }
+
+    public function desa()
+    {
+        return $this->belongsTo(Desa::class, 'desaId');
     }
 
     public function detailPesanans()

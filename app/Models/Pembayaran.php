@@ -9,6 +9,8 @@ class Pembayaran extends Model
 {
     use HasUlids;
 
+    protected $table = 'pembayarans';
+
     protected $fillable = [
         'pesananId',
         'snapToken',
@@ -17,13 +19,13 @@ class Pembayaran extends Model
         'paymentType',
         'totalPembayaran',
         'waktuDibayar',
-        'jumlahRefund'
+        'jumlahRefund',
     ];
 
     protected $casts = [
-        'waktuDibayar' => 'datetime',
         'totalPembayaran' => 'decimal:2',
-        'jumlahRefund' => 'decimal:2'
+        'jumlahRefund' => 'decimal:2',
+        'waktuDibayar' => 'datetime',
     ];
 
     public function pesanan()

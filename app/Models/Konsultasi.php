@@ -9,11 +9,13 @@ class Konsultasi extends Model
 {
     use HasUlids;
 
+    protected $table = 'konsultasis';
+
     protected $fillable = [
         'userId',
         'pertanyaan',
         'jawaban',
-        'statusKonsultasi'
+        'statusKonsultasi',
     ];
 
     public function user()

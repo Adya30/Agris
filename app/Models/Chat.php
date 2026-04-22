@@ -9,17 +9,19 @@ class Chat extends Model
 {
     use HasUlids;
 
+    protected $table = 'chats';
+
     protected $fillable = [
         'id_pengirim',
         'id_penerima',
         'pesan',
         'foto_chat',
         'status',
-        'waktu_chat'
+        'waktu_chat',
     ];
 
     protected $casts = [
-        'waktu_chat' => 'datetime'
+        'waktu_chat' => 'datetime',
     ];
 
     public function pengirim()

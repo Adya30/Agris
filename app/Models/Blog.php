@@ -9,16 +9,18 @@ class Blog extends Model
 {
     use HasUlids;
 
+    protected $table = 'blogs';
+
     protected $fillable = [
         'userId',
         'judulBlog',
         'isiBlog',
         'fotoBlog',
-        'tanggalBlog'
+        'tanggalBlog',
     ];
 
     protected $casts = [
-        'tanggalBlog' => 'date'
+        'tanggalBlog' => 'date',
     ];
 
     public function user()

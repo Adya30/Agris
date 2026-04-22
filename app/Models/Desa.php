@@ -9,7 +9,12 @@ class Desa extends Model
 {
     use HasUlids;
 
-    protected $fillable = ['kecamatanId', 'namaDesa'];
+    protected $table = 'desas';
+
+    protected $fillable = [
+        'kecamatanId',
+        'namaDesa',
+    ];
 
     public function kecamatan()
     {
@@ -19,5 +24,10 @@ class Desa extends Model
     public function users()
     {
         return $this->hasMany(User::class, 'desaId');
+    }
+
+    public function pesanans()
+    {
+        return $this->hasMany(Pesanan::class, 'desaId');
     }
 }
