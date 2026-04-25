@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'AGRIS - Marketplace Pertanian')
+@section('title', 'AGRIS - Pusat Penyedia Suplai Benih Berkualitas')
 
 @section('content')
 
@@ -23,12 +23,12 @@
             <div class="flex gap-4">
                 <a href="#produk"
                    class="px-8 py-3 bg-white text-[#58CC02] font-semibold rounded-full shadow-md hover:shadow-xl hover:scale-105 transition duration-300">
-                    Belanja Sekarang
+                    Mulai
                 </a>
 
                 <a href="#kategori"
                    class="px-8 py-3 border border-white rounded-full hover:bg-white hover:text-[#58CC02] transition duration-300">
-                    Lihat Kategori
+                    Lihat Produk
                 </a>
             </div>
         </div>
@@ -36,7 +36,7 @@
         <!-- GAMBAR -->
         <div class="md:w-1/2 flex justify-center">
             <img src="{{ asset('images/icon.png') }}"
-                 class="w-[300px] pb-3 drop-shadow-xl">
+                 class="w-[350px] pb-3 drop-shadow-xl">
         </div>
 
     </div>
@@ -144,7 +144,7 @@
 
 <section class="bg-white py-10 px-6 md:px-10">
   <div class="max-w-3xl mx-auto">
-    
+
     <h2 class="text-2xl md:text-3xl font-bold text-center mb-6">
       FAQ
     </h2>

@@ -16,12 +16,17 @@ class SocialAuthController extends Controller
 
     public function callback()
     {
-        $googleUser = Socialite::driver('google')->stateless()->user();
+        try {
+            $googleUser = Socialite::driver('google')->user();
+        } catch (\Exception $e) {
+
+            return redirect('/login')->with('error', 'Login gagal: ' . $e->getMessage());
+        }
 
         $user = User::firstOrCreate(
             ['email' => $googleUser->email],
             [
-                'username' => $googleUser->name,
+                'name' => $googleUser->name,
                 'namaLengkap' => $googleUser->name,
                 'password' => bcrypt(Str::random(16)),
                 'noTelp' => '-'

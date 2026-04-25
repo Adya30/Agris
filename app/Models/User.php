@@ -2,21 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 class User extends Authenticatable
 {
-    use HasUlids, Notifiable;
+    use HasFactory, Notifiable, HasUlids;
 
     protected $table = 'users';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'username',
         'password',
         'namaLengkap',
         'email',
+        'jenisKelamin',
+        'tanggalLahir',
         'noTelp',
         'fotoProfil',
         'detailAlamat',
@@ -30,49 +37,56 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $casts = [
-        'isAdmin' => 'boolean',
-        'isActive' => 'boolean',
-        'email_verified_at' => 'datetime',
-    ];
+    protected $appends = ['alamatLengkap'];
 
-    public function desa()
+    protected function casts(): array
     {
-        return $this->belongsTo(Desa::class, 'desaId');
+        return [
+            'email_verified_at' => 'datetime',
+            'password'          => 'hashed',
+            'tanggalLahir'      => 'date',
+            'isAdmin'           => 'boolean',
+            'isActive'          => 'boolean',
+        ];
     }
 
-    public function blogs()
+
+    public function desa(): BelongsTo
     {
-        return $this->hasMany(Blog::class, 'userId');
+        return $this->belongsTo(Desa::class, 'desaId', 'id');
     }
 
-    public function kemitraans()
+
+    public function getKecamatanAttribute()
     {
-        return $this->hasMany(Kemitraan::class, 'userId');
+        return $this->desa?->kecamatan;
     }
 
-    public function konsultasis()
+    public function getKabupatenAttribute()
     {
-        return $this->hasMany(Konsultasi::class, 'userId');
+        return $this->desa?->kecamatan?->kabupaten;
     }
 
-    public function pesanans()
+    public function getProvinsiAttribute()
     {
-        return $this->hasMany(Pesanan::class, 'userId');
+        return $this->desa?->kecamatan?->kabupaten?->provinsi;
     }
 
-    public function riwayatTransaksis()
-    {
-        return $this->hasMany(RiwayatTransaksi::class, 'userId');
-    }
 
-    public function chatTerkirim()
+    public function getAlamatLengkapAttribute(): string
     {
-        return $this->hasMany(Chat::class, 'id_pengirim');
-    }
+        if (!$this->desa) {
+            return $this->detailAlamat ?? '';
+        }
 
-    public function chatDiterima()
-    {
-        return $this->hasMany(Chat::class, 'id_penerima');
+        $parts = [
+            $this->detailAlamat,
+            $this->desa->namaDesa,
+            $this->kecamatan?->namaKecamatan,
+            $this->kabupaten?->namaKabupaten,
+            $this->provinsi?->namaProvinsi,
+        ];
+
+        return collect($parts)->filter()->implode(', ');
     }
 }

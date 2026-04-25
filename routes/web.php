@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\c_profile;
+use App\Http\Controllers\c_wilayah;
+use App\Http\Controllers\c_produk;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,7 +12,7 @@ use App\Http\Controllers\AdminController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return view('landing');
+    return view('guest.landing');
 })->name('landing');
 
 /*
@@ -82,14 +83,32 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | PROFILE
+    | USER PROFILE
     |--------------------------------------------------------------------------
     */
-    Route::get('/profile', [ProfileController::class, 'index'])
-        ->name('profile');
+    Route::prefix('agen')->middleware(['auth','isUser'])->group(function () {
+        Route::get('/profile', [c_profile::class, 'show'])->name('agen.profile');
+        Route::put('/profile', [c_profile::class, 'update'])->name('agen.profile.update');
+    });
 
-    Route::post('/profile/update', [ProfileController::class, 'update'])
-        ->name('profile.update');
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN PROFILE
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('admin')->middleware(['auth','isAdmin'])->name('admin.')->group(function () {
+        Route::get('/profile', [c_profile::class, 'show'])->name('profile');
+        Route::put('/profile', [c_profile::class, 'update'])->name('profile.update');
+
+        Route::get('produk/trash', [c_produk::class, 'trash'])->name('produk.trash');
+        Route::get('produk/{id}/restore', [c_produk::class, 'restore'])->name('produk.restore');
+        Route::delete('produk/{id}/force-delete', [c_produk::class, 'forceDelete'])->name('produk.forceDelete');
+        Route::post('kategori', [c_produk::class, 'storeKategori'])->name('kategori.store');
+
+        Route::resource('produk', c_produk::class);
+    });
+
 
     /*
     |--------------------------------------------------------------------------
@@ -100,15 +119,9 @@ Route::middleware('auth')->group(function () {
         ->name('logout');
 });
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN
-|--------------------------------------------------------------------------
-*/
-Route::prefix('admin')
-    ->middleware(['auth', 'admin'])
-    ->group(function () {
-
-        Route::get('/', [AdminController::class, 'index'])
-            ->name('admin.dashboard');
+Route::prefix('wilayah')->group(function () {
+    Route::get('/provinsi', [c_wilayah::class, 'getProvinsi'])->name('wilayah.provinsi');
+    Route::get('/kabupaten/{id}', [c_wilayah::class, 'getKabupaten'])->name('wilayah.kabupaten');
+    Route::get('/kecamatan/{id}', [c_wilayah::class, 'getKecamatan'])->name('wilayah.kecamatan');
+    Route::get('/desa/{id}', [c_wilayah::class, 'getDesa'])->name('wilayah.desa');
 });

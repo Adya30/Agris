@@ -1,21 +1,13 @@
 <!DOCTYPE html>
-<html lang="id"> {{-- Menggunakan 'id' seperti yang kamu gunakan sebelumnya --}}
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <title>@yield('title', 'Agris')</title>
-
+    <title>@yield('title', 'Agen')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    @vite('resources/css/app.css')
-
-    @stack('styles')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-white text-gray-800">
+<body class="bg-gray-100">
 
     <div id="progressBarContainer"
         class="hidden fixed top-0 left-0 w-full h-1 bg-gray-200 z-[9999]">
@@ -24,12 +16,16 @@
         </div>
     </div>
 
-    @yield('content')
+    @include('components.navbar-agen')
 
-    @stack('scripts')
+    <div class="pt-24 p-8">
+        @yield('content')
+    </div>
+
+    @include('components.footer-agen')
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
 
         const forms = document.querySelectorAll('form');
         const progressContainer = document.getElementById('progressBarContainer');

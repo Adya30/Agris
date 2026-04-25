@@ -4,9 +4,9 @@
 
         <div class="grid md:grid-cols-4 gap-10">
 
-            <div>
+            <div class="flex flex-col items-start">
                 <h2 class="text-2xl font-bold text-[#58CC02] mb-4">
-                    <img src="{{ asset('images/icon.png') }}" class="w-40 mb-4">
+                    <img src="{{ asset('images/icon.png') }}" class="w-50 mb-4">
                 </h2>
                 <p class="text-gray-400 text-sm">
                     Marketplace pertanian modern yang menyediakan kebutuhan

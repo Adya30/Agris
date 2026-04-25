@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Verifikasi Email - AGRIS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     @vite('resources/css/app.css')
 
 </head>
@@ -39,7 +39,7 @@
         {{-- Resend Button --}}
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
-            <button 
+            <button
                 type="submit"
                 class="w-full bg-green-600 hover:bg-green-700 transition duration-200 text-white py-2.5 rounded-xl font-semibold">
                 Kirim Ulang Email Verifikasi
@@ -50,7 +50,7 @@
         <div class="mt-6 text-center">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button 
+                <button
                     type="submit"
                     class="text-sm text-gray-500 hover:text-red-500 transition">
                     Keluar dari akun

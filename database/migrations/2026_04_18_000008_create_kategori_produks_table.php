@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('kategori_produks', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->ulid('id')->primary();
-            $table->string('jenisKategori', 100);
+            $table->enum('jenisKategori', ['padi', 'jagung']);
             $table->enum('mutu', ['A', 'B', 'C']);
-            $table->text('deskripsi')->nullable();
             $table->timestamps();
             $table->unique(['jenisKategori', 'mutu']);
         });

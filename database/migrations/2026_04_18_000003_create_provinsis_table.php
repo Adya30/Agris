@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('provinsis', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->ulid('id')->primary();
+            $table->string('id', 20)->primary();
             $table->string('namaProvinsi', 255);
             $table->timestamps();
         });

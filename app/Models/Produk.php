@@ -3,17 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 class Produk extends Model
 {
-    use HasUlids;
+    use HasUlids, SoftDeletes;
 
     protected $table = 'produks';
 
     protected $fillable = [
         'kategoriId',
         'namaProduk',
+        'fotoProduk',
         'stok',
         'harga',
         'deskripsi',
@@ -21,6 +23,7 @@ class Produk extends Model
 
     protected $casts = [
         'harga' => 'decimal:2',
+        'stok'  => 'decimal:2',
     ];
 
     public function kategori()

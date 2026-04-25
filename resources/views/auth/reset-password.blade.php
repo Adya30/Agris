@@ -12,12 +12,6 @@
 
 <div class="bg-white w-full max-w-md p-8 rounded-lg shadow relative">
 
-    <!-- Back -->
-    <a href="{{ route('login') }}"
-       class="absolute top-5 left-5 text-gray-600 hover:text-[#58CC02] transition">
-        <i class="fa-solid fa-arrow-left text-lg"></i>
-    </a>
-
     <h2 class="text-2xl font-bold text-center mb-6">
         Reset Password
     </h2>
@@ -31,20 +25,13 @@
     <form method="POST" action="{{ route('password.update') }}">
         @csrf
 
-        {{-- Token & Email dikirim secara hidden (otomatis dari link reset) --}}
         <input type="hidden" name="token" value="{{ $token }}">
-        <input type="hidden" name="email" value="{{ request()->query('email') }}">
+        <input type="hidden" name="email" value="{{ $email }}">
 
         <!-- PASSWORD BARU -->
         <div class="mb-5 relative">
-            <input type="password"
-                   name="password"
-                   id="password"
-                   placeholder="Password Baru"
-                   class="w-full border-b border-gray-400 focus:border-[#58CC02] focus:outline-none py-2 pr-10">
-
-            <span onclick="togglePassword('password','eye1')"
-                  class="absolute right-2 top-2 cursor-pointer text-gray-500 hover:text-[#58CC02]">
+            <input type="password" name="password" id="password" placeholder="Password Baru" class="w-full border-b border-gray-400 focus:border-[#58CC02] focus:outline-none py-2 pr-10">
+            <span onclick="togglePassword('password','eye1')" class="absolute right-2 top-2 cursor-pointer text-gray-500 hover:text-[#58CC02]">
                 <i id="eye1" class="fa-solid fa-eye"></i>
             </span>
 
@@ -53,22 +40,15 @@
             @enderror
         </div>
 
-        <!-- KONFIRMASI PASSWORD -->
         <div class="mb-6 relative">
-            <input type="password"
-                   name="password_confirmation"
-                   id="password_confirmation"
-                   placeholder="Konfirmasi Password"
-                   class="w-full border-b border-gray-400 focus:border-[#58CC02] focus:outline-none py-2 pr-10">
-
+            <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Konfirmasi Password" class="w-full border-b border-gray-400 focus:border-[#58CC02] focus:outline-none py-2 pr-10">
             <span onclick="togglePassword('password_confirmation','eye2')"
                   class="absolute right-2 top-2 cursor-pointer text-gray-500 hover:text-[#58CC02]">
                 <i id="eye2" class="fa-solid fa-eye"></i>
             </span>
         </div>
 
-        <button type="submit"
-                class="w-full bg-[#58CC02] hover:bg-green-600 text-white py-3 rounded-full text-lg transition">
+        <button type="submit" class="w-full bg-[#58CC02] hover:bg-green-600 text-white py-3 rounded-full text-lg cursor-pointer transition">
             Reset Password
         </button>
     </form>

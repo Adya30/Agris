@@ -2,26 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Kecamatan extends Model
 {
-    use HasUlids;
+    use HasFactory;
 
     protected $table = 'kecamatans';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
-    protected $fillable = [
-        'kabupatenId',
-        'namaKecamatan',
-    ];
+    protected $fillable = [ 'id', 'kode', 'kabupatenId', 'namaKecamatan' ];
 
-    public function kabupaten()
+    public function kabupaten(): BelongsTo
     {
         return $this->belongsTo(Kabupaten::class, 'kabupatenId');
     }
 
-    public function desas()
+    public function desas(): HasMany
     {
         return $this->hasMany(Desa::class, 'kecamatanId');
     }

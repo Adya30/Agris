@@ -13,16 +13,19 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('username', 150)->unique();
-            $table->string('password', 255);
-            $table->string('namaLengkap', 300);
+            $table->string('username', 30)->unique();
             $table->string('email', 255)->unique();
+            $table->string('password');
+            $table->string('namaLengkap', 300);
             $table->string('noTelp', 20)->unique();
-            $table->string('fotoProfil', 255)->nullable();
+            $table->longtext('fotoProfil')->nullable();
             $table->text('detailAlamat')->nullable();
-            $table->boolean('isAdmin')->default(false);
-            $table->boolean('isActive')->default(false);
-            $table->foreignUlid('desaId')->nullable()->constrained('desas')->nullOnDelete();
+            $table->boolean('isAdmin')->default(false)->index();
+            $table->boolean('isActive')->default(false)->index();
+
+            $table->string('desaId', 20)->nullable()->index();
+            $table->foreign('desaId')->references('id')->on('desas')->nullOnDelete();
+
             $table->rememberToken();
             $table->timestamps();
             $table->timestamp('email_verified_at')->nullable();

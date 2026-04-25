@@ -9,16 +9,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AuthController extends Controller
 {
-
-    /*
-    |--------------------------------------------------------------------------
-    | SHOW LOGIN PAGE
-    |--------------------------------------------------------------------------
-    */
+    //===========================================================================
+    // LOGIN
+    //===========================================================================
     public function showLogin()
     {
         if (Auth::check()) {
@@ -28,39 +26,21 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | SHOW REGISTER PAGE
-    |--------------------------------------------------------------------------
-    */
-    public function showRegister()
-    {
-        if (Auth::check()) {
-            return $this->redirectByRole(Auth::user());
-        }
-
-        return view('auth.register');
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | LOGIN
-    |--------------------------------------------------------------------------
-    */
     public function login(Request $request)
     {
         $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string|min:8',
+            'login' => 'required|string',
+            'password' => 'required|string',
+        ],
+        [
+            'login.required' => 'Username atau email wajib diisi',
+            'password.required' => 'Password wajib diisi',
         ]);
 
-        $user = User::where('username', $request->username)
-                    ->orWhere('email', $request->username)
-                    ->first();
+        $user = User::where('email', $request->login) ->orWhere('username', $request->login) ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->with('error', 'Username/email atau password salah.')
-                         ->withInput($request->only('username'));
+            return back()->with('error', 'Email atau password salah.') -> withInput($request->only('login'));
         }
 
         Auth::login($user, $request->boolean('remember'));
@@ -69,19 +49,80 @@ class AuthController extends Controller
         return $this->redirectByRole($user);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | LOGOUT
-    |--------------------------------------------------------------------------
-    */
-    public function logout(Request $request)
+    //===========================================================================
+    // RESET
+    //===========================================================================
+    public function forgotPassword()
     {
-        Auth::logout();
+        return view('auth.forgot-password');
+    }
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+    public function sendResetLink(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email'
+        ],[
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+        ]
+        );
 
-        return redirect()->route('landing');
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return redirect()->route('login')
+                ->with('success', 'Link reset telah dikirim ke email Anda.');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email tidak ditemukan atau belum terdaftar.'
+        ]);
+    }
+    public function resetForm($token)
+    {
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => request()->email
+        ]);
+    }
+
+    /**
+     * Proses Reset Password (POST)
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => ['required', 'confirmed', PasswordRule::min(8)->mixedCase()->numbers()->symbols() ],
+        ],
+        [
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.mixed' => 'Password harus mengandung huruf besar dan kecil.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.numbers' => 'Password harus mengandung angka.',
+            'password.symbols' => 'Password harus mengandung simbol.',
+        ]
+        );
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->password)
+                ])->save();
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()->route('login')
+                            ->with('success', 'Password berhasil direset. Silakan login dengan password baru.');
+        }
+
+        return back()->withErrors(['email' => __($status)]);
     }
 
     /*
@@ -102,10 +143,11 @@ class AuthController extends Controller
             ['email' => $googleUser->getEmail()],
             [
                 'namaLengkap' => $googleUser->getName(),
-                'username' => str_replace(' ', '', strtolower($googleUser->getName())) . rand(100,999),
-                'password' => Hash::make(rand(100000,999999)),
-                'noTelp' => '0000000000',
-                'is_admin' => false
+                'username' => '-',
+                'password' => Hash::make(Str::random(12)),
+                'noTelp' => '-',
+                'tanggalLahir' => null,
+                'isAdmin' => false,
             ]
         );
 
@@ -119,30 +161,68 @@ class AuthController extends Controller
     | REGISTER + OTP
     |--------------------------------------------------------------------------
     */
+    public function showRegister()
+    {
+        if (Auth::check()) {
+            return $this->redirectByRole(Auth::user());
+        }
+
+        return view('auth.register');
+    }
+
+    public function showOtpForm()
+    {
+        if (!session('register_data')) {
+            return redirect()->route('register');
+        }
+
+        return view('auth.otp');
+    }
+
     public function register(Request $request)
     {
-        $validated = $request->validate([
-            'username' => 'required|min:4|unique:users,username',
-            'namaLengkap' => 'required|max:300',
+        $validated = $request->validate(
+        [
+            'username' => 'required|string|min:4|max:30|unique:users,username',
             'email' => 'required|email|unique:users,email',
+            'namaLengkap' => 'required|max:300',
             'noTelp' => 'required|regex:/^[0-9]+$/|unique:users,noTelp',
-            'password' => [
-                'required',
-                'confirmed',
-                PasswordRule::min(8)->mixedCase()->numbers()->symbols()
-            ],
-        ]);
+            'password' => ['required', 'confirmed', PasswordRule::min(8)->mixedCase()->numbers()->symbols() ],
+        ],
+        [
+            'username.required' => 'Username wajib diisi.',
+            'username.min' => 'Username minimal 4 karakter.',
+            'username.unique' => 'Username sudah digunakan.',
+            'namaLengkap.required' => 'Nama lengkap wajib diisi.',
+            'namaLengkap.max' => 'Nama Lengkap maksimal 300 karakter.',
+
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
+
+            'noTelp.required' => 'Nomor telepon wajib diisi.',
+            'noTelp.regex' => 'Nomor telepon hanya boleh angka.',
+            'noTelp.unique' => 'Nomor telepon sudah digunakan.',
+
+            'password.required' => 'Password wajib diisi.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.mixed' => 'Password harus mengandung huruf besar dan kecil.',
+            'password.numbers' => 'Password harus mengandung angka.',
+            'password.symbols' => 'Password harus mengandung simbol.',
+        ]
+    );
 
         $otp = rand(100000, 999999);
 
         session([
             'register_data' => [
-                'namaLengkap' => $validated['namaLengkap'],
                 'username' => $validated['username'],
+                'namaLengkap' => $validated['namaLengkap'],
                 'email' => $validated['email'],
                 'noTelp' => $validated['noTelp'],
                 'password' => Hash::make($validated['password']),
-                'is_admin' => false
+                'isAdmin' => false
             ],
             'register_otp' => $otp,
             'register_otp_expires' => now()->addMinutes(10)
@@ -185,7 +265,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('profile')
+        return redirect()->route('agen.profile')
             ->with('success', 'Akun berhasil dibuat.');
     }
 
@@ -197,9 +277,24 @@ class AuthController extends Controller
     private function redirectByRole($user)
     {
         if ($user->isAdmin) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.profile');
         }
 
-        return redirect()->route('profile');
+        return redirect()->route('agen.profile');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOGOUT
+    |--------------------------------------------------------------------------
+    */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('landing');
     }
 }

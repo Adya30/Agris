@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('kabupatens', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->ulid('id')->primary();
-            $table->foreignUlid('provinsiId')->constrained('provinsis')->cascadeOnDelete();
+            $table->string('id', 20)->primary();
+            $table->string('provinsiId', 20)->index();
             $table->string('namaKabupaten', 255);
             $table->timestamps();
+
+            $table->foreign('provinsiId')->references('id')->on('provinsis')->cascadeOnDelete();
         });
     }
 

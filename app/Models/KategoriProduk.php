@@ -14,7 +14,6 @@ class KategoriProduk extends Model
     protected $fillable = [
         'jenisKategori',
         'mutu',
-        'deskripsi',
     ];
 
     public function produks()

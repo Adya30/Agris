@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('desas', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->ulid('id')->primary();
-            $table->foreignUlid('kecamatanId')->constrained('kecamatans')->cascadeOnDelete();
-            $table->string('namaDesa', 255);
-            $table->timestamps();
-        });
+    Schema::create('desas', function (Blueprint $table) {
+        $table->engine = 'InnoDB';
+        $table->string('id', 20)->primary();
+        $table->string('kecamatanId', 20)->index();
+        $table->string('namaDesa', 255);
+        $table->timestamps();
+
+        $table->foreign('kecamatanId')->references('id')->on('kecamatans')->cascadeOnDelete();
+    });
     }
 
     /**
