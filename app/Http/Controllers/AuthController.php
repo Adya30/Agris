@@ -14,9 +14,7 @@ use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AuthController extends Controller
 {
-    //===========================================================================
-    // LOGIN
-    //===========================================================================
+    // SHOW LOGIN
     public function showLogin()
     {
         if (Auth::check()) {
@@ -29,29 +27,28 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'login' => 'required|string',
+            'email' => 'required|string|email',
             'password' => 'required|string',
         ],
         [
-            'login.required' => 'Username atau email wajib diisi',
-            'password.required' => 'Password wajib diisi',
+            'email.required' => 'Data wajib diisi!',
+            'email.email' => 'Format email tidak valid',
+            'password.required' => 'Data wajib diisi!',
         ]);
 
-        $user = User::where('email', $request->login) ->orWhere('username', $request->login) ->first();
+        $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->with('error', 'Email atau password salah.') -> withInput($request->only('login'));
+            return back()->with('error', 'Email atau password salah.') -> withInput($request->only('email'));
         }
 
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
 
-        return $this->redirectByRole($user);
+        return $this->redirectByRole($user)->with('success', 'Login Berhasil' . $user->name);
     }
 
-    //===========================================================================
     // RESET
-    //===========================================================================
     public function forgotPassword()
     {
         return view('auth.forgot-password');
@@ -88,9 +85,7 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Proses Reset Password (POST)
-     */
+    // PROSES RESET
     public function resetPassword(Request $request)
     {
         $request->validate([
@@ -118,18 +113,13 @@ class AuthController extends Controller
         );
 
         if ($status === Password::PASSWORD_RESET) {
-            return redirect()->route('login')
-                            ->with('success', 'Password berhasil direset. Silakan login dengan password baru.');
+            return redirect()->route('login') ->with('success', 'Password berhasil direset. Silakan login dengan password baru.');
         }
 
         return back()->withErrors(['email' => __($status)]);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | GOOGLE LOGIN
-    |--------------------------------------------------------------------------
-    */
+    // LOGIN GOOGLE
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
@@ -143,7 +133,6 @@ class AuthController extends Controller
             ['email' => $googleUser->getEmail()],
             [
                 'namaLengkap' => $googleUser->getName(),
-                'username' => '-',
                 'password' => Hash::make(Str::random(12)),
                 'noTelp' => '-',
                 'tanggalLahir' => null,
@@ -153,14 +142,10 @@ class AuthController extends Controller
 
         Auth::login($user, true);
 
-        return $this->redirectByRole($user);
+        return $this->redirectByRole($user)->with('success', 'Login Berhasil' . $user->name);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | REGISTER + OTP
-    |--------------------------------------------------------------------------
-    */
+    // REGISTER OTP
     public function showRegister()
     {
         if (Auth::check()) {
@@ -265,29 +250,21 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('agen.profile')
-            ->with('success', 'Akun berhasil dibuat.');
+        return redirect()->route('agen.profile') ->with('success', 'Akun berhasil dibuat.');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | REDIRECT BY ROLE
-    |--------------------------------------------------------------------------
-    */
+
+    // ROLE
     private function redirectByRole($user)
     {
         if ($user->isAdmin) {
-            return redirect()->route('admin.profile');
+            return redirect()->route('admin.produk.index');
         }
 
         return redirect()->route('agen.profile');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | LOGOUT
-    |--------------------------------------------------------------------------
-    */
+    // LOGOUT
     public function logout(Request $request)
     {
         Auth::logout();

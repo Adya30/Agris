@@ -6,27 +6,14 @@ use App\Http\Controllers\c_profile;
 use App\Http\Controllers\c_wilayah;
 use App\Http\Controllers\c_produk;
 
-/*
-|--------------------------------------------------------------------------
-| LANDING
-|--------------------------------------------------------------------------
-*/
 Route::get('/', function () {
     return view('guest.landing');
 })->name('landing');
 
-/*
-|--------------------------------------------------------------------------
-| GUEST ROUTES (Belum Login)
-|--------------------------------------------------------------------------
-*/
+//guest
 Route::middleware('guest')->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | REGISTER + OTP
-    |--------------------------------------------------------------------------
-    */
+    //register otp
     Route::get('/register', [AuthController::class, 'showRegister'])
         ->name('register');
 
@@ -54,11 +41,7 @@ Route::middleware('guest')->group(function () {
         ->middleware('throttle:5,1');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | RESET PASSWORD
-    |--------------------------------------------------------------------------
-    */
+    //reset password
     Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])
         ->name('password.request');
 
@@ -73,31 +56,19 @@ Route::middleware('guest')->group(function () {
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| AGEN
-|--------------------------------------------------------------------------
-*/
 Route::middleware('auth')->group(function () {
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | USER PROFILE
-    |--------------------------------------------------------------------------
-    */
+    //Agen
     Route::prefix('agen')->middleware(['auth','isUser'])->group(function () {
         Route::get('/profile', [c_profile::class, 'show'])->name('agen.profile');
         Route::put('/profile', [c_profile::class, 'update'])->name('agen.profile.update');
     });
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | ADMIN PROFILE
-    |--------------------------------------------------------------------------
-    */
+    //Admin
     Route::prefix('admin')->middleware(['auth','isAdmin'])->name('admin.')->group(function () {
+        Route::get('/', function () { return redirect()->route('admin.produk.index'); });
         Route::get('/profile', [c_profile::class, 'show'])->name('profile');
         Route::put('/profile', [c_profile::class, 'update'])->name('profile.update');
 
@@ -110,15 +81,13 @@ Route::middleware('auth')->group(function () {
     });
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | LOGOUT
-    |--------------------------------------------------------------------------
-    */
+    //Logout
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('logout');
 });
 
+
+//Wilayah
 Route::prefix('wilayah')->group(function () {
     Route::get('/provinsi', [c_wilayah::class, 'getProvinsi'])->name('wilayah.provinsi');
     Route::get('/kabupaten/{id}', [c_wilayah::class, 'getKabupaten'])->name('wilayah.kabupaten');

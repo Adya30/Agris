@@ -3,144 +3,220 @@
 @section('title', 'Edit Produk - AGRIS')
 
 @section('content')
-<div class="max-w-4xl mx-auto py-10 px-4">
+<div class="max-w-5xl mx-auto pt-4 pb-12">
     {{-- Header --}}
-    <div class="flex items-center gap-4 mb-10">
-        <a href="{{ route('admin.produk.index') }}" class="w-11 h-11 flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-100 hover:bg-gray-50 text-gray-600 transition">
-            <i class="fa-solid fa-arrow-left"></i>
-        </a>
+    <div class="flex items-center gap-4 mb-6 px-4 md:px-0">
         <div>
-            <h1 class="text-2xl font-extrabold text-gray-800">Edit Informasi Produk</h1>
-            <p class="text-gray-500 text-sm">Perbarui detail untuk produk <span class="font-bold text-[#58CC02]">"{{ $produk->namaProduk }}"</span></p>
+            <h1 class="text-xl font-bold text-gray-800">Edit Data Produk</h1>
+            <p class="text-xs text-gray-500">Mengubah varietas <span class="text-[#58CC02] font-semibold">{{ $produk->namaProduk }}</span></p>
         </div>
     </div>
 
-    {{-- Error Alert jika ada validasi gagal --}}
-    @if ($errors->any())
-        <div class="mb-8 p-5 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-2xl shadow-sm">
-            <p class="font-bold mb-2">Periksa kembali input Anda:</p>
-            <ul class="list-disc list-inside text-sm space-y-1">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    <form action="{{ route('admin.produk.update', $produk->id) }}" method="POST" enctype="multipart/form-data" id="formProduk">
+        @csrf
+        @method('PUT')
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden mx-4 md:mx-0">
+            <div class="flex flex-col lg:flex-row">
 
-    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-        <form action="{{ route('admin.produk.update', $produk->id) }}" method="POST" enctype="multipart/form-data" class="p-8 md:p-10">
-            @csrf
-            @method('PUT')
+                {{-- SISI KIRI: PREVIEW & UPLOAD FOTO --}}
+                <div class="lg:w-1/3 bg-gray-50 p-8 border-b lg:border-b-0 lg:border-r border-gray-200">
+                    <div class="flex flex-col items-center">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Foto Produk</span>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-
-                {{-- Bagian Kiri: Preview & Ganti Foto --}}
-                <div class="text-center">
-                    <label class="block text-sm font-black text-gray-400 uppercase tracking-wider mb-4">Foto Produk</label>
-                    <div class="relative w-full aspect-square rounded-3xl bg-gray-50 overflow-hidden border-2 border-dashed border-gray-100 mb-5 group">
-                        @if($produk->fotoProduk)
-                            <img src="{{ asset('storage/' . $produk->fotoProduk) }}" class="w-full h-full object-cover shadow-inner transition duration-300 group-hover:scale-105">
-                        @else
-                            <div class="flex flex-col items-center justify-center h-full text-gray-300">
-                                <i class="fa-solid fa-image text-6xl mb-2"></i>
-                                <span class="text-xs font-medium">Belum ada foto</span>
+                        <div class="relative cursor-pointer">
+                            <div class="w-44 h-44 rounded-xl overflow-hidden bg-white border-2 border-dashed @error('fotoProduk') border-red-500 @else border-gray-300 @enderror flex items-center justify-center">
+                                @if($produk->fotoProduk)
+                                    <img id="previewImg" src="{{ asset('storage/'.$produk->fotoProduk) }}" class="w-full h-full object-cover">
+                                    <div id="placeholderIcon" class="hidden text-center text-gray-300">
+                                        <i class="fa-solid fa-camera text-3xl mb-1"></i>
+                                        <p class="text-[10px] font-medium">Klik untuk ganti</p>
+                                    </div>
+                                @else
+                                    <img id="previewImg" src="#" class="w-full h-full object-cover hidden">
+                                    <div id="placeholderIcon" class="text-center text-gray-300">
+                                        <i class="fa-solid fa-camera text-3xl mb-1"></i>
+                                        <p class="text-[10px] font-medium">Klik untuk upload</p>
+                                    </div>
+                                @endif
                             </div>
-                        @endif
+                            <input type="file" name="fotoProduk" id="fotoInput" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewImage(this)">
+                        </div>
+                        @error('fotoProduk')
+                            <p class="text-red-500 text-[11px] mt-2 font-semibold italic text-center">{{ $message }}</p>
+                        @enderror
+                        <p class="text-[10px] text-gray-400 mt-4 text-center">Abaikan jika tidak ingin mengganti foto</p>
                     </div>
-
-                    {{-- Input File Tersembunyi --}}
-                    <input type="file" name="fotoProduk" id="fotoProduk" class="hidden" accept="image/*">
-
-                    {{-- Tombol Pemicu Input File --}}
-                    <label for="fotoProduk" class="inline-block px-6 py-2.5 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl text-sm cursor-pointer hover:bg-gray-50 transition shadow-sm">
-                        <i class="fa-solid fa-cloud-arrow-up mr-2 text-[#58CC02]"></i>Ganti Foto
-                    </label>
-                    <p class="text-xs text-gray-400 mt-2">Maks. 2MB (JPG, JPEG, PNG)</p>
                 </div>
 
-                {{-- Bagian Kanan: Input Data Produk --}}
-                <div class="md:col-span-2 space-y-7">
+                {{-- SISI KANAN: FORM INPUT --}}
+                <div class="lg:w-2/3 p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                    {{-- Nama Produk --}}
-                    <div>
-                        <label class="block text-sm font-black text-gray-400 uppercase tracking-wider mb-2">Nama Produk</label>
-                        <input type="text" name="namaProduk" value="{{ old('namaProduk', $produk->namaProduk) }}" class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#58CC02] focus:border-[#58CC02] outline-none transition font-medium" placeholder="Nama benih..." required>
-                    </div>
+                        {{-- Nama Produk --}}
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Varietas Benih</label>
+                            <input type="text" name="namaProduk" value="{{ old('namaProduk', $produk->namaProduk) }}"
+                                class="w-full px-4 py-3 rounded-xl border @error('namaProduk') border-red-500 @else border-gray-300 @enderror focus:border-[#58CC02] focus:ring-1 focus:ring-[#58CC02] outline-none transition"
+                                placeholder="Contoh: Padi Pandan Wangi Super">
+                            @error('namaProduk')
+                                <p class="text-red-500 text-xs mt-1 font-medium italic">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {{-- Jenis Komoditas --}}
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Jenis Komoditas</label>
+                            <select id="selectJenis" class="w-full px-4 py-3 rounded-xl border @error('kategoriId') border-red-500 @else border-gray-300 @enderror focus:border-[#58CC02] outline-none appearance-none bg-white">
+                                <option value="">-- Pilih Jenis --</option>
+                                @foreach($kategoris->unique('jenisKategori') as $k)
+                                    <option value="{{ $k->jenisKategori }}"
+                                        {{ old('selectJenis', $produk->kategori->jenisKategori) == $k->jenisKategori ? 'selected' : '' }}>
+                                        {{ strtoupper($k->jenisKategori) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Standar Mutu --}}
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Standar Mutu</label>
+                            <select name="kategoriId" id="selectMutu" class="w-full px-4 py-3 rounded-xl border @error('kategoriId') border-red-500 @else border-gray-300 @enderror bg-white outline-none">
+                                {{-- Akan diisi oleh JS --}}
+                                <option value="{{ $produk->kategoriId }}">{{ strtoupper($produk->kategori->mutu) }}</option>
+                            </select>
+                            @error('kategoriId')
+                                <p class="text-red-500 text-xs mt-1 font-medium italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         {{-- Stok --}}
                         <div>
-                            <label class="block text-sm font-black text-gray-400 uppercase tracking-wider mb-2">Stok Tersedia (Kg)</label>
-                            <input type="number" name="stok" step="0.01" value="{{ old('stok', $produk->stok) }}" class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#58CC02] focus:border-[#58CC02] outline-none transition font-bold" required>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Stok Tersedia (Kg)</label>
+                            <input type="number" name="stok" step="any" value="{{ old('stok', $produk->stok) }}"
+                                class="w-full px-4 py-3 rounded-xl border @error('stok') border-red-500 @else border-gray-300 @enderror outline-none"
+                                placeholder="0.00">
+                            @error('stok')
+                                <p class="text-red-500 text-xs mt-1 font-medium italic">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         {{-- Harga --}}
                         <div>
-                            <label class="block text-sm font-black text-gray-400 uppercase tracking-wider mb-2">Harga Per Kg (Rp)</label>
-                            {{-- Kita mengambil attribute harga mentah untuk diinput kembali --}}
-                            <input type="number" name="harga" value="{{ old('harga', number_format($produk->getAttributes()['harga'], 0, '', '')) }}" class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#58CC02] focus:border-[#58CC02] outline-none transition font-bold text-[#58CC02]" required>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Harga per Kg (Rp)</label>
+                            <input type="text" id="hargaVisual" class="w-full px-4 py-3 rounded-xl border @error('harga') border-red-500 @else border-gray-300 @enderror outline-none font-bold text-gray-800" placeholder="0">
+                            <input type="hidden" name="harga" id="hargaAsli" value="{{ old('harga', (int)$produk->getAttributes()['harga']) }}">
+                            @error('harga')
+                                <p class="text-red-500 text-xs mt-1 font-medium italic">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Deskripsi --}}
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan Produk</label>
+                            <textarea name="deskripsi" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-300 outline-none resize-none" placeholder="Tambahkan deskripsi singkat...">{{ old('deskripsi', $produk->deskripsi) }}</textarea>
                         </div>
                     </div>
 
-                    {{-- Kategori & Mutu --}}
-                    <div>
-                        <label class="block text-sm font-black text-gray-400 uppercase tracking-wider mb-2">Kategori Produk & Mutu</label>
-                        <select name="kategoriId" class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#58CC02] focus:border-[#58CC02] outline-none transition font-medium appearance-none" required>
-                            @foreach($kategoris as $k)
-                                <option value="{{ $k->id }}" {{ $produk->kategoriId == $k->id ? 'selected' : '' }}>
-                                    {{ strtoupper($k->jenisKategori) }} — Standar Mutu {{ $k->mutu }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- Deskripsi --}}
-                    <div>
-                        <label class="block text-sm font-black text-gray-400 uppercase tracking-wider mb-2">Deskripsi Produk</label>
-                        <textarea name="deskripsi" rows="6" class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#58CC02] focus:border-[#58CC02] outline-none transition font-medium resize-none" placeholder="Jelaskan detail dan keunggulan produk di sini...">{{ old('deskripsi', $produk->deskripsi) }}</textarea>
+                    <div class="mt-8 flex gap-3">
+                        <button type="button" onclick="openConfirmModal()" class="flex-[2] bg-[#58CC02] text-white py-3.5 rounded-xl font-bold active:bg-[#46a302] transition shadow-sm">
+                            Simpan Perubahan
+                        </button>
+                        <a href="{{ route('admin.produk.index') }}" class="flex-1 bg-gray-100 text-center text-gray-600 py-3.5 rounded-xl font-bold hover:bg-gray-200 transition">
+                            Batal
+                        </a>
                     </div>
                 </div>
             </div>
-
-            {{-- Tombol Aksi --}}
-            <div class="mt-12 pt-8 border-t border-gray-100 flex flex-col md:flex-row gap-4">
-                <a href="{{ route('admin.produk.index') }}" class="flex-1 px-8 py-4 bg-gray-100 text-gray-600 text-center font-extrabold rounded-2xl hover:bg-gray-200 transition">
-                    <i class="fa-solid fa-xmark mr-2"></i>Batalkan Perubahan
-                </a>
-                <button type="submit" class="flex-[2] px-8 py-4 bg-[#58CC02] text-white font-extrabold rounded-2xl hover:bg-[#4fb802] transition shadow-lg shadow-[#58CC02]/30 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-floppy-disk"></i>Update Informasi Produk
-                </button>
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
-{{-- Sederhana JavaScript untuk Preview Foto instan sebelum upload --}}
-<script>
-    const fileInput = document.getElementById('fotoProduk');
-    const previewFoto = document.querySelector('.relative.w-full.aspect-square img');
-    const fallbackFoto = document.querySelector('.relative.w-full.aspect-square .flex');
+<x-modal id="modalUpdateProduk" title="Konfirmasi Update" message="Simpan perubahan data produk ini?" confirmText="Simpan" cancelText="Batal" confirmId="btnSubmitForm" cancelId="btnCloseModal" />
 
-    if (fileInput) {
-        fileInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    // Jika elemen img belum ada (misalnya saat 'Belum ada foto'), buat elemen img baru
-                    if (!previewFoto) {
-                        fallbackFoto.classList.add('hidden');
-                        const img = document.createElement('img');
-                        img.className = "w-full h-full object-cover shadow-inner transition duration-300";
-                        img.src = e.target.result;
-                        fallbackFoto.parentElement.appendChild(img);
-                    } else {
-                        // Jika img sudah ada, tinggal ganti src-nya
-                        previewFoto.src = e.target.result;
-                    }
-                };
-                reader.readAsDataURL(this.files[0]);
+<script>
+    const kategoris = @json($kategoris);
+    const selectedKategoriId = "{{ $produk->kategoriId }}";
+    const selectJenis = document.getElementById('selectJenis');
+    const selectMutu = document.getElementById('selectMutu');
+    const hargaVisual = document.getElementById('hargaVisual');
+    const hargaAsli = document.getElementById('hargaAsli');
+
+    // 1. Logika Dropdown Dinamis (Sama dengan Create)
+    function filterMutu(selectedJenis, targetId = null) {
+        selectMutu.innerHTML = '<option value="">-- Pilih Mutu --</option>';
+        if (selectedJenis) {
+            const filtered = kategoris.filter(k => k.jenisKategori === selectedJenis);
+            filtered.forEach(k => {
+                const option = document.createElement('option');
+                option.value = k.id;
+                option.textContent = k.mutu.toUpperCase();
+                if(targetId && k.id == targetId) option.selected = true;
+                selectMutu.appendChild(option);
+            });
+        }
+    }
+
+    selectJenis.addEventListener('change', function() {
+        filterMutu(this.value);
+    });
+
+    // Inisialisasi awal saat halaman edit dibuka
+    filterMutu(selectJenis.value, selectedKategoriId);
+
+    // 2. Logika Rupiah
+    hargaVisual.addEventListener('keyup', function() { formatRupiah(this); });
+
+    function formatRupiah(input) {
+        let value = input.value.replace(/[^,\d]/g, '').toString();
+        let split = value.split(',');
+        let sisa = split[0].length % 3;
+        let rupiah = split[0].substr(0, sisa);
+        let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+        if (ribuan) {
+            let separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+        input.value = rupiah;
+        hargaAsli.value = value.replace(/\./g, '').replace(',', '.');
+    }
+
+    // Inisialisasi harga saat load
+    if (hargaAsli.value) {
+        hargaVisual.value = hargaAsli.value.replace('.', ',');
+        formatRupiah(hargaVisual);
+    }
+
+    // 3. Modal & Preview
+    function openConfirmModal() {
+        document.getElementById('modalUpdateProduk').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('modalUpdateProduk').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    document.getElementById('btnSubmitForm').addEventListener('click', () => {
+        document.getElementById('formProduk').submit();
+    });
+
+    document.getElementById('btnCloseModal').addEventListener('click', closeConfirmModal);
+
+    function previewImage(input) {
+        const preview = document.getElementById('previewImg');
+        const placeholder = document.getElementById('placeholderIcon');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
             }
-        });
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 </script>
 @endsection

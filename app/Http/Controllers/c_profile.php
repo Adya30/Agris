@@ -29,43 +29,43 @@ class c_profile extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'username'     => 'required|string|min:4|max:30|unique:users,username,' . $user->id,
+            'noTelp'       => 'required|numeric|digits_between:4,15|unique:users,noTelp,' . $user->id,
             'email'        => 'required|email|unique:users,email,' . $user->id,
-            'desaId'       => 'required',
-            'detailAlamat' => 'required|string',
+            'detailAlamat' => 'nullable|string',
             'fotoProfil'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'current_password' => 'required_with:password',
             'password'     => 'nullable|min:8',
+            'desaId'       => $user->desaId ? 'nullable' : 'required',
         ], [
-            'username.required' => 'Username wajib diisi.',
-            'username.min' => 'Username minimal 4 karakter.',
-            'username.unique' => 'Username sudah digunakan.',
-            'email.unique'    => 'Email sudah digunakan.',
-            'email.required'  => 'Email wajib diisi.',
+            'noTelp.required' => 'Data wajib diisi!',
+            'noTelp.numeric'  => 'Nomor telepon harus berupa angka.',
+            'noTelp.unique'   => 'Nomor Telpon sudah digunakan.',
+            'noTelp.digits_between' => 'Nomor telepon harus antara 4 sampai 15 digit.',
+            'email.required'  => 'Data wajib diisi!',
+            'desaId.required' => 'Data wajib diisi!',
             'password.min'    => 'Password baru minimal 8 karakter.',
-            'current_password.required_with' => 'Konfirmasi password wajib diisi.',
+            'current_password.required_with' => 'Konfirmasi password lama wajib diisi.',
             'fotoProfil.image' => 'File harus berupa gambar.',
             'fotoProfil.mimes' => 'Format gambar harus jpeg, png, atau jpg.',
-            'fotoProfil.max' => 'Ukuran gambar maksimal 2MB.'
+            'fotoProfil.max'   => 'Ukuran gambar maksimal 2MB.'
         ]);
 
         if ($request->filled('password')) {
             if (!Hash::check($request->current_password, $user->password)) {
-                return redirect()->back()->withErrors(['current_password' => 'Password lama salah.']);
+                return redirect()->back()->withErrors(['current_password' => 'Password lama salah.'])->withInput();
             }
             $user->password = Hash::make($request->password);
         }
 
         if ($request->hasFile('fotoProfil')) {
             $file = $request->file('fotoProfil');
-
             $imageData = base64_encode(file_get_contents($file->getRealPath()));
             $mimeType = $file->getClientMimeType();
-
             $user->fotoProfil = 'data:' . $mimeType . ';base64,' . $imageData;
         }
 
-        if ($request->filled('desaId') && $request->desaId != $user->desaId) {
+        // Sinkronisasi Wilayah (Hanya jika ada input desaId baru)
+        if ($request->filled('desaId')) {
             $this->syncWilayah($request->desaId);
             $user->desaId = $request->desaId;
         }
@@ -78,11 +78,13 @@ class c_profile extends Controller
             $user->noTelp = $request->noTelp;
             $user->jenisKelamin = $request->jenisKelamin;
             $user->tanggalLahir = $request->tanggalLahir;
+        } else {
+            $user->noTelp = $request->noTelp;
         }
 
         $user->save();
 
-        return redirect()->back()->with('success', 'Profil berhasil diperbarui langsung ke database!');
+        return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
     }
 
     private function syncWilayah($desaId)

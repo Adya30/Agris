@@ -6,199 +6,222 @@
 
 <x-navbar />
 
+{{-- HERO SECTION --}}
 <section id="home" class="min-h-screen flex items-center bg-[#58CC02] text-white">
-
-    <div class="max-w-7xl mx-auto px-6 flex flex-col-reverse md:flex-row gap-12 items-center pt-25 justify-between lg:px-16">
-
-        <!-- TEKS -->
+    <div class="max-w-7xl mx-auto px-6 flex flex-col-reverse md:flex-row gap-12 items-center pt-20 justify-between lg:px-16">
         <div class="md:w-1/2 pb-20">
-            <h1 class="text-5xl font-bold leading-tight mb-6">
+            <h1 class="text-5xl font-extrabold leading-tight mb-6">
                 Pusat Penyedia <br> Suplai Benih Berkualitas
             </h1>
-
             <p class="text-lg opacity-90 mb-8">
-                Platform digital untuk memenuhi kebutuhan pertanian Anda dengan sistem terpercaya dan berkelanjutan.
+                Platform digital untuk memenuhi kebutuhan pertanian Anda dengan sistem terpercaya, berkelanjutan, dan hasil panen maksimal.
             </p>
-
             <div class="flex gap-4">
-                <a href="#produk"
-                   class="px-8 py-3 bg-white text-[#58CC02] font-semibold rounded-full shadow-md hover:shadow-xl hover:scale-105 transition duration-300">
-                    Mulai
+                <a href="#produk" class="px-8 py-3 bg-white text-[#58CC02] font-bold rounded-full shadow-md hover:shadow-xl hover:scale-105 transition duration-300">
+                    Mulai Sekarang
                 </a>
-
-                <a href="#kategori"
-                   class="px-8 py-3 border border-white rounded-full hover:bg-white hover:text-[#58CC02] transition duration-300">
-                    Lihat Produk
+                <a href="#about" class="px-8 py-3 border border-white rounded-full font-medium hover:bg-white hover:text-[#58CC02] transition duration-300">
+                    Tentang Kami
                 </a>
             </div>
         </div>
-
-        <!-- GAMBAR -->
         <div class="md:w-1/2 flex justify-center">
-            <img src="{{ asset('images/icon.png') }}"
-                 class="w-[350px] pb-3 drop-shadow-xl">
+            <img src="{{ asset('images/icon.png') }}" class="w-[350px] md:w-[450px] drop-shadow-2xl animate-pulse-slow">
         </div>
-
     </div>
 </section>
 
-<section id="kategori" class="min-h-screen flex items-center bg-gray-50">
+{{-- ABOUT SECTION --}}
+<section id="about" class="py-24 bg-white px-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
+        <div class="md:w-1/2">
+            <div class="relative">
+                <div class="absolute -top-4 -left-4 w-24 h-24 bg-[#58CC02]/10 rounded-full -z-10"></div>
+                <img src="{{ asset('images/product.jpg') }}" class="rounded-3xl shadow-2xl w-full object-cover h-[400px]">
+                <div class="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-50 hidden md:block">
+                    <p class="text-[#58CC02] font-black text-4xl">10+</p>
+                    <p class="text-gray-500 text-sm font-bold uppercase tracking-widest">Tahun Pengalaman</p>
+                </div>
+            </div>
+        </div>
+        <div class="md:w-1/2">
+            <span class="text-[#58CC02] font-bold tracking-widest uppercase text-sm mb-4 block">Tentang AGRIS</span>
+            <h2 class="text-4xl font-bold text-gray-800 mb-6 leading-tight">Dedikasi Kami untuk Kemajuan Petani Indonesia</h2>
+            <p class="text-gray-600 leading-relaxed mb-6">
+                AGRIS lahir dari semangat untuk memberikan solusi hulu pertanian. Kami memahami bahwa benih berkualitas adalah fondasi utama keberhasilan panen. Dengan teknologi seleksi terkini, kami memastikan setiap benih yang sampai ke tangan Anda memiliki daya tumbuh tinggi.
+            </p>
+            <ul class="space-y-4 mb-8">
+                <li class="flex items-center gap-3 text-gray-700 font-medium">
+                    <i class="fa-solid fa-circle-check text-[#58CC02]"></i> Seleksi Benih Unggul Bersertifikat
+                </li>
+                <li class="flex items-center gap-3 text-gray-700 font-medium">
+                    <i class="fa-solid fa-circle-check text-[#58CC02]"></i> Pendampingan Teknis Budidaya
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
 
-    <div class="max-w-7xl mx-auto pt-10 px-6 w-full">
-
-        <h2 class="text-4xl font-bold text-center mb-16">
-            Keunggulan Kami
-        </h2>
-
-        <div class="grid px-10 md:grid-cols-4 sm:grid-cols-2 gap-8">
-
-            <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 text-center">
-                <div class="text-4xl mb-4 text-[#58CC02]">
+{{-- SERVICES SECTION (LAYANAN) --}}
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <h2 class="text-3xl font-bold mb-12">Layanan Utama Kami</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 hover:border-[#58CC02] transition">
+                <div class="w-16 h-16 bg-[#58CC02]/10 rounded-2xl flex items-center justify-center text-[#58CC02] text-2xl mb-6 mx-auto">
                     <i class="fa-solid fa-seedling"></i>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Produk Berkualitas</h3>
-                <p class="text-gray-600 text-sm">
-                    Kami menyediakan produk pertanian terbaik langsung dari sumber terpercaya.
-                </p>
+                <h3 class="font-bold text-xl mb-3">Distribusi Benih</h3>
+                <p class="text-gray-500 text-sm">Penyaluran benih padi dan jagung unggul ke seluruh penjuru daerah.</p>
             </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 text-center">
-                <div class="text-4xl mb-4 text-[#58CC02]">
-                    <i class="fa-solid fa-truck-fast"></i>
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 hover:border-[#58CC02] transition">
+                <div class="w-16 h-16 bg-[#58CC02]/10 rounded-2xl flex items-center justify-center text-[#58CC02] text-2xl mb-6 mx-auto">
+                    <i class="fa-solid fa-microscope"></i>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Pengiriman Cepat</h3>
-                <p class="text-gray-600 text-sm">
-                    Sistem distribusi efisien memastikan produk sampai tepat waktu.
-                </p>
+                <h3 class="font-bold text-xl mb-3">Uji Laboratorium</h3>
+                <p class="text-gray-500 text-sm">Setiap batch produk melalui uji kelayakan dan daya tumbuh yang ketat.</p>
             </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 text-center">
-                <div class="text-4xl mb-4 text-[#58CC02]">
-                    <i class="fa-solid fa-hand-holding-dollar"></i>
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 hover:border-[#58CC02] transition">
+                <div class="w-16 h-16 bg-[#58CC02]/10 rounded-2xl flex items-center justify-center text-[#58CC02] text-2xl mb-6 mx-auto">
+                    <i class="fa-solid fa-handshake"></i>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Harga Terjangkau</h3>
-                <p class="text-gray-600 text-sm">
-                    Harga kompetitif dengan kualitas terbaik untuk petani modern.
-                </p>
+                <h3 class="font-bold text-xl mb-3">Kemitraan Tani</h3>
+                <p class="text-gray-500 text-sm">Program kerjasama saling menguntungkan untuk meningkatkan kesejahteraan.</p>
             </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 text-center">
-                <div class="text-4xl mb-4 text-[#58CC02]">
-                    <i class="fa-solid fa-leaf"></i>
-                </div>
-                <h3 class="text-xl font-semibold mb-2">Ramah Lingkungan</h3>
-                <p class="text-gray-600 text-sm">
-                    Mendukung pertanian berkelanjutan dan ramah lingkungan.
-                </p>
-            </div>
-
         </div>
-
     </div>
 </section>
 
-<section id="produk" class="min-h-screen flex items-center bg-[#f6f6f6] px-6">
+{{-- PRODUK KAMI (PADI & JAGUNG) --}}
+<section id="produk" class="py-24 bg-white px-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold mb-4">Komoditas Unggulan</h2>
+            <p class="text-gray-500">Pilihan benih terbaik untuk hasil panen yang melimpah.</p>
+        </div>
 
-    <div class="max-w-7xl mx-auto pt-10 px-6 pb-10 w-full">
+        <div class="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+            {{-- Card Padi --}}
+            <div class="group relative rounded-3xl overflow-hidden bg-white shadow-lg border border-gray-100">
+                <img src="{{ asset('images/product.jpg') }}" class="h-64 w-full object-cover">
+                <div class="p-8">
+                    <span class="text-[10px] font-black uppercase text-[#58CC02] bg-[#58CC02]/10 px-3 py-1 rounded-full mb-4 inline-block">Sertifikat Resmi</span>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Benih Padi Unggul</h3>
+                    <p class="text-gray-500 text-sm mb-6">Varietas pilihan dengan ketahanan hama yang kuat dan tekstur nasi yang pulen.</p>
+                    <a href="#" class="inline-flex items-center font-bold text-[#58CC02] hover:gap-3 transition-all">
+                        Lihat Detail <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
 
-        <h2 class="text-4xl font-bold text-center mb-16">
-            Produk Kami
-        </h2>
+            {{-- Card Jagung --}}
+            <div class="group relative rounded-3xl overflow-hidden bg-white shadow-lg border border-gray-100">
+                <img src="{{ asset('images/product.jpg') }}" class="h-64 w-full object-cover">
+                <div class="p-8">
+                    <span class="text-[10px] font-black uppercase text-orange-500 bg-orange-50 px-3 py-1 rounded-full mb-4 inline-block">Produktivitas Tinggi</span>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Benih Jagung Hibrida</h3>
+                    <p class="text-gray-500 text-sm mb-6">Pertumbuhan cepat dan hasil tongkol yang besar, sangat cocok untuk pakan ternak.</p>
+                    <a href="#" class="inline-flex items-center font-bold text-[#58CC02] hover:gap-3 transition-all">
+                        Lihat Detail <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-        <div class="grid md:grid-cols-3 gap-10">
+{{-- SLOGAN KEMITRAAN --}}
+<section class="py-20 bg-[#58CC02] text-white overflow-hidden relative">
+    <div class="absolute top-0 right-0 opacity-10">
+        <i class="fa-solid fa-leaf text-[200px]"></i>
+    </div>
+    <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+        <h2 class="text-4xl font-black mb-6">Tumbuh Bersama AGRIS</h2>
+        <p class="text-xl opacity-90 mb-10 font-medium">Ayo bermitra dengan kami! Bersama kita bangun ketahanan pangan Indonesia yang lebih kuat.</p>
+        <a href="https://wa.me/yournumber" class="px-10 py-4 bg-white text-[#58CC02] font-black rounded-2xl hover:shadow-2xl hover:-translate-y-1 transition duration-300">
+            Hubungi Tim Kemitraan
+        </a>
+    </div>
+</section>
 
-            @for($i=1; $i<=3; $i++)
-            <div class="rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition duration-300 bg-white">
+{{-- FAQ SECTION --}}
+<section class="py-24 bg-gray-50 px-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-16">
+        <div class="md:w-1/3">
+            <h2 class="text-4xl font-bold text-gray-800 mb-6">Pertanyaan Populer</h2>
+            <p class="text-gray-500 mb-8">Masih bingung? Kami merangkum beberapa hal yang sering ditanyakan oleh rekan petani dan mitra kami.</p>
+            <div class="p-6 bg-[#58CC02]/5 rounded-3xl border border-[#58CC02]/20">
+                <p class="text-gray-700 font-medium mb-4 italic text-sm">"Punya pertanyaan khusus?"</p>
+                <button class="font-bold text-[#58CC02] underline">Tanya Admin Langsung</button>
+            </div>
+        </div>
 
-                <img src="{{ asset('images/product.jpg') }}"
-                     class="h-60 w-full object-cover">
-
-                <div class="p-6">
-                    <h3 class="font-semibold text-lg mb-2">
-                        Produk {{ $i }}
-                    </h3>
-
-                    <p class="text-gray-500 text-sm mb-4">
-                        Produk pertanian berkualitas tinggi.
-                    </p>
-
-                    <div class="flex justify-between items-center">
-                        <span class="text-[#58CC02] font-bold text-lg">
-                            Rp 150.000
-                        </span>
-
-                        <button class="px-5 py-2 bg-[#58CC02] text-white rounded-full hover:bg-green-600 hover:scale-105 transition duration-300">
-                            <i class="fa-solid fa-cart-shopping mr-1"></i>
-                            Pesan Sekarang
-                        </button>
+        <div class="md:w-2/3 space-y-4">
+            {{-- Item FAQ --}}
+            <div class="faq-item group">
+                <button class="faq-btn w-full flex items-center justify-between p-6 bg-white rounded-2xl border border-gray-100 hover:border-[#58CC02] transition duration-300">
+                    <span class="font-bold text-gray-700 text-lg">Apa itu AGRIS?</span>
+                    <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#58CC02] group-hover:text-white transition">
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300"></i>
                     </div>
+                </button>
+                <div class="faq-content hidden px-6 py-4 text-gray-500 leading-relaxed">
+                    AGRIS adalah platform penyedia benih padi dan jagung tersertifikasi yang berfokus pada distribusi bibit unggul untuk meningkatkan produktivitas pertanian di Indonesia.
                 </div>
-
             </div>
-            @endfor
 
+            <div class="faq-item group">
+                <button class="faq-btn w-full flex items-center justify-between p-6 bg-white rounded-2xl border border-gray-100 hover:border-[#58CC02] transition duration-300">
+                    <span class="font-bold text-gray-700 text-lg">Apakah benih sudah bersertifikat?</span>
+                    <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#58CC02] group-hover:text-white transition">
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div class="faq-content hidden px-6 py-4 text-gray-500 leading-relaxed">
+                    Ya, seluruh benih yang kami distribusikan telah lolos uji dari Balai Pengawasan dan Sertifikasi Benih (BPSB) dan memiliki label resmi sesuai standar pemerintah.
+                </div>
+            </div>
+
+            <div class="faq-item group">
+                <button class="faq-btn w-full flex items-center justify-between p-6 bg-white rounded-2xl border border-gray-100 hover:border-[#58CC02] transition duration-300">
+                    <span class="font-bold text-gray-700 text-lg">Bagaimana cara menjadi mitra?</span>
+                    <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#58CC02] group-hover:text-white transition">
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div class="faq-content hidden px-6 py-4 text-gray-500 leading-relaxed">
+                    Anda dapat menekan tombol "Hubungi Tim Kemitraan" di atas. Tim kami akan mengirimkan proposal kerjasama dan melakukan survei kelayakan lokasi/usaha tani Anda.
+                </div>
+            </div>
         </div>
-
     </div>
-</section>
-
-<section class="bg-white py-10 px-6 md:px-10">
-  <div class="max-w-3xl mx-auto">
-
-    <h2 class="text-2xl md:text-3xl font-bold text-center mb-6">
-      FAQ
-    </h2>
-
-    <div class="space-y-4">
-
-      <div class="border rounded-lg">
-        <button class="w-full text-left p-4 font-semibold flex justify-between items-center faq-btn">
-          Apa itu AGRIS?
-          <span>+</span>
-        </button>
-        <div class="px-4 pb-4 text-gray-600 hidden">
-          AGRIS adalah brand yang menyediakan benih padi dan jagung berkualitas tinggi.
-        </div>
-      </div>
-
-      <div class="border rounded-lg">
-        <button class="w-full text-left p-4 font-semibold flex justify-between items-center faq-btn">
-          Apakah benih sudah bersertifikat?
-          <span>+</span>
-        </button>
-        <div class="px-4 pb-4 text-gray-600 hidden">
-          Ya, semua produk AGRIS telah melalui proses sertifikasi dan uji kualitas.
-        </div>
-      </div>
-
-      <div class="border rounded-lg">
-        <button class="w-full text-left p-4 font-semibold flex justify-between items-center faq-btn">
-          Bagaimana cara pemesanan?
-          <span>+</span>
-        </button>
-        <div class="px-4 pb-4 text-gray-600 hidden">
-          Anda dapat memesan melalui website kami atau menghubungi customer service.
-        </div>
-      </div>
-
-    </div>
-  </div>
 </section>
 
 <x-footer />
 
 @endsection
 
-
 @push('scripts')
 <script>
-  const buttons = document.querySelectorAll(".faq-btn");
+    const faqBtns = document.querySelectorAll(".faq-btn");
 
-  buttons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const content = btn.nextElementSibling;
-      content.classList.toggle("hidden");
+    faqBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('.fa-chevron-down');
+
+            // Toggle Hidden
+            content.classList.toggle("hidden");
+
+            // Rotate Icon
+            if(!content.classList.contains('hidden')){
+                icon.style.transform = 'rotate(180deg)';
+                btn.classList.add('border-[#58CC02]');
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+                btn.classList.remove('border-[#58CC02]');
+            }
+        });
     });
-  });
 </script>
 @endpush

@@ -10,63 +10,97 @@
 </head>
 <body class="bg-gray-50 font-sans antialiased">
 
-    <div id="progressBarContainer" class="hidden fixed top-0 left-0 w-full h-1 bg-gray-200 z-[9999]">
-        <div id="progressBar" class="h-full bg-[#58CC02] w-0 transition-all duration-300 ease-linear"></div>
-    </div>
+<div id="progressBarContainer" class="hidden fixed top-0 left-0 w-full h-1 bg-gray-200 z-[9999]">
+    <div id="progressBar" class="h-full bg-[#58CC02] w-0 transition-all duration-300 ease-linear"></div>
+</div>
 
-    {{-- 1. SIDEBAR: Hanya muncul jika BUKAN halaman profil --}}
-    @if(!Route::is('admin.profile'))
-        @include('components.sidebar-admin')
+<div class="fixed top-5 right-5 z-[9999] space-y-3">
+    @if(session('success'))
+        <div class="alert-info flex items-center w-full max-w-xs p-4 rounded-2xl shadow-xl border border-green-200 bg-green-50" role="alert">
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-full bg-green-600 text-white">
+                <i class="fa-solid fa-check text-sm"></i>
+            </div>
+            <div class="ms-3">
+                <div class="text-sm font-bold text-green-800">Berhasil</div>
+                <div class="text-xs text-green-700 mt-0.5">{{ session('success') }}</div>
+            </div>
+        </div>
     @endif
 
-    {{-- 2. WRAPPER KONTEN --}}
-    {{-- Class md:ml-64 hanya dipasang jika BUKAN halaman profil agar konten tidak lowong di kiri --}}
-    <div class="{{ !Route::is('admin.profile') ? 'md:ml-64' : '' }} transition-all duration-300">
+    @if(session('error'))
+        <div class="alert-info flex items-center w-full max-w-xs p-4 rounded-2xl shadow-xl border border-red-200 bg-red-50" role="alert">
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-full bg-red-600 text-white">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </div>
+            <div class="ms-3">
+                <div class="text-sm font-bold text-red-800">Gagal</div>
+                <div class="text-xs text-red-700 mt-0.5">{{ session('error') }}</div>
+            </div>
+        </div>
+    @endif
+</div>
 
-        {{-- 3. TOPBAR: Selalu tampil di semua halaman admin --}}
-        @include('components.topbar-admin')
+@if(!Route::is('admin.profile'))
+    @include('components.sidebar-admin')
+@endif
 
-        <main class="pt-20 p-8 min-h-screen">
-            @yield('content')
-        </main>
-    </div>
+<div class="{{ !Route::is('admin.profile') ? 'md:ml-64' : '' }} transition-all duration-300">
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Dropdown Profile Logic
-            const adminBtn = document.getElementById('adminDropdownBtn');
-            const adminMenu = document.getElementById('adminDropdownMenu');
+    @include('components.topbar-admin')
 
-            if(adminBtn && adminMenu) {
-                adminBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    adminMenu.classList.toggle('hidden');
-                });
-                document.addEventListener('click', () => {
-                    adminMenu.classList.add('hidden');
-                });
-            }
+    <main class="pt-20 p-8 min-h-screen">
+        @yield('content')
+    </main>
+</div>
 
-            // Progress Bar Logic
-            const forms = document.querySelectorAll('form');
-            const progressContainer = document.getElementById('progressBarContainer');
-            const progressBar = document.getElementById('progressBar');
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // KODE DROPDOWN DI SINI DIHAPUS SUPAYA TIDAK BENTROK DENGAN TOPBAR.BLADE.PHP
 
-            forms.forEach(form => {
-                form.addEventListener('submit', function () {
-                    progressContainer.classList.remove('hidden');
-                    let width = 0;
-                    const interval = setInterval(() => {
-                        if (width >= 90) {
-                            clearInterval(interval);
-                        } else {
-                            width += 10;
-                            progressBar.style.width = width + "%";
-                        }
-                    }, 100);
-                });
+    const forms = document.querySelectorAll('form');
+    const progressContainer = document.getElementById('progressBarContainer');
+    const progressBar = document.getElementById('progressBar');
+
+    forms.forEach(form => {
+        // Cek agar tidak memicu progress bar pada form logout tersembunyi
+        if (form.id !== 'logoutFormReal') {
+            form.addEventListener('submit', function () {
+                progressContainer.classList.remove('hidden');
+                let width = 0;
+                const interval = setInterval(() => {
+                    if (width >= 90) {
+                        clearInterval(interval);
+                    } else {
+                        width += 10;
+                        progressBar.style.width = width + "%";
+                    }
+                }, 100);
             });
+        }
+    });
+
+    (function() {
+        const alerts = document.querySelectorAll('.alert-info');
+        alerts.forEach(alert => {
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateX(20px)';
+
+            setTimeout(() => {
+                alert.style.transition = "all 0.5s ease";
+                alert.style.opacity = '1';
+                alert.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateX(20px)';
+                setTimeout(() => {
+                    alert.remove();
+                }, 500);
+            }, 4000);
         });
-    </script>
+    })();
+});
+</script>
 </body>
 </html>

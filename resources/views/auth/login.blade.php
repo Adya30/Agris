@@ -6,7 +6,6 @@
 
 <div class="flex min-h-screen w-full bg-gray-100">
 
-    <!-- LEFT -->
     <div class="hidden md:flex w-1/2 bg-[#58CC02] flex-col justify-between p-12">
 
         <div>
@@ -22,12 +21,12 @@
         </div>
     </div>
 
-    <!-- RIGHT -->
     <div class="w-full md:w-1/2 flex items-center justify-center relative">
 
         <a href="{{ route('landing') }}" class="absolute top-6 left-6 text-gray-600 hover:text-[#58CC02] transition">
             <i class="fa-solid fa-arrow-left text-xl"></i>
         </a>
+
 
         <div class="w-full max-w-md px-10">
 
@@ -35,24 +34,12 @@
                 Hi, Selamat Datang!
             </h2>
 
-            @if(session('success'))
-                <div class="mb-4 bg-green-100 text-green-700 p-3 rounded-lg text-sm">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="mb-4 bg-red-100 text-red-700 p-3 rounded-lg text-sm">
-                    {{ session('error') }}
-                </div>
-            @endif
-
             <form method="POST" action="{{ route('login') }}" id="loginForm">
                 @csrf
 
                 <div class="mb-6">
-                    <input type="text" name="login" value="{{ old('login') }}" placeholder="email atau Username" class="w-full bg-transparent border-b border-gray-400 focus:border-[#58CC02] focus:outline-none py-2">
-                    @error('login')
+                    <input type="text" name="email" value="{{ old('email') }}" placeholder="email" class="w-full bg-transparent border-b border-gray-400 focus:border-[#58CC02] focus:outline-none py-2">
+                    @error('email')
                         <p class="text-red-500 text-sm mt-1">
                             {{ $message }}
                         </p>
@@ -73,7 +60,7 @@
                     @enderror
                 </div>
 
-                <!-- Remember -->
+
                 <div class="flex justify-between items-center text-sm mb-8">
                     <label class="flex items-center gap-2">
                         <input type="checkbox" name="remember" class="accent-[#58CC02]" {{ old('remember') ? 'checked' : '' }}>

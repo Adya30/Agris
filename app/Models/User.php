@@ -18,7 +18,6 @@ class User extends Authenticatable
     protected $keyType = 'string';
 
     protected $fillable = [
-        'username',
         'password',
         'namaLengkap',
         'email',

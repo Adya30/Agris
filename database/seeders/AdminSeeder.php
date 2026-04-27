@@ -12,7 +12,6 @@ class AdminSeeder extends Seeder
     {
         User::create([
             'namaLengkap' => 'Admin Utama',
-            'username'    => 'admin',
             'email'       => 'agrisagroindustri@gmail.com',
             'password'    => Hash::make('admin123'),
             'noTelp'      => '08123456789',

@@ -1,6 +1,5 @@
 <aside id="sidebar" class="fixed top-0 left-0 z-50 w-64 h-screen transition-transform -translate-x-full md:translate-x-0 bg-[#58CC02]">
     <div class="h-full flex flex-col">
-        {{-- Logo --}}
         <div class="pl-8 pt-5 pb-5">
             <a href="{{ route('admin.produk.index') }}" class="flex items-center gap-2 group">
                 <div class="rounded-full">
@@ -22,8 +21,7 @@
             @endphp
 
             @foreach($menus as $menu)
-                <a href="{{ $menu['url'] }}"
-                   class="flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 {{ request()->is($menu['active']) ? 'bg-[#46A302] text-white shadow-lg ring-1 ring-white/20' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                <a href="{{ $menu['url'] }}" class="flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 {{ request()->is($menu['active']) ? 'bg-[#46A302] text-white shadow-lg ring-1 ring-white/20' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
                     <i class="fa-solid {{ $menu['icon'] }} text-sm w-5"></i>
                     <span class="tracking-wide text-lg">{{ $menu['name'] }}</span>
                 </a>

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->ulid('id')->primary();
             $table->enum('jenisKategori', ['padi', 'jagung']);
-            $table->enum('mutu', ['A', 'B', 'C']);
+            $table->enum('mutu', ['pandan wangi A', 'rojolele A', 'mentik wangi A', 'ciherang B', 'IR64 B', 'mekongga B', 'bonanza F1']);
             $table->timestamps();
             $table->unique(['jenisKategori', 'mutu']);
         });

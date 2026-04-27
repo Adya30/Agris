@@ -5,6 +5,12 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+
 button {
     cursor: pointer;
 }
@@ -29,4 +35,27 @@ button {
     font-size: 0.75rem;
     margin-top: 0.25rem;
     font-weight: 500;
+}
+
+/* error cloud */
+@keyframes toastIn {
+    from {
+        transform: translateX(100%); /* Muncul dari kanan luar layar */
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animate-toast-in {
+    animation: toastIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Animasi Keluar (Opsional untuk JS) */
+.toast-fade-out {
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.4s ease;
 }
