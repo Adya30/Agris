@@ -3,14 +3,14 @@
 @section('title', 'Stok Kosong - AGRIS')
 
 @section('content')
-<div class="max-w-7xl mx-auto">
+<div class="max-w-7xl mx-auto pt-3">
     <div class="flex items-center gap-4 mb-8">
         <a href="{{ route('admin.produk.index') }}" class="w-11 h-11 flex items-center justify-center rounded-2xl bg-white shadow-sm border border-gray-100 text-gray-600 transition">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
         <div>
             <h1 class="text-2xl font-extrabold text-gray-800 text-red-600">Stok Habis</h1>
-            <p class="text-gray-500 text-sm">Produk-produk yang memerlukan restock segera.</p>
+            <p class="text-gray-500 text-sm">Produk yang stoknya kosong</p>
         </div>
     </div>
 
@@ -26,7 +26,7 @@
                         <th class="px-6 py-4 text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-50">
+                <tbody class="divide-gray-50">
                     @forelse($produks as $item)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4">
@@ -51,9 +51,9 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-gray-400 text-xs italic">{{ $item->updated_at->diffForHumans() }}</td>
-                        <td class="px-6 py-4 text-right">
+                        <td class="px-6 py-3 text-right">
                             <div class="flex justify-end gap-2">
-                                <a href="{{ route('admin.produk.edit', $item->id) }}" class="bg-[#58CC02] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm hover:bg-[#46a302] transition">
+                                <a href="{{ route('admin.produk.edit', $item->id) }}" class="bg-[#58CC02] text-white px-3 py-3 rounded-xl text-xs font-bold shadow-sm hover:bg-[#46a302] transition">
                                     Restock
                                 </a>
                                 <form action="{{ route('admin.produk.forceDelete', $item->id) }}" method="POST" onsubmit="return confirm('Hapus permanen produk ini?')">

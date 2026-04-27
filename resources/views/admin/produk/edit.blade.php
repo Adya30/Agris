@@ -44,15 +44,12 @@
                         @error('fotoProduk')
                             <p class="text-red-500 text-[11px] mt-2 font-semibold italic text-center">{{ $message }}</p>
                         @enderror
-                        <p class="text-[10px] text-gray-400 mt-4 text-center">Abaikan jika tidak ingin mengganti foto</p>
                     </div>
                 </div>
 
-                {{-- SISI KANAN: FORM INPUT --}}
                 <div class="lg:w-2/3 p-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                        {{-- Nama Produk --}}
                         <div class="md:col-span-2">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Varietas Benih</label>
                             <input type="text" name="namaProduk" value="{{ old('namaProduk', $produk->namaProduk) }}"

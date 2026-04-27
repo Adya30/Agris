@@ -54,7 +54,6 @@
                     @endif
                 </div>
 
-                {{-- Info Kategori & Mutu (Dibawah Foto) --}}
                 <div class="flex items-center gap-2 mb-2">
                     <span class="text-[10px] font-black uppercase text-[#58CC02] bg-[#58CC02]/10 px-2 py-0.5 rounded-md">
                         {{ $item->kategori->jenisKategori }}
@@ -64,18 +63,15 @@
                     </span>
                 </div>
 
-                {{-- Nama & Harga --}}
                 <h3 class="font-bold text-gray-800 truncate">{{ $item->namaProduk }}</h3>
                 <p class="text-[#58CC02] font-black text-lg mb-2">
                     Rp {{ number_format($item->harga, 0, ',', '.') }}<span class="text-xs text-gray-400 font-medium">/kg</span>
                 </p>
 
-                {{-- Deskripsi (Dibatasi agar tidak merusak layout) --}}
                 <p class="text-gray-500 text-xs leading-relaxed mb-4 flex-grow">
                     {{ Str::limit($item->deskripsi, 60, '...') }}
                 </p>
 
-                {{-- Footer Card: Stok & Action --}}
                 <div class="flex items-center justify-between pt-4 border-t border-gray-50">
                     <div class="flex flex-col">
                         <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Stok</span>
@@ -86,12 +82,6 @@
                         <a href="{{ route('admin.produk.edit', $item->id) }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition">
                             <i class="fa-solid fa-pen-to-square text-xs"></i>
                         </a>
-                        <form action="{{ route('admin.produk.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Arsipkan produk ini?')">
-                            @csrf @method('DELETE')
-                            <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition">
-                                <i class="fa-solid fa-box-archive text-xs"></i>
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
