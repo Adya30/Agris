@@ -7,7 +7,7 @@
 
         <div class="w-full lg:w-auto">
             <a href="{{ route('admin.produk.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 border-2 text-white bg-[#58CC02] rounded-2xl transition-all duration-300 font-bold group">
-                <i class="fas fa-arrow-left"></i> Dashboard
+                <i class="fas fa-arrow-left"></i> Beranda
             </a>
         </div>
 
@@ -69,6 +69,7 @@
                                     <select id="provinsi" name="provinsiId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="">{{ $user->desa->kecamatan->kabupaten->provinsi->namaProvinsi ?? 'Pilih Provinsi' }}</option>
                                     </select>
+                                    @error('desaId') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>
@@ -79,6 +80,7 @@
                                     <select id="kabupaten" name="kabupatenId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="">{{ $user->desa->kecamatan->kabupaten->namaKabupaten ?? 'Pilih Kabupaten' }}</option>
                                     </select>
+                                    @error('desaId') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>
@@ -89,6 +91,7 @@
                                     <select id="kecamatan" name="kecamatanId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="">{{ $user->desa->kecamatan->namaKecamatan ?? 'Pilih Kecamatan' }}</option>
                                     </select>
+                                    @error('desaId') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>

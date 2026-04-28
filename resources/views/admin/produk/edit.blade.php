@@ -110,7 +110,7 @@
                     </div>
 
                     <div class="mt-8 flex gap-3">
-                        <button type="button" onclick="openConfirmModal()" class="flex-[2] bg-[#58CC02] text-white py-3.5 rounded-xl font-bold active:bg-[#46a302] transition shadow-sm">
+                        <button type="button" onclick="openConfirmModal()" class="flex-2 bg-[#58CC02] text-white py-3.5 rounded-xl font-bold active:bg-[#46a302] transition shadow-sm">
                             Simpan Perubahan
                         </button>
                         <a href="{{ route('admin.produk.index') }}" class="flex-1 bg-gray-100 text-center text-gray-600 py-3.5 rounded-xl font-bold hover:bg-gray-200 transition">

@@ -13,9 +13,9 @@
             @endif
         </div>
 
-        <div class="flex-1 max-w-xl px-10 hidden md:block">
-            <div class="relative flex items-center bg-[#46A302] rounded-full p-1.5 shadow-inner border border-white/10">
-                <input type="text" id="navSearchInput" placeholder="Cari Menu...." class="w-full bg-white rounded-full py-2 px-6 text-sm text-gray-700 focus:outline-none border-none placeholder-gray-400">
+        <div class="flex-1 max-w-xl px-7 hidden md:block">
+            <div class="relative flex items-center bg-[#46A302] rounded-full p-1 shadow-inner border border-white/10">
+                <input type="text" id="navSearchInput" placeholder="Cari Menu...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none border-none placeholder-gray-400">
                 <button type="button" id="navSearchBtn" class="px-4 text-white hover:scale-110 transition-transform">
                     <i class="fa-solid fa-magnifying-glass text-lg"></i>
                 </button>
@@ -30,7 +30,7 @@
                 <div class="flex items-center gap-2 pointer-events-none text-white">
                     <div class="flex flex-col items-start leading-tight">
                         <span class="text-sm font-black">{{ auth()->user()->username }}</span>
-                        <span class="text-sm font-bold opacity-90">Profil</span>
+                        <span class="text-sm font-bold">Profil</span>
                     </div>
                     <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300" id="dropdownArrow"></i>
                 </div>

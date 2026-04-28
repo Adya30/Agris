@@ -39,10 +39,11 @@ class c_produk extends Controller
             'namaProduk' => 'required|string|max:150',
             'stok'       => 'required|numeric|min:0',
             'harga'      => 'required|numeric|min:0',
-            'fotoProduk' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'fotoProduk' => 'nullable|image|mimes:jpeg,png,jpg|max:10048',
             'deskripsi'  => 'nullable|string',
         ],[
-            'required' => 'Data wajib diisi!'
+            'required' => 'Data wajib diisi!',
+            'nimes'    => 'Ukuran file maksimal 10mb'
         ]);
 
         try {

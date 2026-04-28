@@ -10,6 +10,14 @@ Route::get('/', function () {
     return view('guest.landing');
 })->name('landing');
 
+Route::get('/about', function () {
+    return view('guest.about');
+})->name('about');
+
+Route::get('/contact', function () {
+    return view('guest.contact');
+})->name('contact');
+
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);

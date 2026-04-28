@@ -8,11 +8,11 @@
             </a>
 
             <div class="hidden md:flex items-center gap-8 font-medium text-gray-700">
-                <a href="#home" class="relative group py-2">
+                <a href="{{ route('landing') }}" class="relative group py-2">
                     Beranda
                     <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#58CC02] transition-all duration-300 group-hover:w-full"></span>
                 </a>
-                <a href="#kategori" class="relative group py-2">
+                <a href="{{ route('about') }}" class="relative group py-2">
                     Tentang
                     <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#58CC02] transition-all duration-300 group-hover:w-full"></span>
                 </a>
@@ -21,7 +21,7 @@
                     <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#58CC02] transition-all duration-300 group-hover:w-full"></span>
                 </a>
 
-                <a href="#kontak" class="relative group py-2">
+                <a href="{{ route('contact') }}" class="relative group py-2">
                     Kontak
                     <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#58CC02] transition-all duration-300 group-hover:w-full"></span>
                 </a>

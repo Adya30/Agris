@@ -30,7 +30,7 @@ class c_profile extends Controller
 
         $request->validate([
             'noTelp'       => 'required|numeric|digits_between:4,15|unique:users,noTelp,' . $user->id,
-            'namaLengkap'  => 'required',
+            'namaLengkap'  => 'nullable',
             'email'        => 'required|email|unique:users,email,' . $user->id,
             'detailAlamat' => 'nullable|string',
             'fotoProfil'   => 'nullable|image|mimes:jpeg,png,jpg|max:10048',

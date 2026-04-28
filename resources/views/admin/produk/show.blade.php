@@ -85,7 +85,7 @@
     </div>
 </div>
 
-<div id="modalHapus" class="hidden fixed inset-0 z-[100] items-center justify-center p-4">
+<div id="modalHapus" class="hidden fixed inset-0 z-100 items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
 
     <div class="relative bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl text-center border border-gray-100 transition-all transform">
