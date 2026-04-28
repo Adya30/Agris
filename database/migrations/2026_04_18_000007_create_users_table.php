@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('namaLengkap', 300);
             $table->string('noTelp', 20)->unique();
             $table->longtext('fotoProfil')->nullable();
-            $table->text('detailAlamat')->nullable();
+            $table->string('detailAlamat', 200)->nullable();
             $table->boolean('isAdmin')->default(false)->index();
             $table->boolean('isActive')->default(false)->index();
 

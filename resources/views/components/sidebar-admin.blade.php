@@ -9,10 +9,10 @@
             </a>
         </div>
 
-        <nav class="flex-1 px-4 space-y-3">
+        <nav class="flex-1 px-4 space-y-5">
             @php
                 $menus = [
-                    ['name' => 'Produk', 'url' => route('admin.produk.index'), 'active' => 'admin/produk*', 'icon' => 'fa-leaf'],
+                    ['name' => 'Produk', 'url' => route('admin.produk.index'), 'active' => 'admin/produk*', 'icon' => 'fa-seedling'],
                     ['name' => 'Kemitraan', 'url' => '#', 'active' => 'admin/kemitraan*', 'icon' => 'fa-users'],
                     ['name' => 'Transaksi', 'url' => '#', 'active' => 'admin/transaksi*', 'icon' => 'fa-wallet'],
                     ['name' => 'Laporan', 'url' => '#', 'active' => 'admin/laporan*', 'icon' => 'fa-file-lines'],
@@ -21,7 +21,7 @@
             @endphp
 
             @foreach($menus as $menu)
-                <a href="{{ $menu['url'] }}" class="flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 {{ request()->is($menu['active']) ? 'bg-[#46A302] text-white shadow-lg ring-1 ring-white/20' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                <a href="{{ $menu['url'] }}" class="flex items-center gap-5 px-5 py-3 rounded-2xl font-bold transition-all duration-300 {{ request()->is($menu['active']) ? 'bg-[#46A302] text-white shadow-lg ring-1 ring-white/20' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
                     <i class="fa-solid {{ $menu['icon'] }} text-sm w-5"></i>
                     <span class="tracking-wide text-lg">{{ $menu['name'] }}</span>
                 </a>

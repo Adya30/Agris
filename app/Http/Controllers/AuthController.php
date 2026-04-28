@@ -14,7 +14,6 @@ use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AuthController extends Controller
 {
-    // SHOW LOGIN
     public function showLogin()
     {
         if (Auth::check()) {
@@ -26,126 +25,27 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
-        ],
-        [
+        ], [
             'email.required' => 'Data wajib diisi!',
             'email.email' => 'Format email tidak valid',
             'password.required' => 'Data wajib diisi!',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $remember = $request->boolean('remember');
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->with('error', 'Email atau password salah.') -> withInput($request->only('email'));
+        if (Auth::attempt($credentials, $remember)) {
+            $request->session()->regenerate();
+            $user = Auth::user();
+
+            return $this->redirectByRole($user)->with('success', 'Login Berhasil');
         }
 
-        Auth::login($user, $request->boolean('remember'));
-        $request->session()->regenerate();
-
-        return $this->redirectByRole($user)->with('success', 'Login Berhasil' . $user->name);
+        return back()->with('error', 'Email atau password salah.')->withInput($request->only('email'));
     }
 
-    // RESET
-    public function forgotPassword()
-    {
-        return view('auth.forgot-password');
-    }
-
-    public function sendResetLink(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email'
-        ],[
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-        ]
-        );
-
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-
-        if ($status === Password::RESET_LINK_SENT) {
-            return redirect()->route('login')
-                ->with('success', 'Link reset telah dikirim ke email Anda.');
-        }
-
-        return back()->withErrors([
-            'email' => 'Email tidak ditemukan atau belum terdaftar.'
-        ]);
-    }
-    public function resetForm($token)
-    {
-        return view('auth.reset-password', [
-            'token' => $token,
-            'email' => request()->email
-        ]);
-    }
-
-    // PROSES RESET
-    public function resetPassword(Request $request)
-    {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => ['required', 'confirmed', PasswordRule::min(8)->mixedCase()->numbers()->symbols() ],
-        ],
-        [
-            'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password minimal 8 karakter.',
-            'password.mixed' => 'Password harus mengandung huruf besar dan kecil.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'password.numbers' => 'Password harus mengandung angka.',
-            'password.symbols' => 'Password harus mengandung simbol.',
-        ]
-        );
-
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->password)
-                ])->save();
-            }
-        );
-
-        if ($status === Password::PASSWORD_RESET) {
-            return redirect()->route('login') ->with('success', 'Password berhasil direset. Silakan login dengan password baru.');
-        }
-
-        return back()->withErrors(['email' => __($status)]);
-    }
-
-    // LOGIN GOOGLE
-    public function redirectToGoogle()
-    {
-        return Socialite::driver('google')->redirect();
-    }
-
-    public function handleGoogleCallback()
-    {
-        $googleUser = Socialite::driver('google')->user();
-
-        $user = User::firstOrCreate(
-            ['email' => $googleUser->getEmail()],
-            [
-                'namaLengkap' => $googleUser->getName(),
-                'password' => Hash::make(Str::random(12)),
-                'noTelp' => '-',
-                'tanggalLahir' => null,
-                'isAdmin' => false,
-            ]
-        );
-
-        Auth::login($user, true);
-
-        return $this->redirectByRole($user)->with('success', 'Login Berhasil' . $user->name);
-    }
-
-    // REGISTER OTP
     public function showRegister()
     {
         if (Auth::check()) {
@@ -155,54 +55,24 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function showOtpForm()
-    {
-        if (!session('register_data')) {
-            return redirect()->route('register');
-        }
-
-        return view('auth.otp');
-    }
-
     public function register(Request $request)
     {
-        $validated = $request->validate(
-        [
-            'username' => 'required|string|min:4|max:30|unique:users,username',
+        $validated = $request->validate([
             'email' => 'required|email|unique:users,email',
             'namaLengkap' => 'required|max:300',
             'noTelp' => 'required|regex:/^[0-9]+$/|unique:users,noTelp',
-            'password' => ['required', 'confirmed', PasswordRule::min(8)->mixedCase()->numbers()->symbols() ],
-        ],
-        [
-            'username.required' => 'Username wajib diisi.',
-            'username.min' => 'Username minimal 4 karakter.',
-            'username.unique' => 'Username sudah digunakan.',
-            'namaLengkap.required' => 'Nama lengkap wajib diisi.',
-            'namaLengkap.max' => 'Nama Lengkap maksimal 300 karakter.',
-
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
+            'password' => ['required', 'confirmed', PasswordRule::min(8)->mixedCase()->numbers()->symbols()],
+        ], [
+            'required' => 'Data harus diisi!',
             'email.unique' => 'Email sudah terdaftar.',
-
-            'noTelp.required' => 'Nomor telepon wajib diisi.',
-            'noTelp.regex' => 'Nomor telepon hanya boleh angka.',
             'noTelp.unique' => 'Nomor telepon sudah digunakan.',
-
-            'password.required' => 'Password wajib diisi.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'password.min' => 'Password minimal 8 karakter.',
-            'password.mixed' => 'Password harus mengandung huruf besar dan kecil.',
-            'password.numbers' => 'Password harus mengandung angka.',
-            'password.symbols' => 'Password harus mengandung simbol.',
-        ]
-    );
+        ]);
 
         $otp = rand(100000, 999999);
 
         session([
             'register_data' => [
-                'username' => $validated['username'],
                 'namaLengkap' => $validated['namaLengkap'],
                 'email' => $validated['email'],
                 'noTelp' => $validated['noTelp'],
@@ -213,15 +83,20 @@ class AuthController extends Controller
             'register_otp_expires' => now()->addMinutes(10)
         ]);
 
-        Mail::raw("Kode OTP AGRIS kamu adalah: $otp\nBerlaku 10 menit.",
-            function ($message) use ($validated) {
-                $message->to($validated['email'])
-                        ->subject('Kode OTP Verifikasi AGRIS');
-            }
-        );
+        Mail::raw("Kode OTP AGRIS kamu adalah : $otp\nBerlaku 10 menit.", function ($message) use ($validated) {
+            $message->to($validated['email'])->subject('Kode OTP Verifikasi AGRIS');
+        });
 
-        return redirect()->route('otp.form')
-            ->with('success', 'Kode OTP telah dikirim ke email kamu.');
+        return redirect()->route('otp.form')->with('success', 'Kode OTP telah dikirim ke email');
+    }
+
+    public function showOtpForm()
+    {
+        if (!session('register_data')) {
+            return redirect()->route('register');
+        }
+
+        return view('auth.otp');
     }
 
     public function verifyOtp(Request $request)
@@ -241,37 +116,87 @@ class AuthController extends Controller
         }
 
         $user = User::create(session('register_data'));
-
-        session()->forget([
-            'register_data',
-            'register_otp',
-            'register_otp_expires'
-        ]);
+        session()->forget(['register_data', 'register_otp', 'register_otp_expires']);
 
         Auth::login($user);
 
-        return redirect()->route('agen.profile') ->with('success', 'Akun berhasil dibuat.');
+        return $this->redirectByRole($user)->with('success', 'Akun berhasil dibuat.');
     }
 
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
 
-    // ROLE
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+        } catch (\Exception $e) {
+            return redirect()->route('login')->with('error', 'Gagal login Google.');
+        }
+
+        $user = User::firstOrCreate(
+            ['email' => $googleUser->getEmail()],
+            [
+                'namaLengkap' => $googleUser->getName(),
+                'password' => Hash::make(Str::random(16)),
+                'noTelp' => '-',
+                'isAdmin' => false,
+            ]
+        );
+
+        Auth::login($user, true);
+
+        return $this->redirectByRole($user);
+    }
+
     private function redirectByRole($user)
     {
         if ($user->isAdmin) {
-            return redirect()->route('admin.produk.index');
+            return redirect()->intended(route('admin.produk.index'));
         }
 
-        return redirect()->route('agen.profile');
+        return redirect()->intended(route('agen.profile'));
     }
 
-    // LOGOUT
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('landing');
+    }
+
+    public function forgotPassword() { return view('auth.forgot-password'); }
+
+    public function sendResetLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        $status = Password::sendResetLink($request->only('email'));
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('success', 'Link reset telah dikirim.')
+            : back()->withErrors(['email' => 'Email tidak ditemukan.']);
+    }
+
+    public function resetForm($token) { return view('auth.reset-password', ['token' => $token, 'email' => request()->email]); }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => ['required', 'confirmed', PasswordRule::defaults()],
+        ]);
+
+        $status = Password::reset($request->only('email', 'password', 'password_confirmation', 'token'), function ($user, $password) {
+            $user->forceFill(['password' => Hash::make($password)])->save();
+        });
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('success', 'Password berhasil direset.')
+            : back()->withErrors(['email' => __($status)]);
     }
 }

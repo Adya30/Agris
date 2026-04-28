@@ -44,25 +44,16 @@
                     @enderror
                 </div>
 
-                <div class="mb-2">
-                    <input type="text" name="username" value="{{ old('username') }}" placeholder="Username" class="w-full bg-transparent border-b border-gray-400 focus:border-[#58CC02] focus:outline-none py-2">
-                    @error('username')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- EMAIL --}}
-                <div class="mb-3">
-                    <input type="email" name="email" value="{{ old('email') }}" placeholder="Email" class="w-full bg-transparent border-b border-gray-400 focus:border-[#58CC02] focus:outline-none py-2">
-                    @error('email')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-
                 <div class="mb-3">
                     <input type="text" name="noTelp" value="{{ old('noTelp') }}" placeholder="Nomor Telepon" class="w-full bg-transparent border-b border-gray-400 focus:border-[#58CC02] focus:outline-none py-2">
                     @error('noTelp')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="Email" class="w-full bg-transparent border-b border-gray-400 focus:border-[#58CC02] focus:outline-none py-2">
+                    @error('email')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>

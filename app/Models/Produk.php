@@ -12,15 +12,7 @@ class Produk extends Model
 
     protected $table = 'produks';
 
-    protected $fillable = [
-        'kategoriId',
-        'namaProduk',
-        'fotoProduk',
-        'stok',
-        'harga',
-        'deskripsi',
-    ];
-
+    protected $fillable = [ 'kategoriId', 'namaProduk', 'fotoProduk', 'stok', 'harga', 'deskripsi', ];
     protected $casts = [
         'harga' => 'decimal:2',
         'stok'  => 'decimal:2',

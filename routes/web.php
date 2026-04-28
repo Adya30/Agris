@@ -10,84 +10,45 @@ Route::get('/', function () {
     return view('guest.landing');
 })->name('landing');
 
-//guest
 Route::middleware('guest')->group(function () {
-
-    //register otp
-    Route::get('/register', [AuthController::class, 'showRegister'])
-        ->name('register');
-
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+    Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('otp.form');
+    Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('otp.verify');
+    Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('otp.resend');
 
-    Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])
-        ->name('otp.form');
+    Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('google.callback');
 
-    Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])
-        ->name('otp.verify');
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
-    Route::post('/resend-otp', [AuthController::class, 'resendOtp'])
-        ->name('otp.resend');
-
-    Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])
-        ->name('google.login');
-
-    Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])
-        ->name('google.callback');
-
-    Route::get('/login', [AuthController::class, 'showLogin'])
-        ->name('login');
-
-    Route::post('/login', [AuthController::class, 'login'])
-        ->middleware('throttle:5,1');
-
-
-    //reset password
-    Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])
-        ->name('password.request');
-
-    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])
-        ->name('password.email');
-
-    Route::get('/reset-password/{token}', [AuthController::class, 'resetForm'])
-        ->name('password.reset');
-
-    Route::post('/reset-password', [AuthController::class, 'resetPassword'])
-        ->name('password.update');
+    Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/reset-password/{token}', [AuthController::class, 'resetForm'])->name('password.reset');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 
-
 Route::middleware('auth')->group(function () {
-
-
-    //Agen
-    Route::prefix('agen')->middleware(['auth','isUser'])->group(function () {
+    Route::prefix('agen')->middleware('isUser')->group(function () {
         Route::get('/profile', [c_profile::class, 'show'])->name('agen.profile');
         Route::put('/profile', [c_profile::class, 'update'])->name('agen.profile.update');
     });
 
-
-    //Admin
-    Route::prefix('admin')->middleware(['auth','isAdmin'])->name('admin.')->group(function () {
+    Route::prefix('admin')->middleware('isAdmin')->name('admin.')->group(function () {
         Route::get('/', function () { return redirect()->route('admin.produk.index'); });
         Route::get('/profile', [c_profile::class, 'show'])->name('profile');
         Route::put('/profile', [c_profile::class, 'update'])->name('profile.update');
-
         Route::get('produk/trash', [c_produk::class, 'trash'])->name('produk.trash');
         Route::get('produk/{id}/restore', [c_produk::class, 'restore'])->name('produk.restore');
         Route::delete('produk/{id}/force-delete', [c_produk::class, 'forceDelete'])->name('produk.forceDelete');
         Route::post('kategori', [c_produk::class, 'storeKategori'])->name('kategori.store');
-
         Route::resource('produk', c_produk::class);
     });
 
-
-    //Logout
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->name('logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-
-//Wilayah
 Route::prefix('wilayah')->group(function () {
     Route::get('/provinsi', [c_wilayah::class, 'getProvinsi'])->name('wilayah.provinsi');
     Route::get('/kabupaten/{id}', [c_wilayah::class, 'getKabupaten'])->name('wilayah.kabupaten');

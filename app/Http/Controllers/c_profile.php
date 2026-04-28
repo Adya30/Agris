@@ -30,24 +30,23 @@ class c_profile extends Controller
 
         $request->validate([
             'noTelp'       => 'required|numeric|digits_between:4,15|unique:users,noTelp,' . $user->id,
+            'namaLengkap'  => 'required',
             'email'        => 'required|email|unique:users,email,' . $user->id,
             'detailAlamat' => 'nullable|string',
-            'fotoProfil'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'fotoProfil'   => 'nullable|image|mimes:jpeg,png,jpg|max:10048',
             'current_password' => 'required_with:password',
             'password'     => 'nullable|min:8',
             'desaId'       => $user->desaId ? 'nullable' : 'required',
         ], [
-            'noTelp.required' => 'Data wajib diisi!',
-            'noTelp.numeric'  => 'Nomor telepon harus berupa angka.',
-            'noTelp.unique'   => 'Nomor Telpon sudah digunakan.',
+            'required'              => 'Data wajib diisi!',
+            'noTelp.numeric'        => 'Nomor telepon harus berupa angka.',
+            'noTelp.unique'         => 'Nomor Telpon sudah digunakan.',
             'noTelp.digits_between' => 'Nomor telepon harus antara 4 sampai 15 digit.',
-            'email.required'  => 'Data wajib diisi!',
-            'desaId.required' => 'Data wajib diisi!',
-            'password.min'    => 'Password baru minimal 8 karakter.',
+            'password.min'          => 'Password baru minimal 8 karakter.',
             'current_password.required_with' => 'Konfirmasi password lama wajib diisi.',
-            'fotoProfil.image' => 'File harus berupa gambar.',
-            'fotoProfil.mimes' => 'Format gambar harus jpeg, png, atau jpg.',
-            'fotoProfil.max'   => 'Ukuran gambar maksimal 2MB.'
+            'fotoProfil.image'      => 'File harus berupa gambar.',
+            'fotoProfil.mimes'      => 'Format gambar harus jpeg, png, atau jpg.',
+            'fotoProfil.max'        => 'Ukuran gambar maksimal 10MB.'
         ]);
 
         if ($request->filled('password')) {
@@ -64,7 +63,6 @@ class c_profile extends Controller
             $user->fotoProfil = 'data:' . $mimeType . ';base64,' . $imageData;
         }
 
-        // Sinkronisasi Wilayah (Hanya jika ada input desaId baru)
         if ($request->filled('desaId')) {
             $this->syncWilayah($request->desaId);
             $user->desaId = $request->desaId;

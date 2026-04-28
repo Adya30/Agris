@@ -6,7 +6,6 @@
 
 <x-navbar />
 
-{{-- HERO SECTION --}}
 <section id="home" class="min-h-screen flex items-center bg-[#58CC02] text-white">
     <div class="max-w-7xl mx-auto px-6 flex flex-col-reverse md:flex-row gap-12 items-center pt-20 justify-between lg:px-16">
         <div class="md:w-1/2 pb-20">
@@ -31,7 +30,6 @@
     </div>
 </section>
 
-{{-- ABOUT SECTION --}}
 <section id="about" class="py-24 bg-white px-6">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
         <div class="md:w-1/2">
@@ -39,7 +37,7 @@
                 <div class="absolute -top-4 -left-4 w-24 h-24 bg-[#58CC02]/10 rounded-full -z-10"></div>
                 <img src="{{ asset('images/product.jpg') }}" class="rounded-3xl shadow-2xl w-full object-cover h-[400px]">
                 <div class="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-50 hidden md:block">
-                    <p class="text-[#58CC02] font-black text-4xl">10+</p>
+                    <p class="text-[#58CC02] font-bold text-4xl">10+</p>
                     <p class="text-gray-500 text-sm font-bold uppercase tracking-widest">Tahun Pengalaman</p>
                 </div>
             </div>
@@ -62,7 +60,6 @@
     </div>
 </section>
 
-{{-- SERVICES SECTION (LAYANAN) --}}
 <section class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-6 text-center">
         <h2 class="text-3xl font-bold mb-12">Layanan Utama Kami</h2>
@@ -92,7 +89,6 @@
     </div>
 </section>
 
-{{-- PRODUK KAMI (PADI & JAGUNG) --}}
 <section id="produk" class="py-24 bg-white px-6">
     <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
@@ -105,7 +101,7 @@
             <div class="group relative rounded-3xl overflow-hidden bg-white shadow-lg border border-gray-100">
                 <img src="{{ asset('images/product.jpg') }}" class="h-64 w-full object-cover">
                 <div class="p-8">
-                    <span class="text-[10px] font-black uppercase text-[#58CC02] bg-[#58CC02]/10 px-3 py-1 rounded-full mb-4 inline-block">Sertifikat Resmi</span>
+                    <span class="text-[10px] font-bold uppercase text-[#58CC02] bg-[#58CC02]/10 px-3 py-1 rounded-full mb-4 inline-block">Sertifikat Resmi</span>
                     <h3 class="text-2xl font-bold text-gray-800 mb-2">Benih Padi Unggul</h3>
                     <p class="text-gray-500 text-sm mb-6">Varietas pilihan dengan ketahanan hama yang kuat dan tekstur nasi yang pulen.</p>
                     <a href="#" class="inline-flex items-center font-bold text-[#58CC02] hover:gap-3 transition-all">
@@ -114,11 +110,10 @@
                 </div>
             </div>
 
-            {{-- Card Jagung --}}
             <div class="group relative rounded-3xl overflow-hidden bg-white shadow-lg border border-gray-100">
                 <img src="{{ asset('images/product.jpg') }}" class="h-64 w-full object-cover">
                 <div class="p-8">
-                    <span class="text-[10px] font-black uppercase text-orange-500 bg-orange-50 px-3 py-1 rounded-full mb-4 inline-block">Produktivitas Tinggi</span>
+                    <span class="text-[10px] font-bold uppercase text-orange-500 bg-orange-50 px-3 py-1 rounded-full mb-4 inline-block">Produktivitas Tinggi</span>
                     <h3 class="text-2xl font-bold text-gray-800 mb-2">Benih Jagung Hibrida</h3>
                     <p class="text-gray-500 text-sm mb-6">Pertumbuhan cepat dan hasil tongkol yang besar, sangat cocok untuk pakan ternak.</p>
                     <a href="#" class="inline-flex items-center font-bold text-[#58CC02] hover:gap-3 transition-all">
@@ -136,9 +131,9 @@
         <i class="fa-solid fa-leaf text-[200px]"></i>
     </div>
     <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
-        <h2 class="text-4xl font-black mb-6">Tumbuh Bersama AGRIS</h2>
+        <h2 class="text-4xl font-bold mb-6">Tumbuh Bersama AGRIS</h2>
         <p class="text-xl opacity-90 mb-10 font-medium">Ayo bermitra dengan kami! Bersama kita bangun ketahanan pangan Indonesia yang lebih kuat.</p>
-        <a href="https://wa.me/yournumber" class="px-10 py-4 bg-white text-[#58CC02] font-black rounded-2xl hover:shadow-2xl hover:-translate-y-1 transition duration-300">
+        <a href="https://wa.me/yournumber" class="px-10 py-4 bg-white text-[#58CC02] font-bold rounded-2xl hover:shadow-2xl hover:-translate-y-1 transition duration-300">
             Hubungi Tim Kemitraan
         </a>
     </div>

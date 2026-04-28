@@ -69,7 +69,6 @@
                             @enderror
                         </div>
 
-                        {{-- Stok --}}
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Stok Masuk (Kg)</label>
                             <input type="number" name="stok" step="any" value="{{ old('stok') }}"
@@ -80,19 +79,18 @@
                             @enderror
                         </div>
 
-                        {{-- Harga --}}
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Harga per Kg (Rp)</label>
-                            {{-- Input visual yang ada titiknya --}}
-                            <input type="text" id="hargaVisual" class="w-full px-4 py-3 rounded-xl border @error('harga') border-red-500 @else border-gray-300 @enderror outline-none font-bold text-gray-800" placeholder="0">
-                            {{-- Input hidden yang dikirim ke database (tanpa titik) --}}
-                            <input type="hidden" name="harga" id="hargaAsli" value="{{ old('harga') }}">
+                            <input type="text" id="hargaVisual"
+                                class="w-full px-4 py-3 rounded-xl border @error('harga') border-red-500 @else border-gray-300 @enderror outline-none font-bold text-gray-800"
+                                placeholder="0"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, ''); document.getElementById('hargaAsli').value = this.value;">
+                            <input type="number" name="harga" id="hargaAsli" value="{{ old('harga') }}" class="hidden">
                             @error('harga')
                                 <p class="text-red-500 text-xs mt-1 font-medium italic">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- Deskripsi --}}
                         <div class="md:col-span-2">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan Produk</label>
                             <textarea name="deskripsi" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-300 outline-none resize-none" placeholder="Tambahkan deskripsi singkat...">{{ old('deskripsi') }}</textarea>
@@ -103,7 +101,6 @@
                         <button type="button" onclick="openConfirmModal()" class="flex-[2] bg-[#58CC02] text-white py-3.5 rounded-xl font-bold active:bg-[#46a302] transition shadow-sm">
                             Tambah
                         </button>
-                        {{-- Tombol Batal berfungsi sebagai link Kembali --}}
                         <a href="{{ route('admin.produk.index') }}" class="flex-1 bg-gray-100 text-center text-gray-600 py-3.5 rounded-xl font-bold hover:bg-gray-200 transition">
                             Batal
                         </a>
@@ -114,7 +111,7 @@
     </form>
 </div>
 
-<x-modal id="modalKonfirmasiProduk" title="Konfirmasi" message="Yakin mau menambahkan produk?" confirmText="Iya" cancelText="Batal" confirmId="btnSubmitForm" cancelId="btnCloseModal" />
+<x-modal id="modalKonfirmasiProduk" title="Konfirmasi" message="Apakah anda yakin ingin menambah produk ini" confirmText="Iya" cancelText="Batal" confirmId="btnSubmitForm" cancelId="btnCloseModal" />
 
 <script>
     const kategoris = @json($kategoris);
@@ -122,12 +119,14 @@
     const selectMutu = document.getElementById('selectMutu');
     const hargaVisual = document.getElementById('hargaVisual');
     const hargaAsli = document.getElementById('hargaAsli');
-
     const modalElement = document.getElementById('modalKonfirmasiProduk');
     const btnConfirm = document.getElementById('btnSubmitForm');
     const btnCancel = document.getElementById('btnCloseModal');
 
-    // 1. Logika Dropdown Dinamis
+    if (hargaAsli.value) {
+        hargaVisual.value = hargaAsli.value;
+    }
+
     selectJenis.addEventListener('change', function() {
         const selectedJenis = this.value;
         selectMutu.innerHTML = '<option value="">-- Pilih Mutu --</option>';
@@ -148,35 +147,6 @@
         }
     });
 
-    // 2. Logika Rupiah (Titik Ribuan Otomatis)
-    hargaVisual.addEventListener('keyup', function() { formatRupiah(this); });
-
-    function formatRupiah(input) {
-        let value = input.value.replace(/[^,\d]/g, '').toString();
-        let split = value.split(',');
-        let sisa = split[0].length % 3;
-        let rupiah = split[0].substr(0, sisa);
-        let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-        if (ribuan) {
-            let separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
-        }
-
-        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-        input.value = rupiah;
-
-        // Simpan versi angka murni tanpa titik ke input hidden
-        hargaAsli.value = value.replace(/\./g, '').replace(',', '.');
-    }
-
-    // Load format jika ada data lama (setelah error validasi)
-    if (hargaAsli.value) {
-        hargaVisual.value = hargaAsli.value.replace('.', ',');
-        formatRupiah(hargaVisual);
-    }
-
-    // 3. Kontrol Modal
     function openConfirmModal() {
         if (modalElement) {
             modalElement.classList.remove('hidden');
@@ -201,7 +171,6 @@
         btnCancel.addEventListener('click', closeConfirmModal);
     }
 
-    // 4. Preview Gambar
     function previewImage(input) {
         const preview = document.getElementById('previewImg');
         const placeholder = document.getElementById('placeholderIcon');

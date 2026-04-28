@@ -10,6 +10,9 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+body{
+    scroll-behavior: smooth;
+}
 
 button {
     cursor: pointer;
