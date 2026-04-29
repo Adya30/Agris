@@ -16,10 +16,10 @@
                 Platform digital untuk memenuhi kebutuhan pertanian Anda dengan sistem terpercaya, berkelanjutan, dan hasil panen maksimal.
             </p>
             <div class="flex gap-4">
-                <a href="#produk" class="px-8 py-3 bg-white text-[#58CC02] font-bold rounded-full shadow-md hover:shadow-xl hover:scale-105 transition duration-300">
+                <a href="{{ route('login') }}" class="px-8 py-3 bg-white text-[#58CC02] font-bold rounded-full shadow-md hover:shadow-xl hover:scale-105 transition duration-300">
                     Mulai Sekarang
                 </a>
-                <a href="#about" class="px-8 py-3 border border-white rounded-full font-medium hover:bg-white hover:text-[#58CC02] transition duration-300">
+                <a href="{{ route('about') }}" class="px-8 py-3 border border-white rounded-full font-medium hover:bg-white hover:text-[#58CC02] transition duration-300">
                     Tentang Kami
                 </a>
             </div>

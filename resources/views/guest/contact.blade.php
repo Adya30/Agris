@@ -39,13 +39,9 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-gray-800">Email Resmi</h4>
-                            <p class="text-gray-500">info@agris.co.id</p>
+                            <p class="text-gray-500">agrisagroindustri@agris.co.id</p>
                         </div>
                     </div>
-                </div>
-
-                <div class="mt-12 h-64 bg-gray-100 rounded-3xl overflow-hidden shadow-inner border border-gray-100">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63192.058441133886!2d113.6171077216797!3d-8.151902600000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd695e2281a28c5%3A0x2c7dd8c671e2c553!2sPT.%20Surya%20Kencana%20Agrifarm%20Sejahtera!5e0!3m2!1sid!2sid!4v1777362908806!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
 

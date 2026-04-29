@@ -15,7 +15,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('email', 255)->unique();
             $table->string('password');
-            $table->string('namaLengkap', 300);
+            $table->string('namaLengkap', 300)->nullable();
             $table->string('noTelp', 20)->unique();
             $table->longtext('fotoProfil')->nullable();
             $table->string('detailAlamat', 200)->nullable();

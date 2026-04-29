@@ -17,10 +17,24 @@
             <div>
                 <h3 class="text-lg font-semibold mb-4">Navigasi</h3>
                 <ul class="space-y-2 text-gray-400 text-sm">
-                    <li><a href="#home" class="hover:text-white">Home</a></li>
-                    <li><a href="#produk" class="hover:text-white">Produk</a></li>
-                    <li><a href="#kategori" class="hover:text-white">Kategori</a></li>
-                    <li><a href="#kontak" class="hover:text-white">Kontak</a></li>
+                    </li>
+                        <a href="#" class="hover:text-white">Blog</a>
+                    <li>
+                    <li>
+                        <a href="{{ route('agen.produk.index') }}" class="hover:text-white  {{ Route::is('agen.produk.*') ? 'border-white' : 'border-transparent' }}">Produk</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-white ">Transaksi</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-white ">Kemitraan</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-white ">Chat</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-white ">Konsultasi</a>
+                    </li>
                 </ul>
             </div>
 
@@ -29,7 +43,7 @@
                 <ul class="space-y-2 text-gray-400 text-sm">
                     <li><i class="fa-solid fa-location-dot mr-2"></i> Jember, Indonesia</li>
                     <li><i class="fa-solid fa-phone mr-2"></i> +62 812 3456 7890</li>
-                    <li><i class="fa-solid fa-envelope mr-2"></i> info@mylogo.com</li>
+                    <li><i class="fa-solid fa-envelope mr-2"></i> agrisagroindustri@gmail.com</li>
                 </ul>
 
                 <div class="flex gap-4 mt-8 text-xl">
@@ -43,7 +57,7 @@
                 <h3 class="text-lg font-semibold mb-4">Lokasi</h3>
                 <iframe
                     class="w-full h-48 rounded-xl border-0"
-                    src="https://www.google.com/maps?q=Jember&output=embed"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63192.058441133886!2d113.6171077216797!3d-8.151902600000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd695e2281a28c5%3A0x2c7dd8c671e2c553!2sPT.%20Surya%20Kencana%20Agrifarm%20Sejahtera!5e0!3m2!1sid!2sid!4v1777362908806!5m2!1sid!2sid"
                     loading="lazy">
                 </iframe>
             </div>

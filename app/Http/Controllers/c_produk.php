@@ -9,9 +9,41 @@ use Illuminate\Support\Facades\Storage;
 
 class c_produk extends Controller
 {
+    public function indexAgen(Request $request)
+    {
+        $query = Produk::with('kategori')->where('stok', '>', 0);
+
+        if ($request->kategori) {
+            $query->where('kategoriId', $request->kategori);
+        }
+
+        if ($request->search) {
+            $query->where('namaProduk', 'like', '%' . $request->search . '%');
+        }
+
+        $produks = $query->latest()->paginate(12)->withQueryString();
+        $kategoris = KategoriProduk::orderBy('jenisKategori', 'asc')->get();
+
+        return view('agen.produk.index', compact('produks', 'kategoris'));
+    }
+
+    public function showAgen($id)
+    {
+        $item = Produk::with('kategori')->where('stok', '>', 0)->findOrFail($id);
+
+        $relatedProducts = Produk::where('kategoriId', $item->kategoriId)
+                            ->where('id', '!=', $id)
+                            ->where('stok', '>', 0)
+                            ->limit(4)
+                            ->get();
+
+        return view('agen.produk.show', compact('item', 'relatedProducts'));
+    }
+
     public function index(Request $request)
     {
         $query = Produk::with('kategori')->where('stok', '>', 0);
+
         if ($request->kategori) {
             $query->where('kategoriId', $request->kategori);
         }
@@ -43,7 +75,6 @@ class c_produk extends Controller
             'deskripsi'  => 'nullable|string',
         ],[
             'required' => 'Data wajib diisi!',
-            'nimes'    => 'Ukuran file maksimal 10mb'
         ]);
 
         try {

@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('agen')->middleware('isUser')->group(function () {
         Route::get('/profile', [c_profile::class, 'show'])->name('agen.profile');
         Route::put('/profile', [c_profile::class, 'update'])->name('agen.profile.update');
+
+        Route::get('/produk', [c_produk::class, 'indexAgen'])->name('agen.produk.index');
+        Route::get('/produk/{id}', [c_produk::class, 'showAgen'])->name('agen.produk.show');
     });
 
     Route::prefix('admin')->middleware('isAdmin')->name('admin.')->group(function () {

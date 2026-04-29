@@ -2,9 +2,7 @@
 
 @section('content')
 <div class="max-w-full mx-auto py-8">
-
     <div class="flex flex-col lg:flex-row gap-4 items-start">
-
         <div class="w-full lg:w-auto">
             <a href="{{ route('admin.produk.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 border-2 text-white bg-[#58CC02] rounded-2xl transition-all duration-300 font-bold group">
                 <i class="fas fa-arrow-left"></i> Beranda
@@ -45,21 +43,14 @@
                             <div>
                                 <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Email</label>
                                 <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-input editable w-full rounded-2xl border-gray-200 bg-gray-50/50 py-3 px-4 disabled:text-black transition-all font-medium" disabled>
-                                @error('email') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Nomor Telepon</label>
                                 <input type="text" name="noTelp" value="{{ old('noTelp', $user->noTelp) }}" class="form-input editable w-full rounded-2xl border-gray-200 bg-gray-50/50 py-3 px-4 disabled:text-black transition-all font-medium" disabled>
-                                @error('noTelp') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
                         <div class="space-y-6">
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Detail Alamat</label>
-                                <textarea name="detailAlamat" class="form-input editable w-full rounded-2xl border-gray-200 bg-gray-50/50 py-3 px-4 disabled:text-black transition-all font-medium resize-none" rows="2" disabled>{{ old('detailAlamat', $user->detailAlamat) }}</textarea>
-                            </div>
-
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
                                     <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Provinsi</label>
@@ -69,7 +60,6 @@
                                     <select id="provinsi" name="provinsiId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="">{{ $user->desa->kecamatan->kabupaten->provinsi->namaProvinsi ?? 'Pilih Provinsi' }}</option>
                                     </select>
-                                    @error('desaId') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>
@@ -80,7 +70,6 @@
                                     <select id="kabupaten" name="kabupatenId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="">{{ $user->desa->kecamatan->kabupaten->namaKabupaten ?? 'Pilih Kabupaten' }}</option>
                                     </select>
-                                    @error('desaId') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>
@@ -91,7 +80,6 @@
                                     <select id="kecamatan" name="kecamatanId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="">{{ $user->desa->kecamatan->namaKecamatan ?? 'Pilih Kecamatan' }}</option>
                                     </select>
-                                    @error('desaId') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>
@@ -102,25 +90,16 @@
                                     <select id="desa" name="desaId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="{{ $user->desaId }}">{{ $user->desa->namaDesa ?? 'Pilih Desa' }}</option>
                                     </select>
-                                    @error('desaId') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
                                 </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Detail Alamat</label>
+                                <textarea name="detailAlamat" class="form-input editable w-full rounded-2xl border-gray-200 bg-gray-50/50 py-3 px-4 disabled:text-black transition-all font-medium resize-none" rows="2" disabled>{{ old('detailAlamat', $user->detailAlamat) }}</textarea>
                             </div>
                         </div>
 
-                        <div id="passwordSection" class="hidden pt-8 border-t border-gray-100 space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Password Lama</label>
-                                    <input type="password" name="current_password" class="form-input w-full rounded-2xl border-gray-200 focus:border-[#58CC02] focus:ring-0 py-3 px-4">
-                                    @error('current_password') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Password Baru</label>
-                                    <input type="password" name="password" class="form-input w-full rounded-2xl border-gray-200 focus:border-[#58CC02] focus:ring-0 py-3 px-4">
-                                    @error('password') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-                        </div>
+                        {{-- Password Section (Temporarily Commented) --}}
+                        {{-- <div id="passwordSection" class="hidden pt-8 border-t border-gray-100 space-y-6">...</div> --}}
                     </div>
                 </div>
             </div>
@@ -132,13 +111,16 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Elements
         const editBtn = document.getElementById('editBtn');
         const cancelBtn = document.getElementById('cancelBtn');
         const confirmBtn = document.getElementById('confirmBtn');
         const editableInputs = document.querySelectorAll('.editable');
-        const passwordSection = document.getElementById('passwordSection');
-        const infoFoto = document.getElementById('infoFoto');
         const modal = document.getElementById('confirmModal');
+        const infoFoto = document.getElementById('infoFoto');
+        const passwordSection = document.getElementById('passwordSection'); // Bisa null jika di-comment
+
+        // Modal Confirm Button - Pastikan ID 'submitForm' ada di dalam x-modal anda
         const btnSubmitForm = document.getElementById('submitForm');
         const baseUrl = "https://www.emsifa.com/api-wilayah-indonesia/api";
 
@@ -146,37 +128,61 @@
         const selects = ['provinsi', 'kabupaten', 'kecamatan', 'desa'];
 
         function activateEditMode() {
+            // Enable Inputs
             editableInputs.forEach(input => {
                 input.disabled = false;
-                if(input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') {
-                    input.classList.remove('bg-gray-50/50', 'border-gray-200');
-                    input.classList.add('bg-white', 'border-[#58CC02]');
-                }
+                input.classList.remove('bg-gray-50/50', 'border-gray-200');
+                input.classList.add('bg-white', 'border-[#58CC02]');
             });
-            views.forEach(id => document.getElementById(id).classList.add('hidden'));
-            selects.forEach(id => document.getElementById(id).classList.remove('hidden'));
-            infoFoto.classList.remove('hidden');
-            editBtn.classList.add('hidden');
-            cancelBtn.classList.remove('hidden');
-            confirmBtn.classList.remove('hidden');
-            passwordSection.classList.remove('hidden');
-            document.getElementById('overlayFoto').classList.replace('hidden', 'flex');
-            document.getElementById('btnPilihFoto').classList.remove('hidden');
+
+            // Toggle Address Views
+            views.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
+            selects.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.remove('hidden');
+            });
+
+            // Toggle Buttons & Info
+            if(infoFoto) infoFoto.classList.remove('hidden');
+            if(editBtn) editBtn.classList.add('hidden');
+            if(cancelBtn) cancelBtn.classList.remove('hidden');
+            if(confirmBtn) confirmBtn.classList.remove('hidden');
+
+            // Check if password section exists before removing hidden
+            if(passwordSection) passwordSection.classList.remove('hidden');
+
+            // Photo Overlay
+            const overlay = document.getElementById('overlayFoto');
+            const btnPilih = document.getElementById('btnPilihFoto');
+            if(overlay) overlay.classList.replace('hidden', 'flex');
+            if(btnPilih) btnPilih.classList.remove('hidden');
+
             loadProvinsi();
         }
 
+        // Initialize Edit Mode if there are errors
         @if($errors->any()) activateEditMode(); @endif
 
-        editBtn.addEventListener('click', activateEditMode);
-        cancelBtn.addEventListener('click', () => window.location.reload());
-        confirmBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-        document.getElementById('closeModal').addEventListener('click', () => modal.classList.add('hidden'));
+        // Button Listeners
+        if(editBtn) editBtn.addEventListener('click', activateEditMode);
+        if(cancelBtn) cancelBtn.addEventListener('click', () => window.location.reload());
+        if(confirmBtn) confirmBtn.addEventListener('click', () => modal.classList.remove('hidden'));
 
-        btnSubmitForm.addEventListener('click', () => {
-            editableInputs.forEach(input => input.disabled = false);
-            document.getElementById('formProfile').submit();
-        });
+        const closeModal = document.getElementById('closeModal');
+        if(closeModal) closeModal.addEventListener('click', () => modal.classList.add('hidden'));
 
+        // Handle Submit from Modal
+        if(btnSubmitForm) {
+            btnSubmitForm.addEventListener('click', () => {
+                editableInputs.forEach(input => input.disabled = false);
+                document.getElementById('formProfile').submit();
+            });
+        }
+
+        // Photo Preview
         document.getElementById('fotoProfil').addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const reader = new FileReader();
@@ -187,12 +193,15 @@
 
         // API WILAYAH LOGIC
         async function loadProvinsi() {
-            const res = await fetch(`${baseUrl}/provinces.json`);
-            const data = await res.json();
-            const select = document.getElementById('provinsi');
-            const defaultText = select.options[0].text;
-            select.innerHTML = `<option value="">${defaultText}</option>`;
-            data.forEach(item => select.add(new Option(item.name, item.id)));
+            try {
+                const res = await fetch(`${baseUrl}/provinces.json`);
+                const data = await res.json();
+                const select = document.getElementById('provinsi');
+                if(!select) return;
+                const defaultText = select.options[0] ? select.options[0].text : 'Pilih Provinsi';
+                select.innerHTML = `<option value="">${defaultText}</option>`;
+                data.forEach(item => select.add(new Option(item.name, item.id)));
+            } catch (e) { console.error("Gagal load provinsi"); }
         }
 
         document.getElementById('provinsi').addEventListener('change', async function() {
@@ -215,6 +224,7 @@
 
         function updateSelect(id, data, label) {
             const select = document.getElementById(id);
+            if(!select) return;
             select.innerHTML = `<option value="">Pilih ${label}</option>`;
             data.forEach(item => select.add(new Option(item.name, item.id)));
         }

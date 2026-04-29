@@ -15,7 +15,7 @@
 
         <div class="flex-1 max-w-xl px-7 hidden md:block">
             <div class="relative flex items-center bg-[#46A302] rounded-full p-1 shadow-inner border border-white/10">
-                <input type="text" id="navSearchInput" placeholder="Cari Menu...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none border-none placeholder-gray-400">
+                <input type="text" id="navSearchInput" placeholder="Search...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none border-none placeholder-gray-400">
                 <button type="button" id="navSearchBtn" class="px-4 text-white hover:scale-110 transition-transform">
                     <i class="fa-solid fa-magnifying-glass text-lg"></i>
                 </button>

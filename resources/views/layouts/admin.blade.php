@@ -55,14 +55,12 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // KODE DROPDOWN DI SINI DIHAPUS SUPAYA TIDAK BENTROK DENGAN TOPBAR.BLADE.PHP
 
     const forms = document.querySelectorAll('form');
     const progressContainer = document.getElementById('progressBarContainer');
     const progressBar = document.getElementById('progressBar');
 
     forms.forEach(form => {
-        // Cek agar tidak memicu progress bar pada form logout tersembunyi
         if (form.id !== 'logoutFormReal') {
             form.addEventListener('submit', function () {
                 progressContainer.classList.remove('hidden');
