@@ -2,21 +2,22 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Agen')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 font-sans antialiased">
 
-    <div id="progressBarContainer" class="hidden fixed top-0 left-0 w-full h-1 bg-gray-200 z-[9999]">
+    <div id="progressBarContainer" class="hidden fixed top-0 left-0 w-full h-1 bg-gray-200 z-110">
         <div id="progressBar" class="h-full bg-[#58CC02] w-0 transition-all duration-300 ease-linear"></div>
     </div>
 
-    <div class="fixed bottom-5 right-5 z-[9999] space-y-3">
+    <div class="fixed bottom-5 right-5 z-200 space-y-3">
         @if(session('success'))
             <div class="alert-info flex items-center w-full max-w-xs p-4 rounded-2xl shadow-xl border border-green-200 bg-green-50" role="alert">
-                <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-full bg-green-600 text-white">
+                <div class="inline-flex items-center justify-center shrink-0 w-10 h-10 rounded-full bg-green-600 text-white">
                     <i class="fa-solid fa-check text-sm"></i>
                 </div>
                 <div class="ms-3">
@@ -28,7 +29,7 @@
 
         @if(session('error'))
             <div class="alert-info flex items-center w-full max-w-xs p-4 rounded-2xl shadow-xl border border-red-200 bg-red-50" role="alert">
-                <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-full bg-red-600 text-white">
+                <div class="inline-flex items-center justify-center shrink-0 w-10 h-10 rounded-full bg-red-600 text-white">
                     <i class="fa-solid fa-xmark text-sm"></i>
                 </div>
                 <div class="ms-3">
@@ -41,15 +42,14 @@
 
     @include('components.navbar-agen')
 
-    <div class="p-6">
+    <main class="p-6 min-h-screen">
         @yield('content')
-    </div>
+    </main>
 
     @include('components.footer-agen')
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-
     const forms = document.querySelectorAll('form');
     const progressContainer = document.getElementById('progressBarContainer');
     const progressBar = document.getElementById('progressBar');
@@ -71,27 +71,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    (function() {
-        const alerts = document.querySelectorAll('.alert-info');
-        alerts.forEach(alert => {
+    const alerts = document.querySelectorAll('.alert-info');
+    alerts.forEach(alert => {
+        alert.style.opacity = '0';
+        alert.style.transform = 'translateX(20px)';
+        alert.style.transition = "all 0.5s ease";
+
+        setTimeout(() => {
+            alert.style.opacity = '1';
+            alert.style.transform = 'translateX(0)';
+        }, 100);
+
+        setTimeout(() => {
             alert.style.opacity = '0';
             alert.style.transform = 'translateX(20px)';
-
-            setTimeout(() => {
-                alert.style.transition = "all 0.5s ease";
-                alert.style.opacity = '1';
-                alert.style.transform = 'translateX(0)';
-            }, 100);
-
-            setTimeout(() => {
-                alert.style.opacity = '0';
-                alert.style.transform = 'translateX(20px)';
-                setTimeout(() => {
-                    alert.remove();
-                }, 500);
-            }, 4000);
-        });
-    })();
+            setTimeout(() => { alert.remove(); }, 500);
+        }, 4000);
+    });
 });
 </script>
 </body>

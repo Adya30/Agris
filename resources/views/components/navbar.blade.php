@@ -1,56 +1,59 @@
-<nav class="fixed w-full z-50 bg-white/90 backdrop-blur shadow-sm px-6">
+<nav id="navbar" class="fixed w-full z-50 transition-all duration-500 px-6 bg-[#0f8629]/60 backdrop-blur-lg">
     <div class="max-w-7xl mx-auto">
-        <div class="flex justify-between items-center h-16">
-
-            <a href="#" class="flex items-center gap-2 text-2xl font-bold text-[#58CC02]">
-                <img src="{{ asset('images/icon.png') }}" class="w-10">
-                AGRIS
+        <div class="flex justify-between items-center h-17">
+            <a href="#" class="flex items-center gap-3 text-2xl font-bold text-white tracking-tight">
+                <img src="{{ asset('images/icon.png') }}" class="w-10 h-auto drop-shadow-md" alt="Logo AGRIS">
+                <span>AGRIS</span>
             </a>
 
-            <div class="hidden md:flex items-center gap-8 font-medium text-gray-700">
-                <a href="{{ route('landing') }}" class="relative group py-2">
+            <div class="hidden md:flex items-center gap-10 font-semibold text-white">
+                <a href="{{ route('landing') }}" class="relative group py-2 transition-colors duration-300">
                     Beranda
-                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#58CC02] transition-all duration-300 group-hover:w-full"></span>
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#10b981] transition-all duration-300 group-hover:w-full"></span>
                 </a>
-                <a href="{{ route('about') }}" class="relative group py-2">
+                <a href="{{ route('about') }}" class="relative group py-2 transition-colors duration-300">
                     Tentang
-                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#58CC02] transition-all duration-300 group-hover:w-full"></span>
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#10b981] transition-all duration-300 group-hover:w-full"></span>
                 </a>
-                <a href="#produk" class="relative group py-2">
+                <a href="{{ route('guest.blog.index') }}" class="relative group py-2 transition-colors duration-300">
                     Blog
-                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#58CC02] transition-all duration-300 group-hover:w-full"></span>
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#10b981] transition-all duration-300 group-hover:w-full"></span>
                 </a>
-
-                <a href="{{ route('contact') }}" class="relative group py-2">
+                <a href="{{ route('contact') }}" class="relative group py-2 transition-colors duration-300">
                     Kontak
-                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#58CC02] transition-all duration-300 group-hover:w-full"></span>
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#10b981] transition-all duration-300 group-hover:w-full"></span>
                 </a>
-
             </div>
 
-            <div class="hidden md:flex gap-4">
-                <a href="{{ route('login') }}" class="px-6 py-2 rounded-full bg-[#58CC02] text-white shadow-md hover:shadow-lg hover:scale-105 transition duration-300">
+            <div class="hidden md:flex items-center gap-3">
+                <a href="{{ route('register') }}" class="px-6 py-2 rounded-xl text-white font-bold border-2 border-white/20">
+                    Daftar
+                </a>
+                <a href="{{ route('login') }}" class="px-6 py-2.5 rounded-xl bg-[#0eb833] hover:bg-[#0f8629] text-white font-bold shadow-lg shadow-green-900/20">
                     Login
                 </a>
             </div>
 
             <div class="md:hidden flex items-center">
-                <button id="menu-btn" class="text-gray-600 hover:text-[#58CC02] focus:outline-none transition-all duration-300">
+                <button id="menu-btn" class="text-white focus:outline-none transition-all duration-300">
                     <i id="menu-icon" class="fas fa-bars text-2xl"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full left-0 shadow-lg">
-        <div class="px-6 pt-4 pb-6 space-y-4 font-medium">
-            <a href="#home" class="mobile-link block hover:text-[#58CC02] transition border-b border-gray-50 pb-2">Beranda</a>
-            <a href="#kategori" class="mobile-link block hover:text-[#58CC02] transition border-b border-gray-50 pb-2">Layanan</a>
-            <a href="#produk" class="mobile-link block hover:text-[#58CC02] transition border-b border-gray-50 pb-2">Tentang Kami</a>
-            <a href="#kontak" class="mobile-link block hover:text-[#58CC02] transition border-b border-gray-50 pb-2">Kontak</a>
-            <div class="pt-2">
-                <a href="{{ route('login') }}" class="block w-full text-center py-3 rounded-xl bg-[#58CC02] text-white font-bold">
+    <div id="mobile-menu" class="hidden md:hidden bg-[#0B2B26] border-t border-white/10 absolute w-full left-0">
+        <div class="px-6 pt-6 pb-12 space-y-5 font-medium text-gray-300">
+            <a href="#home" class="block hover:text-white transition border-b border-white/5 pb-3">Beranda</a>
+            <a href="#about" class="block hover:text-white transition border-b border-white/5 pb-3">Tentang</a>
+            <a href="#produk" class="block hover:text-white transition border-b border-white/5 pb-3">Blog</a>
+            <a href="#kontak" class="block hover:text-white transition border-b border-white/5 pb-3">Kontak</a>
+            <div class="pt-6 grid grid-cols-2 gap-4">
+                <a href="{{ route('login') }}" class="flex items-center justify-center py-3 rounded-xl border border-white/20 text-white font-bold hover:bg-white/5">
                     Login
+                </a>
+                <a href="{{ route('register') }}" class="flex items-center justify-center py-3 rounded-xl bg-[#58CC02] text-white font-bold shadow-lg">
+                    Daftar
                 </a>
             </div>
         </div>
@@ -58,28 +61,27 @@
 </nav>
 
 <script>
-    const menuBtn = document.getElementById('menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const menuIcon = document.getElementById('menu-icon');
-    const mobileLinks = document.querySelectorAll('.mobile-link');
+    document.addEventListener('DOMContentLoaded', () => {
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const navbar = document.getElementById('navbar');
 
-    menuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-
-        if (mobileMenu.classList.contains('hidden')) {
-            menuIcon.classList.remove('fa-times');
-            menuIcon.classList.add('fa-bars');
-        } else {
-            menuIcon.classList.remove('fa-bars');
-            menuIcon.classList.add('fa-times');
+        if (menuBtn && mobileMenu && menuIcon) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                const isHidden = mobileMenu.classList.contains('hidden');
+                menuIcon.classList.toggle('fa-bars', isHidden);
+                menuIcon.classList.toggle('fa-times', !isHidden);
+            });
         }
-    });
 
-    mobileLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-            menuIcon.classList.remove('fa-times');
-            menuIcon.classList.add('fa-bars');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.replace('bg-[#0f8629]/60', 'bg-[#0f8629]');
+            } else {
+                navbar.classList.replace('bg-[#0f8629]', 'bg-[#0f8629]/60');
+            }
         });
     });
 </script>

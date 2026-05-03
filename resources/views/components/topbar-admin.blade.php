@@ -1,8 +1,8 @@
-<header class="fixed top-0 right-0 left-0 {{ !Route::is('admin.profile') ? 'md:left-64' : 'z-40' }} bg-[#58CC02] h-17" style="z-index: 50;">
+<header class="fixed top-0 right-0 left-0 {{ !Route::is('admin.profile') ? 'md:left-64' : 'z-40' }} bg-[#0f8629] h-17" style="z-index: 50;">
     <div class="flex items-center justify-between h-full px-6">
         <div class="flex items-center gap-4">
             @if(Route::is('admin.profile'))
-                <a href="{{ route('admin.produk.index') }}" class="flex items-center gap-2 group transition-transform hover:scale-105">
+                <a href="{{ route('admin.produk.index') }}" class="flex items-center gap-2">
                     <img src="{{ asset('images/icon.png') }}" class="h-10 w-10">
                     <span class="text-2xl font-bold text-white uppercase tracking-wider">AGRIS</span>
                 </a>
@@ -36,7 +36,7 @@
                 </div>
             </button>
 
-            <div id="adminDropdownMenu" class="hidden absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 transition-all duration-200 z-[9999]">
+            <div id="adminDropdownMenu" class="hidden absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 transition-all duration-200 z-100">
                 <a href="{{ route('admin.profile') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition font-semibold">
                     <i class="fa-regular fa-id-card mr-3 text-[#58CC02] text-lg"></i>
                     Profil Saya
@@ -63,7 +63,6 @@
         const menu = document.getElementById('adminDropdownMenu');
         const arrow = document.getElementById('dropdownArrow');
         const logoutTrigger = document.getElementById('logoutBtnTrigger');
-        const logoutModal = document.getElementById('logoutModal');
 
         if (btn && menu) {
             btn.addEventListener('click', function(e) {
@@ -89,14 +88,9 @@
         if (logoutTrigger) {
             logoutTrigger.addEventListener('click', function() {
                 menu.classList.add('hidden');
-                if(logoutModal) logoutModal.classList.remove('hidden');
-            });
-        }
-
-        const closeLogout = document.getElementById('closeLogoutBtn');
-        if (closeLogout) {
-            closeLogout.addEventListener('click', function() {
-                logoutModal.classList.add('hidden');
+                if (typeof openModal === 'function') {
+                    openModal('logoutModal');
+                }
             });
         }
 
@@ -104,6 +98,18 @@
         if (confirmLogout) {
             confirmLogout.addEventListener('click', function() {
                 document.getElementById('logoutFormReal').submit();
+            });
+        }
+
+        const closeLogoutBtn = document.getElementById('closeLogoutBtn');
+        if (closeLogoutBtn) {
+            closeLogoutBtn.addEventListener('click', function() {
+                if (typeof closeModal === 'function') {
+                    closeModal('logoutModal');
+                } else {
+                    // Fallback jika fungsi global tidak terdeteksi
+                    document.getElementById('logoutModal').classList.add('hidden');
+                }
             });
         }
 

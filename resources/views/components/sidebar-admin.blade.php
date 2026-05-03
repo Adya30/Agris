@@ -1,4 +1,4 @@
-<aside id="sidebar" class="fixed top-0 left-0 z-50 w-64 h-screen transition-transform -translate-x-full md:translate-x-0 bg-[#58CC02]">
+<aside id="sidebar" class="fixed top-0 left-0 z-50 w-64 h-screen transition-transform -translate-x-full md:translate-x-0 bg-[#0f8629]">
     <div class="h-full flex flex-col">
         <div class="pl-8 pt-5 pb-8">
             <a href="{{ route('admin.produk.index') }}" class="flex items-center gap-2 group">
@@ -16,7 +16,7 @@
                     ['name' => 'Kemitraan', 'url' => '#', 'active' => 'admin/kemitraan*', 'icon' => 'fa-users'],
                     ['name' => 'Transaksi', 'url' => '#', 'active' => 'admin/transaksi*', 'icon' => 'fa-wallet'],
                     ['name' => 'Laporan', 'url' => '#', 'active' => 'admin/laporan*', 'icon' => 'fa-file-lines'],
-                    ['name' => 'Blog', 'url' => '#', 'active' => 'admin/blog*', 'icon' => 'fa-book-open'],
+                    ['name' => 'Blog', 'url' => route('admin.blog.index'), 'active' => 'admin/blog*', 'icon' => 'fa-book-open'],
                 ];
             @endphp
 
@@ -38,15 +38,13 @@
         const overlay = document.getElementById('sidebarOverlay');
 
         function toggleSidebar() {
+            if (!sidebar || !overlay) return;
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
         }
 
         document.addEventListener('click', function(e) {
-            if (e.target.closest('#hamburgerBtn')) {
-                toggleSidebar();
-            }
-            if (e.target.id === 'sidebarOverlay') {
+            if (e.target.closest('#hamburgerBtn') || e.target.id === 'sidebarOverlay') {
                 toggleSidebar();
             }
         });

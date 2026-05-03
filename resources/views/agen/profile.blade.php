@@ -3,14 +3,13 @@
 @section('content')
 <div class="max-w-full mx-auto py-8">
     <div class="flex flex-col lg:flex-row gap-4 items-start">
-
         <form action="{{ route('agen.profile.update') }}" method="POST" enctype="multipart/form-data" id="formProfile" class="flex-1 w-full">
             @csrf
             @method('PUT')
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="flex justify-between items-center px-10 py-8 border-b border-gray-100 bg-gray-50/50">
-                    <h1 class="text-3xl font-bold text-gray-800">Profil</h1>
+                    <h1 class="text-3xl font-black text-gray-800">Profil Agen</h1>
                     <div class="flex gap-3">
                         <button type="button" id="editBtn" class="px-8 py-2.5 bg-[#58CC02] text-white font-bold rounded-xl transition">Edit</button>
                         <button type="button" id="cancelBtn" class="hidden px-8 py-2.5 bg-red-500 text-white font-bold rounded-xl transition">Batal</button>
@@ -19,10 +18,9 @@
                 </div>
 
                 <div class="p-10 flex flex-col lg:flex-row gap-16">
-                    {{-- Bagian Foto --}}
                     <div class="w-full lg:w-1/3 flex flex-col items-center">
                         <div class="group relative w-64 h-64 rounded-full overflow-hidden shadow-xl bg-gray-50 border-4 border-white">
-                            <img id="previewFoto" src="{{ $user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($user->namaLengkap) }}" class="w-full h-full object-cover">
+                            <img id="previewFoto" src="{{ $user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($user->namaLengkap ?? 'User') }}" class="w-full h-full object-cover">
                             <label for="fotoProfil" id="overlayFoto" class="hidden absolute inset-0 bg-black/40 items-center justify-center cursor-pointer transition">
                                 <i class="fas fa-camera text-white text-4xl"></i>
                             </label>
@@ -34,73 +32,95 @@
                         </p>
                     </div>
 
-                    {{-- Bagian Input Data --}}
                     <div class="w-full lg:w-2/3 space-y-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-6">
                             <div>
-                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Email</label>
-                                <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-input editable w-full rounded-2xl border-gray-200 bg-gray-50/50 py-3 px-4 disabled:text-black transition-all font-medium" disabled>
-                                @error('email') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Nama Lengkap</label>
+                                <input type="text" name="namaLengkap" value="{{ old('namaLengkap', $user->namaLengkap) }}" class="form-input editable w-full rounded-2xl border-gray-200 bg-gray-50/50 py-3 px-4 disabled:text-black transition-all font-medium" disabled>
+                                @error('namaLengkap') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Nomor Telepon</label>
-                                <input type="text" name="noTelp" value="{{ old('noTelp', $user->noTelp) }}" class="form-input editable w-full rounded-2xl border-gray-200 bg-gray-50/50 py-3 px-4 disabled:text-black transition-all font-medium" disabled>
-                                @error('noTelp') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Email</label>
+                                    <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-input editable w-full rounded-2xl border-gray-200 bg-gray-50/50 py-3 px-4 disabled:text-black transition-all font-medium" disabled>
+                                    @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Nomor Telepon</label>
+                                    <input type="text" name="noTelp" value="{{ old('noTelp', $user->noTelp) }}" class="form-input editable w-full rounded-2xl border-gray-200 bg-gray-50/50 py-3 px-4 disabled:text-black transition-all font-medium" disabled>
+                                    @error('noTelp') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                </div>
                             </div>
                         </div>
 
                         <div class="space-y-6">
-                            {{-- Dropdown Wilayah --}}
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Provinsi</label>
+                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Provinsi</label>
                                     <div id="provinsiView" class="py-3 px-4 rounded-2xl border border-gray-200 bg-gray-50/50 font-medium text-black">
                                         {{ $user->desa->kecamatan->kabupaten->provinsi->namaProvinsi ?? '-' }}
                                     </div>
-                                    <select id="provinsi" name="provinsiId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
-                                        <option value="">{{ $user->desa->kecamatan->kabupaten->provinsi->namaProvinsi ?? 'Pilih Provinsi' }}</option>
+                                    <select id="provinsi" name="provinsiId" data-old="{{ $user->desa->kecamatan->kabupaten->provinsi->id ?? '' }}" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
+                                        <option value="">Pilih Provinsi</option>
                                     </select>
                                 </div>
-
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Kabupaten</label>
+                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Kabupaten</label>
                                     <div id="kabupatenView" class="py-3 px-4 rounded-2xl border border-gray-200 bg-gray-50/50 font-medium text-black">
                                         {{ $user->desa->kecamatan->kabupaten->namaKabupaten ?? '-' }}
                                     </div>
-                                    <select id="kabupaten" name="kabupatenId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
-                                        <option value="">{{ $user->desa->kecamatan->kabupaten->namaKabupaten ?? 'Pilih Kabupaten' }}</option>
+                                    <select id="kabupaten" name="kabupatenId" data-old="{{ $user->desa->kecamatan->kabupaten->id ?? '' }}" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
+                                        <option value="">Pilih Kabupaten</option>
                                     </select>
                                 </div>
-
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Kecamatan</label>
+                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Kecamatan</label>
                                     <div id="kecamatanView" class="py-3 px-4 rounded-2xl border border-gray-200 bg-gray-50/50 font-medium text-black">
                                         {{ $user->desa->kecamatan->namaKecamatan ?? '-' }}
                                     </div>
-                                    <select id="kecamatan" name="kecamatanId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
-                                        <option value="">{{ $user->desa->kecamatan->namaKecamatan ?? 'Pilih Kecamatan' }}</option>
+                                    <select id="kecamatan" name="kecamatanId" data-old="{{ $user->desa->kecamatan->id ?? '' }}" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
+                                        <option value="">Pilih Kecamatan</option>
                                     </select>
                                 </div>
-
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Desa</label>
+                                    <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Desa</label>
                                     <div id="desaView" class="py-3 px-4 rounded-2xl border border-gray-200 bg-gray-50/50 font-medium text-black">
                                         {{ $user->desa->namaDesa ?? '-' }}
                                     </div>
-                                    <select id="desa" name="desaId" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
-                                        <option value="{{ $user->desaId }}">{{ $user->desa->namaDesa ?? 'Pilih Desa' }}</option>
+                                    <select id="desa" name="desaId" data-old="{{ $user->desaId ?? '' }}" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
+                                        <option value="{{ $user->desaId ?? '' }}">{{ $user->desa->namaDesa ?? 'Pilih Desa' }}</option>
                                     </select>
-                                    @error('desaId') <span class="text-[10px] text-red-500 font-bold mt-1 ml-2">{{ $message }}</span> @enderror
                                 </div>
                             </div>
+
                             <div>
-                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Detail Alamat</label>
+                                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Detail Alamat</label>
                                 <textarea name="detailAlamat" class="form-input editable w-full rounded-2xl border-gray-200 bg-gray-50/50 py-3 px-4 disabled:text-black transition-all font-medium resize-none" rows="2" disabled>{{ old('detailAlamat', $user->detailAlamat) }}</textarea>
                             </div>
-                        </div>
 
-                        {{-- Password Section (Temporarily Commented) --}}
-                        {{-- <div id="passwordSection" class="hidden pt-8 border-t border-gray-100 space-y-6">...</div> --}}
+                            <div id="passwordSection" class="hidden mt-8 pt-8 border-t border-gray-100">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div class="relative">
+                                        <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Password Lama</label>
+                                        <input type="password" name="current_password" id="current_password" class="form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 pr-12 transition-all font-medium" placeholder="Konfirmasi password lama">
+                                        <button type="button" class="toggle-password absolute right-4 top-10 text-gray-400 hover:text-[#58CC02]">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        @error('current_password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div class="relative">
+                                        <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Password Baru</label>
+                                        <input type="password" name="password" id="password" class="form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 pr-12 transition-all font-medium" placeholder="Minimal 8 karakter">
+                                        <button type="button" class="toggle-password absolute right-4 top-10 text-gray-400 hover:text-[#58CC02]">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-gray-400 mt-4 italic">*Biarkan kosong jika tidak ingin mengubah password.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -108,81 +128,99 @@
     </div>
 </div>
 
-<x-modal id="confirmModal" message="Apakah yakin melakukan perubahan profil?" confirmText="Iya" cancelText="Batal" />
+<x-modal id="confirmModal" message="Apakah Anda yakin ingin memperbarui data profil agen?" confirmText="Ya, Simpan" cancelText="Batal" confirmId="btnSubmitProfile" cancelId="btnCloseProfileModal" />
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Elements
         const editBtn = document.getElementById('editBtn');
         const cancelBtn = document.getElementById('cancelBtn');
         const confirmBtn = document.getElementById('confirmBtn');
+        const form = document.getElementById('formProfile');
         const editableInputs = document.querySelectorAll('.editable');
-        const modal = document.getElementById('confirmModal');
-        const btnSubmitForm = document.getElementById('submitForm');
-        const infoFoto = document.getElementById('infoFoto');
-        const passwordSection = document.getElementById('passwordSection'); // Ini akan null jika di-comment
+        const passwordSection = document.getElementById('passwordSection');
 
-        const baseUrl = "https://www.emsifa.com/api-wilayah-indonesia/api";
-        const views = ['provinsiView', 'kabupatenView', 'kecamatanView', 'desaView'];
-        const selects = ['provinsi', 'kabupaten', 'kecamatan', 'desa'];
-
-        function activateEditMode() {
-            // Enable Inputs
+        async function activateEditMode() {
             editableInputs.forEach(input => {
                 input.disabled = false;
-                if(input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') {
-                    input.classList.remove('bg-gray-50/50', 'border-gray-200');
-                    input.classList.add('bg-white', 'border-[#58CC02]');
-                }
+                input.classList.remove('bg-gray-50/50', 'border-gray-200');
+                input.classList.add('bg-white', 'border-[#58CC02]');
             });
 
-            // Toggle Address Views
-            views.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.classList.add('hidden');
-            });
-            selects.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.classList.remove('hidden');
+            ['provinsi', 'kabupaten', 'kecamatan', 'desa'].forEach(id => {
+                const viewEl = document.getElementById(id + 'View');
+                const selectEl = document.getElementById(id);
+                if (viewEl) viewEl.classList.add('hidden');
+                if (selectEl) selectEl.classList.remove('hidden');
             });
 
-            // Toggle Buttons & Info
-            if(infoFoto) infoFoto.classList.remove('hidden');
-            if(editBtn) editBtn.classList.add('hidden');
-            if(cancelBtn) cancelBtn.classList.remove('hidden');
-            if(confirmBtn) confirmBtn.classList.remove('hidden');
+            editBtn?.classList.add('hidden');
+            cancelBtn?.classList.remove('hidden');
+            confirmBtn?.classList.remove('hidden');
 
-            // Pengecekan agar tidak error saat passwordSection di-comment
-            if(passwordSection) passwordSection.classList.remove('hidden');
+            passwordSection?.classList.remove('hidden');
+            document.getElementById('infoFoto')?.classList.remove('hidden');
+            document.getElementById('btnPilihFoto')?.classList.remove('hidden');
+            document.getElementById('overlayFoto')?.classList.replace('hidden', 'flex');
 
-            // Photo Overlay
-            const overlay = document.getElementById('overlayFoto');
-            const btnPilih = document.getElementById('btnPilihFoto');
-            if(overlay) overlay.classList.replace('hidden', 'flex');
-            if(btnPilih) btnPilih.classList.remove('hidden');
-
-            loadProvinsi();
+            if (typeof window.initWilayah === 'function') {
+                await window.initWilayah();
+            }
         }
 
-        // Initialize Edit Mode if errors exist
         @if($errors->any()) activateEditMode(); @endif
 
-        // Button Listeners
-        if(editBtn) editBtn.addEventListener('click', activateEditMode);
-        if(cancelBtn) cancelBtn.addEventListener('click', () => window.location.reload());
-        if(confirmBtn) confirmBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-
-        const closeBtn = document.getElementById('closeModal');
-        if(closeBtn) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
-
-        if(btnSubmitForm) {
-            btnSubmitForm.addEventListener('click', () => {
-                editableInputs.forEach(input => input.disabled = false);
-                document.getElementById('formProfile').submit();
+        if(editBtn) {
+            editBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                activateEditMode();
             });
         }
 
-        // Photo Preview
+        if(cancelBtn) {
+            cancelBtn.addEventListener('click', () => window.location.reload());
+        }
+
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.parentElement.querySelector('input');
+                const icon = this.querySelector('i');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.replace('fa-eye', 'fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.replace('fa-eye-slash', 'fa-eye');
+                }
+            });
+        });
+
+        if(confirmBtn) {
+            confirmBtn.addEventListener('click', () => {
+                if (typeof openModal === 'function') {
+                    openModal('confirmModal');
+                } else {
+                    document.getElementById('confirmModal').classList.remove('hidden');
+                }
+            });
+        }
+
+        const btnSubmitProfile = document.getElementById('btnSubmitProfile');
+        if(btnSubmitProfile) {
+            btnSubmitProfile.addEventListener('click', () => form.submit());
+        }
+
+        const btnCloseProfileModal = document.getElementById('btnCloseProfileModal');
+        if(btnCloseProfileModal) {
+            btnCloseProfileModal.addEventListener('click', () => {
+                if (typeof closeModal === 'function') {
+                    closeModal('confirmModal');
+                } else {
+                    document.getElementById('confirmModal').classList.add('hidden');
+                }
+            });
+        }
+
         document.getElementById('fotoProfil').addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const reader = new FileReader();
@@ -190,53 +228,6 @@
                 reader.readAsDataURL(this.files[0]);
             }
         });
-
-        // API WILAYAH LOGIC
-        async function loadProvinsi() {
-            try {
-                const res = await fetch(`${baseUrl}/provinces.json`);
-                const data = await res.json();
-                const select = document.getElementById('provinsi');
-                if(!select) return;
-                const defaultText = select.options[0] ? select.options[0].text : 'Pilih Provinsi';
-                select.innerHTML = `<option value="">${defaultText}</option>`;
-                data.forEach(item => select.add(new Option(item.name, item.id)));
-            } catch (e) { console.error("Gagal load provinsi"); }
-        }
-
-        const provSelect = document.getElementById('provinsi');
-        if(provSelect) {
-            provSelect.addEventListener('change', async function() {
-                if(!this.value) return;
-                const res = await fetch(`${baseUrl}/regencies/${this.value}.json`);
-                updateSelect('kabupaten', await res.json(), 'Kabupaten');
-            });
-        }
-
-        const kabSelect = document.getElementById('kabupaten');
-        if(kabSelect) {
-            kabSelect.addEventListener('change', async function() {
-                if(!this.value) return;
-                const res = await fetch(`${baseUrl}/districts/${this.value}.json`);
-                updateSelect('kecamatan', await res.json(), 'Kecamatan');
-            });
-        }
-
-        const kecSelect = document.getElementById('kecamatan');
-        if(kecSelect) {
-            kecSelect.addEventListener('change', async function() {
-                if(!this.value) return;
-                const res = await fetch(`${baseUrl}/villages/${this.value}.json`);
-                updateSelect('desa', await res.json(), 'Desa');
-            });
-        }
-
-        function updateSelect(id, data, label) {
-            const select = document.getElementById(id);
-            if(!select) return;
-            select.innerHTML = `<option value="">Pilih ${label}</option>`;
-            data.forEach(item => select.add(new Option(item.name, item.id)));
-        }
     });
 </script>
 @endsection

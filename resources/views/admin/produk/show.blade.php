@@ -33,12 +33,15 @@
             </div>
 
             <div class="lg:w-3/5 p-8 md:p-10">
-                <div class="flex gap-2 mb-4">
+                <div class="flex flex-wrap gap-2 mb-4">
                     <span class="text-[10px] font-black uppercase text-[#58CC02] bg-[#58CC02]/10 px-3 py-1 rounded-lg">
                         {{ $item->kategori->jenisKategori }}
                     </span>
-                    <span class="text-[10px] font-black uppercase text-gray-500 bg-gray-100 px-3 py-1 rounded-lg">
+                    <span class="text-[10px] font-black uppercase text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
                         Mutu {{ $item->kategori->mutu }}
+                    </span>
+                    <span class="text-[10px] font-black uppercase text-gray-500 bg-gray-100 px-3 py-1 rounded-lg">
+                        Isi {{ $item->kategori->karung }} Kg
                     </span>
                 </div>
 
@@ -46,14 +49,14 @@
 
                 <div class="flex items-baseline gap-1 mb-8">
                     <span class="text-3xl font-black text-[#58CC02]">Rp {{ number_format($item->harga, 0, ',', '.') }}</span>
-                    <span class="text-gray-400 font-medium">/kg</span>
+                    <span class="text-gray-400 font-medium">/ Karung</span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-6 mb-8">
                     <div class="p-4 rounded-2xl bg-gray-50 border border-gray-100">
                         <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Stok Tersedia</p>
                         <p class="text-xl font-black {{ $item->stok > 0 ? 'text-gray-700' : 'text-red-500' }}">
-                            {{ $item->stok }} <span class="text-sm font-medium">Kg</span>
+                            {{ $item->stok }} <span class="text-sm font-medium">Karung</span>
                         </p>
                     </div>
                     <div class="p-4 rounded-2xl bg-gray-50 border border-gray-100">
@@ -66,7 +69,7 @@
                     <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
                         Deskripsi Produk
                     </h4>
-                    <p class="text-gray-600 leading-relaxed text-sm">
+                    <p class="text-gray-600 leading-relaxed text-sm whitespace-pre-line">
                         {{ $item->deskripsi ?? 'Tidak ada deskripsi untuk produk ini.' }}
                     </p>
                 </div>
@@ -76,7 +79,7 @@
                         <i class="fa-solid fa-pen-to-square mr-2"></i> Ubah data produk
                     </a>
 
-                    <button type="button" onclick="confirmDelete()" class="px-6 py-3 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-bold transition border border-red-100 shadow-sm">
+                    <button type="button" onclick="openModal('modalHapus')" class="px-6 py-3 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-bold transition border border-red-100 shadow-sm">
                         <i class="fa-solid fa-trash-can mr-2"></i> Hapus
                     </button>
                 </div>
@@ -85,29 +88,15 @@
     </div>
 </div>
 
-<div id="modalHapus" class="hidden fixed inset-0 z-100 items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
-
-    <div class="relative bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl text-center border border-gray-100 transition-all transform">
-        <div class="w-20 h-20 bg-green-100 text-[#58CC02] rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
-            <i class="fa-solid fa-question"></i>
-        </div>
-
-        <h3 class="text-2xl font-black text-gray-800 mb-2">Hapus Produk</h3>
-        <p class="text-gray-500 font-medium mb-8">Apakah Anda yakin ingin menghapus produk ini? Stok akan otomatis menjadi 0 dan produk diarsipkan.</p>
-
-        <div class="flex gap-3">
-            <button type="button" onclick="closeDeleteModal()"
-                class="flex-1 py-4 bg-red-500 hover:bg-red-400 text-white font-bold rounded-2xl transition">
-                Batal
-            </button>
-            <button type="button" onclick="submitDelete(this)"
-                class="flex-1 py-4 bg-[#58CC02] hover:bg-[#4fb802] text-white font-bold rounded-2xl transition shadow-lg shadow-green-100">
-                Hapus
-            </button>
-        </div>
-    </div>
-</div>
+<x-modal
+    id="modalHapus"
+    title="Arsip Produk?"
+    message="Produk akan dipindahkan ke tempat sampah, stok otomatis menjadi 0, dan tidak akan tampil di halaman Agen."
+    confirmText="Iya"
+    cancelText="Batal"
+    confirmId="btnConfirmDelete"
+    cancelId="btnCancelDelete"
+/>
 
 <form id="delete-form" action="{{ route('admin.produk.destroy', $item->id) }}" method="POST" class="hidden">
     @csrf
@@ -115,24 +104,13 @@
 </form>
 
 <script>
-    function confirmDelete() {
-        const modal = document.getElementById('modalHapus');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeDeleteModal() {
-        const modal = document.getElementById('modalHapus');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = 'auto';
-    }
-
-    function submitDelete(btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    document.getElementById('btnConfirmDelete').addEventListener('click', function() {
+        this.disabled = true;
         document.getElementById('delete-form').submit();
-    }
+    });
+
+    document.getElementById('btnCancelDelete').addEventListener('click', function() {
+        closeModal('modalHapus');
+    });
 </script>
 @endsection

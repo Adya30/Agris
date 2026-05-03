@@ -15,19 +15,19 @@ class c_wilayah extends Controller
         return response()->json($res->json() ?? []);
     }
 
-    public function getKabupaten($id)
+    public function getKabupaten(string $id)
     {
         $res = Http::get("{$this->baseUrl}/regencies/{$id}.json");
         return response()->json($res->json() ?? []);
     }
 
-    public function getKecamatan($id)
+    public function getKecamatan(string $id)
     {
         $res = Http::get("{$this->baseUrl}/districts/{$id}.json");
         return response()->json($res->json() ?? []);
     }
 
-    public function getDesa($id)
+    public function getDesa(string $id)
     {
         $res = Http::get("{$this->baseUrl}/villages/{$id}.json");
         return response()->json($res->json() ?? []);

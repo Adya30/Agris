@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignUlid('kategoriId')->constrained('kategori_produks')->restrictOnDelete();
             $table->string('fotoProduk', 255)->nullable();
             $table->string('namaProduk', 150);
-            $table->decimal('stok', 15, 2)->default(0);
+            $table->integer('stok')->default(0);
             $table->decimal('harga', 15, 2);
             $table->text('deskripsi')->nullable();
             $table->softDeletes();

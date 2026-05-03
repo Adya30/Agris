@@ -1,68 +1,83 @@
-function renderOptions(elementId, data, placeholder) {
-    const select = document.getElementById(elementId);
-    const currentValue = select.value;
-    const currentText = select.options[0] ? select.options[0].text : placeholder;
+document.addEventListener('DOMContentLoaded', function () {
+    const baseUrl = "https://www.emsifa.com/api-wilayah-indonesia/api";
 
-    select.innerHTML = `<option value="${currentValue}">${currentText}</option>`;
+    const safeBind = (id, event, callback) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener(event, callback);
+    };
 
-    if (Array.isArray(data)) {
+    const updateSelect = (id, data, label, currentValue = null) => {
+        const select = document.getElementById(id);
+        if (!select) return;
+
+        select.innerHTML = `<option value="">Pilih ${label}</option>`;
         data.forEach(item => {
-            if (item.id != currentValue) {
-                const option = document.createElement('option');
-                option.value = item.id;
-                option.textContent = item.name;
-                select.appendChild(option);
-            }
+            const option = new Option(item.name, item.id);
+            if (item.id == currentValue) option.selected = true;
+            select.add(option);
         });
-    }
-}
+    };
 
-async function loadProvinsi() {
-    try {
-        const response = await fetch(`${baseUrl}/provinsi`);
-        const data = await response.json();
-        renderOptions('provinsi', data, 'Pilih Provinsi');
-    } catch (e) { console.error("Error load provinsi", e); }
-}
-
-document.getElementById('provinsi').addEventListener('change', async function () {
-    const id = this.value;
-    if (!id) return;
-    const res = await fetch(`${baseUrl}/kabupaten/${id}`);
-    const selectKab = document.getElementById('kabupaten');
-    selectKab.innerHTML = '<option value="">-- Pilih Kabupaten --</option>';
-    (await res.json()).forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item.id; opt.textContent = item.name;
-        selectKab.appendChild(opt);
+    safeBind('provinsi', 'change', async function() {
+        if(!this.value) {
+            updateSelect('kabupaten', [], 'Kabupaten');
+            return;
+        }
+        try {
+            const res = await fetch(`${baseUrl}/regencies/${this.value}.json`);
+            updateSelect('kabupaten', await res.json(), 'Kabupaten');
+            updateSelect('kecamatan', [], 'Kecamatan');
+            updateSelect('desa', [], 'Desa');
+        } catch (e) { console.error(e); }
     });
-    document.getElementById('kecamatan').innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
-    document.getElementById('desa').innerHTML = '<option value="">-- Pilih Desa --</option>';
-});
 
-document.getElementById('kabupaten').addEventListener('change', async function () {
-    const id = this.value;
-    if (!id) return;
-    const res = await fetch(`${baseUrl}/kecamatan/${id}`);
-    const selectKec = document.getElementById('kecamatan');
-    selectKec.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
-    (await res.json()).forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item.id; opt.textContent = item.name;
-        selectKec.appendChild(opt);
+    safeBind('kabupaten', 'change', async function() {
+        if(!this.value) return;
+        try {
+            const res = await fetch(`${baseUrl}/districts/${this.value}.json`);
+            updateSelect('kecamatan', await res.json(), 'Kecamatan');
+            updateSelect('desa', [], 'Desa');
+        } catch (e) { console.error(e); }
     });
-    document.getElementById('desa').innerHTML = '<option value="">-- Pilih Desa --</option>';
-});
 
-document.getElementById('kecamatan').addEventListener('change', async function () {
-    const id = this.value;
-    if (!id) return;
-    const res = await fetch(`${baseUrl}/desa/${id}`);
-    const selectDesa = document.getElementById('desa');
-    selectDesa.innerHTML = '<option value="">-- Pilih Desa --</option>';
-    (await res.json()).forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item.id; opt.textContent = item.name;
-        selectDesa.appendChild(opt);
+    safeBind('kecamatan', 'change', async function() {
+        if(!this.value) return;
+        try {
+            const res = await fetch(`${baseUrl}/villages/${this.value}.json`);
+            updateSelect('desa', await res.json(), 'Desa');
+        } catch (e) { console.error(e); }
     });
+
+    window.initWilayah = async function() {
+        const provSelect = document.getElementById('provinsi');
+        const kabSelect = document.getElementById('kabupaten');
+        const kecSelect = document.getElementById('kecamatan');
+        const desaSelect = document.getElementById('desa');
+
+        if(!provSelect) return;
+
+        try {
+            const oldProvId = provSelect.getAttribute('data-old');
+            const resProv = await fetch(`${baseUrl}/provinces.json`);
+            updateSelect('provinsi', await resProv.json(), 'Provinsi', oldProvId);
+
+            if (oldProvId) {
+                const oldKabId = kabSelect.getAttribute('data-old');
+                const resKab = await fetch(`${baseUrl}/regencies/${oldProvId}.json`);
+                updateSelect('kabupaten', await resKab.json(), 'Kabupaten', oldKabId);
+
+                if (oldKabId) {
+                    const oldKecId = kecSelect.getAttribute('data-old');
+                    const resKec = await fetch(`${baseUrl}/districts/${oldKabId}.json`);
+                    updateSelect('kecamatan', await resKec.json(), 'Kecamatan', oldKecId);
+
+                    if (oldKecId) {
+                        const oldDesaId = desaSelect.getAttribute('data-old');
+                        const resDesa = await fetch(`${baseUrl}/villages/${oldKecId}.json`);
+                        updateSelect('desa', await resDesa.json(), 'Desa', oldDesaId);
+                    }
+                }
+            }
+        } catch (e) { console.error(e); }
+    };
 });

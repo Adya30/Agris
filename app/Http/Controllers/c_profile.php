@@ -29,24 +29,24 @@ class c_profile extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'noTelp'       => 'required|numeric|digits_between:4,15|unique:users,noTelp,' . $user->id,
-            'namaLengkap'  => 'nullable|string|max:255',
-            'email'        => 'required|email|unique:users,email,' . $user->id,
-            'detailAlamat' => 'nullable|string',
-            'fotoProfil'   => 'nullable|image|mimes:jpeg,png,jpg|max:10048',
+            'noTelp'           => 'required|numeric|digits_between:4,15|unique:users,noTelp,' . $user->id,
+            'namaLengkap'      => $user->isAdmin ? 'nullable|string|max:255' : 'required|string|max:255',
+            'email'            => 'required|email|unique:users,email,' . $user->id,
+            'detailAlamat'     => 'nullable|string',
+            'fotoProfil'       => 'nullable|image|mimes:jpeg,png,jpg|max:10048',
             'current_password' => 'required_with:password',
-            'password'     => 'nullable|min:8',
-            'desaId'       => $user->desaId ? 'nullable' : 'required',
+            'password'         => 'nullable|min:8',
+            'desaId'           => 'nullable',
         ], [
-            'required'              => 'Data wajib diisi!',
-            'noTelp.numeric'        => 'Nomor telepon harus berupa angka.',
-            'noTelp.unique'         => 'Nomor Telpon sudah digunakan.',
-            'noTelp.digits_between' => 'Nomor telepon harus antara 4 sampai 15 digit.',
-            'password.min'          => 'Password baru minimal 8 karakter.',
-            'current_password.required_with' => 'Konfirmasi password lama wajib diisi.',
-            'fotoProfil.image'      => 'File harus berupa gambar.',
-            'fotoProfil.mimes'      => 'Format gambar harus jpeg, png, atau jpg.',
-            'fotoProfil.max'        => 'Ukuran gambar maksimal 10MB.'
+            'required'                        => 'Data wajib diisi!',
+            'noTelp.numeric'                  => 'Nomor telepon harus berupa angka.',
+            'noTelp.unique'                   => 'Nomor Telpon sudah digunakan.',
+            'noTelp.digits_between'           => 'Nomor telepon harus antara 4 sampai 15 digit.',
+            'password.min'                    => 'Password baru minimal 8 karakter.',
+            'current_password.required_with'  => 'Konfirmasi password lama wajib diisi.',
+            'fotoProfil.image'                => 'File harus berupa gambar.',
+            'fotoProfil.mimes'                => 'Format gambar harus jpeg, png, atau jpg.',
+            'fotoProfil.max'                  => 'Ukuran gambar maksimal 10MB.'
         ]);
 
         if ($request->filled('password')) {
@@ -72,7 +72,7 @@ class c_profile extends Controller
         $user->detailAlamat = $request->detailAlamat;
         $user->noTelp = $request->noTelp;
 
-        if (!$user->isAdmin) {
+        if (!$user->isAdmin && $request->has('namaLengkap')) {
             $user->namaLengkap = $request->namaLengkap;
         }
 
@@ -81,7 +81,7 @@ class c_profile extends Controller
         return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
     }
 
-    private function syncWilayah($desaId)
+    private function syncWilayah(string $desaId)
     {
         try {
             $resDesa = Http::get("{$this->baseUrl}/village/{$desaId}.json")->json();

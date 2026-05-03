@@ -16,7 +16,7 @@ class Kecamatan extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = [ 'id', 'kode', 'kabupatenId', 'namaKecamatan' ];
+    protected $fillable = [ 'id', 'kode', 'kabupatenId', 'namaKecamatan', 'biteship_area_id'];
 
     public function kabupaten(): BelongsTo
     {

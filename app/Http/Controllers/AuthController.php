@@ -19,7 +19,6 @@ class AuthController extends Controller
         if (Auth::check()) {
             return $this->redirectByRole(Auth::user());
         }
-
         return view('auth.login');
     }
 
@@ -39,7 +38,6 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             $user = Auth::user();
-
             return $this->redirectByRole($user)->with('success', 'Login Berhasil');
         }
 
@@ -51,7 +49,6 @@ class AuthController extends Controller
         if (Auth::check()) {
             return $this->redirectByRole(Auth::user());
         }
-
         return view('auth.register');
     }
 
@@ -95,7 +92,6 @@ class AuthController extends Controller
         if (!session('register_data')) {
             return redirect()->route('register');
         }
-
         return view('auth.otp');
     }
 
@@ -123,6 +119,27 @@ class AuthController extends Controller
         return $this->redirectByRole($user)->with('success', 'Akun berhasil dibuat.');
     }
 
+    public function resendOtp(Request $request)
+    {
+        if (!session('register_data')) {
+            return redirect()->route('register');
+        }
+
+        $otp = rand(100000, 999999);
+        session([
+            'register_otp' => $otp,
+            'register_otp_expires' => now()->addMinutes(10)
+        ]);
+
+        $email = session('register_data')['email'];
+
+        Mail::raw("Kode OTP AGRIS baru kamu adalah : $otp\nBerlaku 10 menit.", function ($message) use ($email) {
+            $message->to($email)->subject('Resend: Kode OTP Verifikasi AGRIS');
+        });
+
+        return back()->with('success', 'Kode OTP baru telah dikirim.');
+    }
+
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
@@ -147,7 +164,6 @@ class AuthController extends Controller
         );
 
         Auth::login($user, true);
-
         return $this->redirectByRole($user);
     }
 
@@ -156,7 +172,6 @@ class AuthController extends Controller
         if ($user->isAdmin) {
             return redirect()->intended(route('admin.produk.index'));
         }
-
         return redirect()->intended(route('agen.profile'));
     }
 
@@ -165,11 +180,13 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
         return redirect()->route('landing');
     }
 
-    public function forgotPassword() { return view('auth.forgot-password'); }
+    public function forgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
 
     public function sendResetLink(Request $request)
     {
@@ -181,7 +198,10 @@ class AuthController extends Controller
             : back()->withErrors(['email' => 'Email tidak ditemukan.']);
     }
 
-    public function resetForm($token) { return view('auth.reset-password', ['token' => $token, 'email' => request()->email]); }
+    public function resetForm($token)
+    {
+        return view('auth.reset-password', ['token' => $token, 'email' => request()->email]);
+    }
 
     public function resetPassword(Request $request)
     {
@@ -192,11 +212,24 @@ class AuthController extends Controller
         ]);
 
         $status = Password::reset($request->only('email', 'password', 'password_confirmation', 'token'), function ($user, $password) {
-            $user->forceFill(['password' => Hash::make($password)])->save();
+            $user->forceFill([
+                'password' => Hash::make($password),
+                'remember_token' => Str::random(60),
+            ])->save();
         });
 
         return $status === Password::PASSWORD_RESET
             ? redirect()->route('login')->with('success', 'Password berhasil direset.')
             : back()->withErrors(['email' => __($status)]);
+    }
+
+    public function sendVerificationEmail(Request $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return $this->redirectByRole($request->user());
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('success', 'Link verifikasi baru telah dikirim.');
     }
 }

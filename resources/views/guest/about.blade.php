@@ -5,12 +5,21 @@
 @section('content')
 <x-navbar />
 
-<section class="pt-32 pb-20 bg-gray-50 px-6">
-    <div class="max-w-7xl mx-auto text-center">
-        <span class="text-[#58CC02] font-bold tracking-widest uppercase text-sm mb-4 block">Mengenal Lebih Dekat</span>
-        <h1 class="text-5xl font-bold text-gray-800 mb-6">Membangun Masa Depan <br> Pertanian Indonesia</h1>
-        <p class="text-gray-500 max-w-2xl mx-auto text-lg">
-            PT Surya Kencana Agrifarm berkomitmen menyediakan solusi hulu pertanian terbaik melalui benih unggul "Janger" untuk kesejahteraan petani.
+<section class="relative pt-32 pb-20 px-6 overflow-hidden">
+    <div class="absolute inset-0 z-0">
+        <img src="{{ asset('images/jagung.png') }}" class="w-full h-full object-cover" alt="Background">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto text-center">
+        <span class="text-[#58CC02] font-bold tracking-widest uppercase text-sm mb-4 block">
+            Mengenal Lebih Dekat
+        </span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+            Membangun Masa Depan <br> Pertanian Indonesia
+        </h1>
+        <p class="text-gray-200 max-w-2xl mx-auto text-lg leading-relaxed">
+            PT Surya Kencana Agrifarm berkomitmen menyediakan solusi hulu pertanian terbaik melalui benih unggul <span class="text-[#58CC02] font-bold">"Janger"</span> untuk kesejahteraan petani.
         </p>
     </div>
 </section>
@@ -18,7 +27,7 @@
 <section class="py-20 bg-white px-6">
     <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
         <div>
-            <img src="{{ asset('images/about.jpg') }}" class="rounded-3xl shadow-xl w-full h-[450px] object-cover">
+            <img src="{{ asset('images/about.jpg') }}" class="rounded-3xl shadow-xl w-full h-112 object-cover">
         </div>
         <div class="space-y-8">
             <div>
@@ -31,15 +40,15 @@
                 <h2 class="text-3xl font-bold text-gray-800 mb-4">Misi Kami</h2>
                 <ul class="space-y-4">
                     <li class="flex gap-4">
-                        <div class="flex-shrink-0 w-6 h-6 bg-[#58CC02] text-white rounded-full flex items-center justify-center text-xs">1</div>
+                        <div class="shrink-0 w-6 h-6 bg-[#58CC02] text-white rounded-full flex items-center justify-center text-xs">1</div>
                         <p class="text-gray-600">Mengembangkan riset benih yang tahan terhadap hama dan penyakit lokal.</p>
                     </li>
                     <li class="flex gap-4">
-                        <div class="flex-shrink-0 w-6 h-6 bg-[#58CC02] text-white rounded-full flex items-center justify-center text-xs">2</div>
+                        <div class="shrink-0 w-6 h-6 bg-[#58CC02] text-white rounded-full flex items-center justify-center text-xs">2</div>
                         <p class="text-gray-600">Membangun rantai distribusi yang efisien hingga ke pelosok desa.</p>
                     </li>
                     <li class="flex gap-4">
-                        <div class="flex-shrink-0 w-6 h-6 bg-[#58CC02] text-white rounded-full flex items-center justify-center text-xs">3</div>
+                        <div class="shrink-0 w-6 h-6 bg-[#58CC02] text-white rounded-full flex items-center justify-center text-xs">3</div>
                         <p class="text-gray-600">Memberikan edukasi dan pendampingan teknis kepada mitra tani kami.</p>
                     </li>
                 </ul>

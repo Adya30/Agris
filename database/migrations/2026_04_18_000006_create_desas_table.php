@@ -16,6 +16,7 @@ return new class extends Migration
         $table->string('id', 20)->primary();
         $table->string('kecamatanId', 20)->index();
         $table->string('namaDesa', 255);
+        $table->string('kodePos', 10)->nullable();
         $table->timestamps();
 
         $table->foreign('kecamatanId')->references('id')->on('kecamatans')->cascadeOnDelete();

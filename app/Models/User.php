@@ -21,8 +21,6 @@ class User extends Authenticatable
         'password',
         'namaLengkap',
         'email',
-        'jenisKelamin',
-        'tanggalLahir',
         'noTelp',
         'fotoProfil',
         'detailAlamat',

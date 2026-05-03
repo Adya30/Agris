@@ -15,7 +15,7 @@ class Produk extends Model
     protected $fillable = [ 'kategoriId', 'namaProduk', 'fotoProduk', 'stok', 'harga', 'deskripsi', ];
     protected $casts = [
         'harga' => 'decimal:2',
-        'stok'  => 'decimal:2',
+        'stok'  => 'integer',
     ];
 
     public function kategori()

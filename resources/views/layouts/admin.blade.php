@@ -10,14 +10,14 @@
 </head>
 <body class="bg-gray-50 font-sans antialiased">
 
-<div id="progressBarContainer" class="hidden fixed top-0 left-0 w-full h-1 bg-gray-200 z-[9999]">
+<div id="progressBarContainer" class="hidden fixed top-0 left-0 w-full h-1 bg-gray-200 z-110">
     <div id="progressBar" class="h-full bg-[#58CC02] w-0 transition-all duration-300 ease-linear"></div>
 </div>
 
-<div class="fixed bottom-5 right-5 z-[9999] space-y-3">
+<div class="fixed bottom-5 right-5 z-100 space-y-3">
     @if(session('success'))
         <div class="alert-info flex items-center w-full max-w-xs p-4 rounded-2xl shadow-xl border border-green-200 bg-green-50" role="alert">
-            <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-full bg-green-600 text-white">
+            <div class="inline-flex items-center justify-center shrink-0 w-10 h-10 rounded-full bg-green-600 text-white">
                 <i class="fa-solid fa-check text-sm"></i>
             </div>
             <div class="ms-3">
@@ -29,7 +29,7 @@
 
     @if(session('error'))
         <div class="alert-info flex items-center w-full max-w-xs p-4 rounded-2xl shadow-xl border border-red-200 bg-red-50" role="alert">
-            <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-full bg-red-600 text-white">
+            <div class="inline-flex items-center justify-center shrink-0 w-10 h-10 rounded-full bg-red-600 text-white">
                 <i class="fa-solid fa-xmark text-sm"></i>
             </div>
             <div class="ms-3">
@@ -45,7 +45,6 @@
 @endif
 
 <div class="{{ !Route::is('admin.profile') ? 'md:ml-64' : '' }} transition-all duration-300">
-
     @include('components.topbar-admin')
 
     <main class="pt-20 p-8 min-h-screen">
@@ -53,38 +52,38 @@
     </main>
 </div>
 
+@stack('modals')
+
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        const forms = document.querySelectorAll('form');
+        const progressContainer = document.getElementById('progressBarContainer');
+        const progressBar = document.getElementById('progressBar');
 
-    const forms = document.querySelectorAll('form');
-    const progressContainer = document.getElementById('progressBarContainer');
-    const progressBar = document.getElementById('progressBar');
+        forms.forEach(form => {
+            if (form.id !== 'logoutFormReal') {
+                form.addEventListener('submit', function () {
+                    progressContainer.classList.remove('hidden');
+                    let width = 0;
+                    const interval = setInterval(() => {
+                        if (width >= 90) {
+                            clearInterval(interval);
+                        } else {
+                            width += 10;
+                            progressBar.style.width = width + "%";
+                        }
+                    }, 100);
+                });
+            }
+        });
 
-    forms.forEach(form => {
-        if (form.id !== 'logoutFormReal') {
-            form.addEventListener('submit', function () {
-                progressContainer.classList.remove('hidden');
-                let width = 0;
-                const interval = setInterval(() => {
-                    if (width >= 90) {
-                        clearInterval(interval);
-                    } else {
-                        width += 10;
-                        progressBar.style.width = width + "%";
-                    }
-                }, 100);
-            });
-        }
-    });
-
-    (function() {
         const alerts = document.querySelectorAll('.alert-info');
         alerts.forEach(alert => {
             alert.style.opacity = '0';
             alert.style.transform = 'translateX(20px)';
+            alert.style.transition = "all 0.5s ease";
 
             setTimeout(() => {
-                alert.style.transition = "all 0.5s ease";
                 alert.style.opacity = '1';
                 alert.style.transform = 'translateX(0)';
             }, 100);
@@ -92,13 +91,10 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => {
                 alert.style.opacity = '0';
                 alert.style.transform = 'translateX(20px)';
-                setTimeout(() => {
-                    alert.remove();
-                }, 500);
+                setTimeout(() => { alert.remove(); }, 500);
             }, 4000);
         });
-    })();
-});
+    });
 </script>
 </body>
 </html>

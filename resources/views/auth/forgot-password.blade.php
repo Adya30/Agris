@@ -53,9 +53,7 @@
 
         <div class="text-center mt-6 text-sm">
             Kembali ke
-            <a href="{{ route('login') }}"
-            class="text-[#58CC02] font-semibold hover:underline">
-                Login
+            <a href="{{ route('login') }}" class="text-[#58CC02] font-semibold hover:underline"> Login
             </a>
         </div>
 

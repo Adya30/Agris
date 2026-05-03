@@ -1,18 +1,14 @@
 <nav class="fixed top-0 w-full z-50 shadow-md border-b border-white/10">
-    <div class="bg-[#58CC02] py-3 px-6">
+    <div class="bg-[#0f8629] py-3 px-6">
         <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
-            <a href="{{ route('landing') }}" class="flex items-center gap-2">
-                <img src="{{ asset('images/icon.png') }}" class="w-15 h-auto">
-                <span class="text-2xl font-bold text-white uppercase tracking-wider">AGRIS</span>
+            <a href="{{ route('agen.produk.index') }}" class="flex items-center gap-2">
+                <img src="{{ asset('images/icon.png') }}" class="w-15 h-auto" alt="Logo AGRIS">
+                <span class="text-2xl font-bold text-white uppercase">AGRIS</span>
             </a>
 
             <div class="flex-1 max-w-xl hidden md:block px-4">
                 <form action="{{ route('agen.produk.index') }}" method="GET" class="relative flex items-center bg-[#46A302] rounded-full p-1 shadow-inner border border-white/10 group">
-                    <input type="text"
-                           name="search"
-                           value="{{ request('search') }}"
-                           placeholder="Search....."
-                           class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none border-none placeholder-gray-400 transition-all">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari produk di AGRIS..." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none border-none placeholder-gray-400 transition-all">
                     <button type="submit" class="px-4 text-white hover:scale-110 transition-transform">
                         <i class="fa-solid fa-magnifying-glass text-lg"></i>
                     </button>
@@ -20,41 +16,42 @@
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
-                <button id="dropdownBtn" class="group flex items-center gap-3 rounded-full bg-green-600/30 p-1.5 pr-4 transition-all hover:bg-green-600/60 focus:outline-none border border-white/10">
-                    <div class="h-9 w-9 overflow-hidden rounded-full border-2 border-white shadow-sm pointer-events-none">
-                        <img src="{{ auth()->user()->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
+                <div class="relative hidden md:block">
+                    <button id="dropdownBtn" type="button" class="group flex items-center gap-3 rounded-full bg-green-600/30 p-1.5 pr-4 transition-all hover:bg-green-600/60 focus:outline-none">
+                        <div class="h-10 w-10 overflow-hidden rounded-full border-2 border-white pointer-events-none">
+                            <img src="{{ auth()->user()->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
+                        </div>
+                        <div class="flex items-center gap-2 pointer-events-none text-white">
+                            <div class="flex flex-col items-start leading-tight">
+                                <span class="text-sm font-black">{{ auth()->user()->username }}</span>
+                                <span class="text-sm font-bold">Profil</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300" id="dropdownArrow"></i>
+                        </div>
+                    </button>
+
+                    <div id="dropdownMenu" class="hidden absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-60">
+                        <a href="{{ route('agen.profile') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition font-semibold">
+                            <i class="fa-regular fa-id-card mr-3 text-[#0f8629] text-lg"></i> Profil Saya
+                        </a>
+                        <div class="mx-4 border-t border-gray-100 my-1"></div>
+                        <button type="button" id="logoutBtnTrigger" class="w-full flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition font-bold text-left">
+                            <i class="fa-solid fa-right-from-bracket mr-3 text-lg"></i> Logout
+                        </button>
                     </div>
-                    <div class="flex flex-col items-start leading-tight text-white hidden sm:flex pointer-events-none">
-                        <span class="text-[11px] font-bold uppercase opacity-80">Profil</span>
-                    </div>
-                    <i id="dropdownIcon" class="fa-solid fa-chevron-down text-[10px] text-white transition-transform duration-300"></i>
-                </button>
+                </div>
 
                 <button id="hamburger" class="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
-
-                <div id="dropdownMenu" class="hidden absolute right-6 top-16 w-52 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-[60]">
-
-                    <a href="{{ route('agen.profile') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition font-semibold">
-                        <i class="fa-regular fa-id-card mr-3 text-[#58CC02] text-lg"></i> Profil Saya
-                    </a>
-
-                    <div class="mx-4 border-t border-gray-100 my-1"></div>
-
-                    <button type="button" onclick="document.getElementById('logoutForm').submit()" class="w-full flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition font-bold">
-                        <i class="fa-solid fa-right-from-bracket mr-3 text-lg"></i> Logout
-                    </button>
-                    <form action="{{ route('logout') }}" method="POST" id="logoutForm" class="hidden">@csrf</form>
-                </div>
             </div>
         </div>
     </div>
 
-    <div class="bg-[#2D5A01] hidden md:block border-t border-white/5">
+    <div class="bg-[#46A302] hidden md:block border-t border-white/5">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex justify-center items-center gap-10 h-11 text-white/90 text-sm font-bold tracking-wide uppercase">
-                <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-[#58CC02]">Blog</a>
+                <a href="{{ route('agen.blog.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.blog.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Blog</a>
                 <a href="{{ route('agen.produk.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.produk.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Produk</a>
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Transaksi</a>
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Kemitraan</a>
@@ -64,24 +61,57 @@
         </div>
     </div>
 
-    <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-2xl absolute w-full left-0 animate-fade-in-down">
-        <div class="px-6 py-4 space-y-2">
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-2xl absolute w-full left-0 animate-fade-in-down max-h-[calc(100vh-80px)] overflow-y-auto">
+        <div class="px-6 py-6 space-y-4">
+            <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <div class="h-14 w-14 overflow-hidden rounded-full border-2 border-[#0f8629]">
+                    <img src="{{ auth()->user()->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-black text-gray-900 text-lg">{{ auth()->user()->username }}</h4>
+                    <a href="{{ route('agen.profile') }}" class="text-sm font-bold text-[#0f8629] hover:underline">Lihat Profil</a>
+                </div>
+            </div>
+
             <form action="{{ route('agen.produk.index') }}" method="GET" class="mb-4">
-                <div class="relative flex items-center bg-gray-100 rounded-xl px-4 py-2">
+                <div class="relative flex items-center bg-gray-100 rounded-xl px-4 py-3">
                     <i class="fa-solid fa-magnifying-glass text-gray-400 mr-2"></i>
                     <input type="text" name="search" placeholder="Cari produk..." class="bg-transparent w-full focus:outline-none text-sm">
                 </div>
             </form>
 
-            <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700">Blog</a>
-            <a href="{{ route('agen.produk.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.produk.*') ? 'bg-green-50 text-[#58CC02]' : 'hover:bg-gray-50 text-gray-700' }} font-bold">Produk</a>
-            <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700">Transaksi</a>
-            <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-red-500" onclick="document.getElementById('logoutForm').submit()">Logout</a>
+            <div class="grid grid-cols-1 gap-2">
+                <a href="{{ route('agen.blog.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.blog.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base">
+                    <i class="fa-solid fa-newspaper mr-3 w-5 text-center"></i> Blog
+                </a>
+                <a href="{{ route('agen.produk.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.produk.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base">
+                    <i class="fa-solid fa-box mr-3 w-5 text-center"></i> Produk
+                </a>
+                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
+                    <i class="fa-solid fa-receipt mr-3 w-5 text-center"></i> Transaksi
+                </a>
+                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
+                    <i class="fa-solid fa-handshake mr-3 w-5 text-center"></i> Kemitraan
+                </a>
+                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
+                    <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Konsultasi
+                </a>
+                <div class="my-2 border-t border-gray-100"></div>
+                <button type="button" class="logoutMobileBtn w-full flex items-center py-4 px-4 rounded-xl hover:bg-red-50 font-black text-red-500 transition-all">
+                    <i class="fa-solid fa-right-from-bracket mr-3 w-5 text-center"></i> Logout dari Akun
+                </button>
+            </div>
         </div>
     </div>
 </nav>
 
 <div class="h-20 md:h-28"></div>
+
+<x-modal id="logoutModal" title="Konfirmasi Logout" message="Apakah Anda yakin ingin keluar dari AGRIS?" confirmText="Iya" cancelText="Batal" confirmId="confirmLogoutBtn" cancelId="closeLogoutBtn" />
+
+<form id="logoutFormReal" action="{{ route('logout') }}" method="POST" class="hidden">
+    @csrf
+</form>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -89,28 +119,59 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileMenu = document.getElementById('mobileMenu');
     const dropdownBtn = document.getElementById('dropdownBtn');
     const dropdownMenu = document.getElementById('dropdownMenu');
-    const dropdownIcon = document.getElementById('dropdownIcon');
+    const dropdownArrow = document.getElementById('dropdownArrow');
 
-    hamburger.addEventListener('click', function(e) {
+    const closeAllMenus = () => {
+        dropdownMenu?.classList.add('hidden');
+        mobileMenu?.classList.add('hidden');
+        if (dropdownArrow) dropdownArrow.style.transform = 'rotate(0deg)';
+    };
+
+    const triggerLogout = () => {
+        closeAllMenus();
+        if (typeof openModal === 'function') {
+            openModal('logoutModal');
+        } else {
+            document.getElementById('logoutModal')?.classList.remove('hidden');
+        }
+    };
+
+    dropdownBtn?.addEventListener('click', function(e) {
         e.stopPropagation();
-        mobileMenu.classList.toggle('hidden');
-        dropdownMenu.classList.add('hidden');
+        mobileMenu?.classList.add('hidden');
+        const isHidden = dropdownMenu.classList.toggle('hidden');
+        if (dropdownArrow) dropdownArrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
     });
 
-    dropdownBtn.addEventListener('click', function(e) {
+    hamburger?.addEventListener('click', function(e) {
         e.stopPropagation();
-        dropdownMenu.classList.toggle('hidden');
-        if(dropdownIcon) dropdownIcon.style.transform = dropdownMenu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
-        mobileMenu.classList.add('hidden');
+        dropdownMenu?.classList.add('hidden');
+        mobileMenu.classList.toggle('hidden');
     });
 
     document.addEventListener('click', function(e) {
-        if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-            dropdownMenu.classList.add('hidden');
-            if(dropdownIcon) dropdownIcon.style.transform = 'rotate(0deg)';
+        if (!e.target.closest('#dropdownBtn') && !e.target.closest('#dropdownMenu')) {
+            dropdownMenu?.classList.add('hidden');
+            if (dropdownArrow) dropdownArrow.style.transform = 'rotate(0deg)';
         }
-        if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
-            mobileMenu.classList.add('hidden');
+        if (!e.target.closest('#hamburger') && !e.target.closest('#mobileMenu')) {
+            mobileMenu?.classList.add('hidden');
+        }
+    });
+
+    document.getElementById('logoutBtnTrigger')?.addEventListener('click', triggerLogout);
+    document.querySelector('.logoutMobileBtn')?.addEventListener('click', triggerLogout);
+
+    document.getElementById('confirmLogoutBtn')?.addEventListener('click', function() {
+        const realForm = document.getElementById('logoutFormReal');
+        if (realForm) realForm.submit();
+    });
+
+    document.getElementById('closeLogoutBtn')?.addEventListener('click', function() {
+        if (typeof closeModal === 'function') {
+            closeModal('logoutModal');
+        } else {
+            document.getElementById('logoutModal')?.classList.add('hidden');
         }
     });
 });
