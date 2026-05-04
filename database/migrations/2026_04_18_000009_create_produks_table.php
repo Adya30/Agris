@@ -15,7 +15,7 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->ulid('id')->primary();
             $table->foreignUlid('kategoriId')->constrained('kategori_produks')->restrictOnDelete();
-            $table->string('fotoProduk', 255)->nullable();
+            $table->longText('fotoProduk')->nullable();
             $table->string('namaProduk', 150);
             $table->integer('stok')->default(0);
             $table->decimal('harga', 15, 2);

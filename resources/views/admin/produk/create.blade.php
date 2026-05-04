@@ -12,7 +12,6 @@
         @csrf
         <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden mx-4 md:mx-0 shadow-sm">
             <div class="flex flex-col lg:flex-row">
-
                 <div class="lg:w-1/3 bg-gray-50 p-8 border-b lg:border-b-0 lg:border-r border-gray-200">
                     <div class="flex flex-col items-center">
                         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Foto Produk</span>
@@ -32,10 +31,8 @@
                                 class="absolute inset-0 opacity-0 cursor-pointer"
                                 onchange="previewImage(this)">
                         </div>
-
                         <p class="text-[10px] text-gray-400 mt-2 font-medium text-center">Format: JPG, JPEG, PNG (Maks. 10MB)</p>
                         <div id="clientError" class="hidden text-red-500 text-[11px] mt-1 font-semibold italic text-center"></div>
-
                         @error('fotoProduk')
                             <p class="text-red-500 text-[11px] mt-1 font-semibold italic text-center">{{ $message }}</p>
                         @enderror
@@ -44,7 +41,6 @@
 
                 <div class="lg:w-2/3 p-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
                         <div class="md:col-span-2">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Varietas Benih</label>
                             <input type="text" name="namaProduk" value="{{ old('namaProduk') }}"
@@ -147,14 +143,12 @@
 
         if (input.files && input.files[0]) {
             const file = input.files[0];
-
             if (file.size > 10 * 1024 * 1024) {
                 errorDiv.textContent = "Ukuran file terlalu besar!";
                 errorDiv.classList.remove('hidden');
                 input.value = "";
                 return;
             }
-
             errorDiv.classList.add('hidden');
             const reader = new FileReader();
             reader.onload = function(e) {

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Wawasan Pertanian - AGRIS')
+@section('title', 'Blog - AGRIS')
 
 @section('content')
 <x-navbar/>
@@ -25,13 +25,13 @@
 </section>
 
 <section class="relative pt-10 pb-20 bg-gray-50 px-6">
-
+    <div class="max-w-7xl mx-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($blogs as $blog)
-            <div class="group bg-white rounded-4xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 flex flex-col">
+            <a href="{{ route('guest.blog.show', $blog->id) }}" class="group bg-white rounded-4xl overflow-hidden shadow-sm border border-gray-100 flex flex-col">
                 <div class="relative h-64 overflow-hidden">
                     @if($blog->fotoBlog)
-                        <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <img src="{{ $blog->fotoBlog }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                     @else
                         <div class="w-full h-full bg-green-50 flex items-center justify-center text-green-200">
                             <i class="fa-solid fa-image text-5xl"></i>
@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="p-8 flex flex-col flex-1">
-                    <h3 class="text-xl font-bold text-slate-900 mb-4 leading-tight group-hover:text-green-600 transition-colors">
+                    <h3 class="text-xl font-bold text-slate-900 mb-4 leading-tight group-hover:text-[#58CC02] transition-colors">
                         {{ $blog->judulBlog }}
                     </h3>
 
@@ -58,12 +58,12 @@
                             <img src="{{ $blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin').'&background=f0fdf4&color=166534' }}" class="h-10 w-10 rounded-full object-cover border border-gray-100">
                             <span class="text-sm font-bold text-slate-700">{{ $blog->user->username ?? 'Admin' }}</span>
                         </div>
-                        <a href="{{ route('guest.blog.show', $blog->id) }}" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-slate-400 group-hover:bg-green-600 group-hover:text-white transition-all">
+                        <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-slate-400 group-hover:bg-[#58CC02] group-hover:text-white transition-all">
                             <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
             @empty
             <div class="col-span-full py-24 text-center bg-white rounded-[40px] border-2 border-dashed border-gray-200">
                 <i class="fa-solid fa-box-open text-6xl text-gray-200 mb-6"></i>

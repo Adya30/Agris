@@ -12,12 +12,11 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         @forelse($blogs as $blog)
         <div class="group relative bg-white rounded-[40px] overflow-hidden shadow-sm">
-
             <a href="{{ route('agen.blog.show', $blog->id) }}" class="absolute inset-0 z-20"></a>
 
             <div class="relative h-72 w-full overflow-hidden">
                 @if($blog->fotoBlog)
-                    <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                    <img src="{{ $blog->fotoBlog }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                 @else
                     <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
                         <i class="fa-solid fa-image text-5xl"></i>
@@ -30,9 +29,9 @@
                     {{ $blog->judulBlog }}
                 </h3>
 
-            <div class="text-gray-500 text-base leading-relaxed line-clamp-3 mb-10">
-                {{ Str::limit(strip_tags($blog->isiBlog), 150, '...') }}
-            </div>
+                <div class="text-gray-500 text-base leading-relaxed line-clamp-3 mb-10">
+                    {{ Str::limit(strip_tags($blog->isiBlog), 150, '...') }}
+                </div>
 
                 <div class="mt-auto pt-8 flex items-center justify-between border-t border-gray-50">
                     <div class="flex items-center gap-4">

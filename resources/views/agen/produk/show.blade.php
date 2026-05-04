@@ -14,7 +14,7 @@
             <div class="p-6 md:p-10 bg-gray-50 flex items-center justify-center">
                 <div class="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg bg-white">
                     @if($item->fotoProduk)
-                        <img src="{{ asset('storage/'.$item->fotoProduk) }}" class="w-full h-full object-cover" alt="{{ $item->namaProduk }}">
+                        <img src="{{ $item->fotoProduk }}" class="w-full h-full object-cover" alt="{{ $item->namaProduk }}">
                     @else
                         <div class="flex flex-col items-center justify-center h-full text-gray-300">
                             <i class="fa-solid fa-image text-8xl mb-4"></i>

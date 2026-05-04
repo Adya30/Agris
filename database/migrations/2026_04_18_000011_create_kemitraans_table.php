@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-    * Run the migrations.
-    */
     public function up(): void
     {
         Schema::create('kemitraans', function (Blueprint $table) {
@@ -16,15 +13,13 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->foreignUlid('userId')->constrained('users')->cascadeOnDelete();
             $table->date('tanggalPengajuan');
-            $table->enum('statusPengajuan', ['diproses','disetujui','ditolak'])->default('diproses');
-            $table->string('fileKemitraan', 255);
+            $table->enum('statusPengajuan', [ 'diproses', 'Menunggu Upload MOU', 'Menunggu Verifikasi MOU', 'Aktif', 'Ditolak'
+            ])->default('diproses');
+            $table->longText('fileKemitraan')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('kemitraans');

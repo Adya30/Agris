@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignUlid('userId')->constrained('users')->restrictOnDelete();
             $table->string('judulBlog', 200);
             $table->text('isiBlog');
-            $table->string('fotoBlog', 255)->nullable();
+            $table->longText('fotoBlog')->nullable();
             $table->date('tanggalBlog')->nullable();
             $table->timestamps();
             $table->index('judulBlog');

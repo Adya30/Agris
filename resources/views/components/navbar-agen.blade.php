@@ -16,6 +16,11 @@
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
+                <!-- Chat link untuk Mobile di sebelah Profil -->
+                <a href="#" class="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-green-600/30 text-white hover:bg-green-600/60 transition-all">
+                    <i class="fa-solid fa-comments text-lg"></i>
+                </a>
+
                 <div class="relative hidden md:block">
                     <button id="dropdownBtn" type="button" class="group flex items-center gap-3 rounded-full bg-green-600/30 p-1.5 pr-4 transition-all hover:bg-green-600/60 focus:outline-none">
                         <div class="h-10 w-10 overflow-hidden rounded-full border-2 border-white pointer-events-none">
@@ -48,21 +53,25 @@
         </div>
     </div>
 
+    <!-- Sub Navbar Desktop -->
     <div class="bg-[#46A302] hidden md:block border-t border-white/5">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex justify-center items-center gap-10 h-11 text-white/90 text-sm font-bold tracking-wide uppercase">
                 <a href="{{ route('agen.blog.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.blog.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Blog</a>
                 <a href="{{ route('agen.produk.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.produk.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Produk</a>
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Transaksi</a>
-                <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Kemitraan</a>
+                <a href="{{ route('kemitraan.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.kemitraan.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Kemitraan</a>
+                <!-- Link Chat Desktop sementara # -->
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Chat</a>
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Konsultasi</a>
             </div>
         </div>
     </div>
 
+    <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-2xl absolute w-full left-0 animate-fade-in-down max-h-[calc(100vh-80px)] overflow-y-auto">
         <div class="px-6 py-6 space-y-4">
+            <!-- User Info di Mobile -->
             <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                 <div class="h-14 w-14 overflow-hidden rounded-full border-2 border-[#0f8629]">
                     <img src="{{ auth()->user()->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
@@ -72,13 +81,6 @@
                     <a href="{{ route('agen.profile') }}" class="text-sm font-bold text-[#0f8629] hover:underline">Lihat Profil</a>
                 </div>
             </div>
-
-            <form action="{{ route('agen.produk.index') }}" method="GET" class="mb-4">
-                <div class="relative flex items-center bg-gray-100 rounded-xl px-4 py-3">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400 mr-2"></i>
-                    <input type="text" name="search" placeholder="Cari produk..." class="bg-transparent w-full focus:outline-none text-sm">
-                </div>
-            </form>
 
             <div class="grid grid-cols-1 gap-2">
                 <a href="{{ route('agen.blog.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.blog.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base">
@@ -90,11 +92,15 @@
                 <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
                     <i class="fa-solid fa-receipt mr-3 w-5 text-center"></i> Transaksi
                 </a>
-                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
+                <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
                     <i class="fa-solid fa-handshake mr-3 w-5 text-center"></i> Kemitraan
                 </a>
+                <!-- Link Chat Mobile sementara # -->
                 <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
-                    <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Konsultasi
+                    <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Chat
+                </a>
+                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
+                    <i class="fa-solid fa-headset mr-3 w-5 text-center"></i> Konsultasi
                 </a>
                 <div class="my-2 border-t border-gray-100"></div>
                 <button type="button" class="logoutMobileBtn w-full flex items-center py-4 px-4 rounded-xl hover:bg-red-50 font-black text-red-500 transition-all">
@@ -127,15 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dropdownArrow) dropdownArrow.style.transform = 'rotate(0deg)';
     };
 
-    const triggerLogout = () => {
-        closeAllMenus();
-        if (typeof openModal === 'function') {
-            openModal('logoutModal');
-        } else {
-            document.getElementById('logoutModal')?.classList.remove('hidden');
-        }
-    };
-
     dropdownBtn?.addEventListener('click', function(e) {
         e.stopPropagation();
         mobileMenu?.classList.add('hidden');
@@ -159,20 +156,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    document.getElementById('logoutBtnTrigger')?.addEventListener('click', triggerLogout);
-    document.querySelector('.logoutMobileBtn')?.addEventListener('click', triggerLogout);
+    document.getElementById('logoutBtnTrigger')?.addEventListener('click', () => {
+        closeAllMenus();
+        openModal('logoutModal');
+    });
+
+    document.querySelector('.logoutMobileBtn')?.addEventListener('click', () => {
+        closeAllMenus();
+        openModal('logoutModal');
+    });
 
     document.getElementById('confirmLogoutBtn')?.addEventListener('click', function() {
-        const realForm = document.getElementById('logoutFormReal');
-        if (realForm) realForm.submit();
+        document.getElementById('logoutFormReal')?.submit();
     });
 
     document.getElementById('closeLogoutBtn')?.addEventListener('click', function() {
-        if (typeof closeModal === 'function') {
-            closeModal('logoutModal');
-        } else {
-            document.getElementById('logoutModal')?.classList.add('hidden');
-        }
+        closeModal('logoutModal');
     });
 });
 </script>

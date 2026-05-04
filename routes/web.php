@@ -6,6 +6,7 @@ use App\Http\Controllers\c_profile;
 use App\Http\Controllers\c_wilayah;
 use App\Http\Controllers\c_produk;
 use App\Http\Controllers\c_blog;
+use App\Http\Controllers\c_kemitraan;
 
 Route::get('/', function () {
     return view('guest.landing');
@@ -55,6 +56,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/blog', [c_blog::class, 'indexAgen'])->name('agen.blog.index');
         Route::get('/blog/{id}', [c_blog::class, 'showAgen'])->name('agen.blog.show');
+
+        Route::get('/kemitraan', [c_kemitraan::class, 'index'])->name('kemitraan.index');
+        Route::get('/kemitraan/ajukan', [c_kemitraan::class, 'create'])->name('kemitraan.create');
+        Route::post('/kemitraan', [c_kemitraan::class, 'store'])->name('kemitraan.store');
+        Route::post('/kemitraan/upload-mou/{id}', [c_kemitraan::class, 'uploadMou'])->name('kemitraan.uploadMou');
     });
 
     Route::prefix('admin')->middleware('isAdmin')->name('admin.')->group(function () {
@@ -72,6 +78,11 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('produk', c_produk::class);
         Route::resource('blog', c_blog::class);
+
+        Route::get('/kemitraan', [c_kemitraan::class, 'index'])->name('kemitraan.index');
+        Route::get('/kemitraan/{id}', [c_kemitraan::class, 'show'])->name('kemitraan.show');
+        Route::post('/kemitraan/action/{id}', [c_kemitraan::class, 'adminAction'])->name('kemitraan.action');
+        Route::post('/kemitraan/verify-mou/{id}', [c_kemitraan::class, 'verifyMou'])->name('kemitraan.verifyMou');
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

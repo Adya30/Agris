@@ -7,7 +7,7 @@
 
 <section class="relative pt-32 pb-20 px-6 overflow-hidden">
     <div class="absolute inset-0 z-0">
-        <img src="{{ asset('images/jagung.png') }}" class="w-full h-full object-cover" alt="Background">
+        <img src="{{ asset('images/hero.jpg') }}" class="w-full h-full object-cover" alt="Background">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
     </div>
 

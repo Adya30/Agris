@@ -11,17 +11,6 @@
         </div>
     </div>
 
-    @if ($errors->any())
-    <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 mx-4 md:mx-0 rounded-r-xl shadow-sm">
-        <p class="text-sm font-bold">Terjadi kesalahan input:</p>
-        <ul class="list-disc list-inside text-xs mt-1">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-
     <form action="{{ route('admin.produk.update', $produk->id) }}" method="POST" enctype="multipart/form-data" id="formProduk">
         @csrf
         @method('PUT')
@@ -37,7 +26,7 @@
                                 'border-gray-300' => !$errors->has('fotoProduk'),
                             ])>
                                 @if($produk->fotoProduk)
-                                    <img id="previewImg" src="{{ asset('storage/'.$produk->fotoProduk) }}" class="w-full h-full object-cover">
+                                    <img id="previewImg" src="{{ $produk->fotoProduk }}" class="w-full h-full object-cover">
                                     <div id="placeholderIcon" class="hidden text-center text-gray-300 group-hover:text-gray-400">
                                         <i class="fa-solid fa-camera text-3xl mb-1"></i>
                                         <p class="text-[10px] font-medium">Ganti Foto</p>
@@ -54,6 +43,9 @@
                                 class="absolute inset-0 opacity-0 cursor-pointer"
                                 onchange="previewImage(this)">
                         </div>
+                        @error('fotoProduk')
+                            <p class="text-[10px] text-red-500 mt-2 font-bold">{{ $message }}</p>
+                        @enderror
                         <p class="text-[10px] text-gray-400 mt-2 font-medium text-center">Format: JPG, JPEG, PNG (Maks. 10MB)</p>
                     </div>
                 </div>
@@ -64,6 +56,9 @@
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Varietas Benih</label>
                             <input type="text" name="namaProduk" value="{{ old('namaProduk', $produk->namaProduk) }}"
                                 @class([ 'w-full px-4 py-3 rounded-xl border outline-none transition focus:ring-1 focus:ring-[#58CC02] focus:border-[#58CC02]', 'border-red-500' => $errors->has('namaProduk'), 'border-gray-300' => !$errors->has('namaProduk'), ])>
+                            @error('namaProduk')
+                                <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="md:col-span-1">
@@ -76,6 +71,9 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('jenis')
+                                <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="md:col-span-1">
@@ -83,19 +81,27 @@
                             <select name="mutu" id="selectMutu" @class(['w-full px-4 py-3 rounded-xl border outline-none bg-white appearance-none', 'border-red-500' => $errors->has('mutu'), 'border-gray-300' => !$errors->has('mutu')])>
                                 <option value="">-- Pilih Mutu --</option>
                             </select>
+                            @error('mutu')
+                                <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="md:col-span-1">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Berat Karung (Kg)</label>
                             <input type="number" name="karung" step="0.1" min="0" value="{{ old('karung', $produk->kategori->karung) }}"
-                                @class([ 'w-full px-4 py-3 rounded-xl border outline-none transition focus:border-[#58CC02]', 'border-red-500' => $errors->has('karung'), 'border-gray-300' => !$errors->has('karung'), ])
-                                placeholder="Contoh: 5">
+                                @class([ 'w-full px-4 py-3 rounded-xl border outline-none transition focus:border-[#58CC02]', 'border-red-500' => $errors->has('karung'), 'border-gray-300' => !$errors->has('karung'), ])>
+                            @error('karung')
+                                <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="md:col-span-1">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Stok (Karung)</label>
                             <input type="number" name="stok" step="1" min="0" value="{{ old('stok', $produk->stok) }}"
                                 @class([ 'w-full px-4 py-3 rounded-xl border outline-none transition focus:border-[#58CC02]', 'border-red-500' => $errors->has('stok'), 'border-gray-300' => !$errors->has('stok'), ])>
+                            @error('stok')
+                                <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="md:col-span-2">
@@ -104,11 +110,17 @@
                                 @class([ 'w-full px-4 py-3 rounded-xl border outline-none font-bold text-gray-800 transition focus:border-[#58CC02]', 'border-red-500' => $errors->has('harga'), 'border-gray-300' => !$errors->has('harga'), ])
                                 placeholder="0" oninput="formatRupiah(this)">
                             <input type="number" name="harga" id="hargaAsli" value="{{ old('harga', (int)$produk->getAttributes()['harga']) }}" class="hidden">
+                            @error('harga')
+                                <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="md:col-span-2">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan</label>
                             <textarea name="deskripsi" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-300 outline-none resize-none focus:border-[#58CC02]">{{ old('deskripsi', $produk->deskripsi) }}</textarea>
+                            @error('deskripsi')
+                                <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -152,12 +164,10 @@
     window.onload = function() {
         const initialJenis = "{{ old('jenis', $produk->kategori->jenisKategori) }}";
         const initialMutu = "{{ old('mutu', $produk->kategori->mutu) }}";
-
         if (initialJenis) {
             const filteredMutu = [...new Set(dataKategori.filter(k => k.jenisKategori === initialJenis).map(k => k.mutu))];
             populateDropdown(selectMutu, filteredMutu, initialMutu);
         }
-
         if (hargaAsli.value) {
             hargaVisual.value = new Intl.NumberFormat('id-ID').format(hargaAsli.value);
         }

@@ -10,27 +10,22 @@
             <a href="{{ route('admin.blog.edit', $blog->id) }}" class="bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-600 transition-all shadow-lg shadow-blue-100">
                 <i class="fa-solid fa-pen-to-square"></i> Edit
             </a>
-
-            <form action="{{ route('admin.blog.destroy', $blog->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus artikel ini?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="bg-red-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-red-600 transition-all shadow-lg shadow-red-100">
-                    <i class="fa-solid fa-trash"></i> Hapus
-                </button>
-            </form>
+            <button type="button" onclick="openModal('modalHapus')" class="bg-red-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-red-600 transition-all shadow-lg shadow-red-100">
+                <i class="fa-solid fa-trash"></i> Hapus
+            </button>
         </div>
     </div>
 
     <div class="bg-white rounded-[48px] border border-gray-100 shadow-sm overflow-hidden">
         @if($blog->fotoBlog)
             <div class="w-full h-100 overflow-hidden">
-                <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover">
+                <img src="{{ $blog->fotoBlog }}" class="w-full h-full object-cover">
             </div>
         @endif
 
         <div class="p-12">
             <div class="flex items-center gap-4 mb-8">
-                <div class="w-12 h-12 rounded-full bg-[#0f8629] flex items-center justify-center text-white font-bold">
+                <div class="w-12 h-12 rounded-full bg-[#0f8629] flex items-center justify-center text-white font-bold overflow-hidden">
                     <img src="{{ $blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin') }}" class="h-full w-full object-cover rounded-full">
                 </div>
                 <div>
@@ -55,4 +50,22 @@
         </div>
     </div>
 </div>
+
+<x-modal id="modalHapus" title="Hapus Artikel?" message="Artikel akan dihapus secara permanen dari sistem dan tidak dapat dikembalikan." confirmText="Iya" cancelText="Batal" confirmId="btnConfirmDelete" cancelId="btnCancelDelete" />
+
+<form id="delete-form" action="{{ route('admin.blog.destroy', $blog->id) }}" method="POST" class="hidden">
+    @csrf
+    @method('DELETE')
+</form>
+
+<script>
+    document.getElementById('btnConfirmDelete').addEventListener('click', function() {
+        this.disabled = true;
+        document.getElementById('delete-form').submit();
+    });
+
+    document.getElementById('btnCancelDelete').addEventListener('click', function() {
+        closeModal('modalHapus');
+    });
+</script>
 @endsection

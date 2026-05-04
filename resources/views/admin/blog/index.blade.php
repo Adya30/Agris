@@ -15,12 +15,10 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         @forelse($blogs as $blog)
         <div class="group relative bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl flex flex-col border border-gray-100">
-
             <a href="{{ route('admin.blog.show', $blog->id) }}" class="absolute inset-0 z-20" aria-label="Lihat {{ $blog->judulBlog }}"></a>
-
             <div class="relative h-72 w-full overflow-hidden">
                 @if($blog->fotoBlog)
-                    <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                    <img src="{{ $blog->fotoBlog }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                 @else
                     <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
                         <i class="fa-solid fa-image text-5xl"></i>
@@ -32,11 +30,9 @@
                 <h3 class="text-3xl font-black text-gray-900 mb-5 leading-tight transition-colors">
                     {{ $blog->judulBlog }}
                 </h3>
-
                 <div class="text-gray-500 text-base leading-relaxed line-clamp-3 mb-10">
                     {{ strip_tags($blog->isiBlog) }}
                 </div>
-
                 <div class="mt-auto pt-8 flex items-center justify-between border-t border-gray-50">
                     <div class="flex items-center gap-4">
                         <div class="h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow-sm bg-gray-100">
@@ -48,7 +44,6 @@
                             <p class="text-xs font-bold text-gray-400">{{ $blog->tanggalBlog->diffForHumans() }}</p>
                         </div>
                     </div>
-
                     <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-300 group-hover:bg-[#58CC02] group-hover:text-white transition-all duration-300">
                         <i class="fa-solid fa-arrow-right"></i>
                     </div>

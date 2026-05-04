@@ -11,7 +11,7 @@
     <div class="bg-white rounded-[48px] border border-gray-100 shadow-sm overflow-hidden">
         @if($blog->fotoBlog)
             <div class="w-full h-100 overflow-hidden">
-                <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover">
+                <img src="{{ $blog->fotoBlog }}" class="w-full h-full object-cover">
             </div>
         @endif
 

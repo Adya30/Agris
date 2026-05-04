@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Produk;
 use App\Models\KategoriProduk;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class c_produk extends Controller
 {
@@ -102,7 +101,9 @@ class c_produk extends Controller
             $data['kategoriId'] = $kategori->id;
 
             if ($request->hasFile('fotoProduk')) {
-                $data['fotoProduk'] = $request->file('fotoProduk')->store('produk', 'public');
+                $file = $request->file('fotoProduk');
+                $base64 = 'data:' . $file->getClientMimeType() . ';base64,' . base64_encode(file_get_contents($file));
+                $data['fotoProduk'] = $base64;
             }
 
             Produk::create($data);
@@ -149,10 +150,9 @@ class c_produk extends Controller
             $data['kategoriId'] = $kategori->id;
 
             if ($request->hasFile('fotoProduk')) {
-                if ($produk->fotoProduk) {
-                    Storage::disk('public')->delete($produk->fotoProduk);
-                }
-                $data['fotoProduk'] = $request->file('fotoProduk')->store('produk', 'public');
+                $file = $request->file('fotoProduk');
+                $base64 = 'data:' . $file->getClientMimeType() . ';base64,' . base64_encode(file_get_contents($file));
+                $data['fotoProduk'] = $base64;
             }
 
             $produk->update($data);
@@ -191,9 +191,6 @@ class c_produk extends Controller
     public function forceDelete(string $id)
     {
         $produk = Produk::onlyTrashed()->findOrFail($id);
-        if ($produk->fotoProduk) {
-            Storage::disk('public')->delete($produk->fotoProduk);
-        }
         $produk->forceDelete();
         return redirect()->back()->with('success', 'Produk dihapus permanen.');
     }

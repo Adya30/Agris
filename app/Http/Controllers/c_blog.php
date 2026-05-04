@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
 class c_blog extends Controller
@@ -39,6 +37,8 @@ class c_blog extends Controller
             'judulBlog' => 'required|max:200',
             'isiBlog' => 'required',
             'fotoBlog' => 'nullable|image|mimes:jpg,jpeg,png|max:10120',
+        ],[
+            'required' => 'Data harus diisi!'
         ]);
 
         $blog = new Blog();
@@ -48,7 +48,11 @@ class c_blog extends Controller
         $blog->tanggalBlog = now();
 
         if ($request->hasFile('fotoBlog')) {
-            $blog->fotoBlog = $request->file('fotoBlog')->store('blog', 'public');
+            $file = $request->file('fotoBlog');
+            $tipe = $file->getClientOriginalExtension();
+            $data = file_get_contents($file->getRealPath());
+            $base64 = 'data:image/' . $tipe . ';base64,' . base64_encode($data);
+            $blog->fotoBlog = $base64;
         }
 
         $blog->save();
@@ -86,6 +90,8 @@ class c_blog extends Controller
             'judulBlog' => 'required|max:200',
             'isiBlog' => 'required',
             'fotoBlog' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ],[
+            'required' => 'Data harus diisi!'
         ]);
 
         $blog = Blog::findOrFail($id);
@@ -93,10 +99,11 @@ class c_blog extends Controller
         $blog->isiBlog = $request->isiBlog;
 
         if ($request->hasFile('fotoBlog')) {
-            if ($blog->fotoBlog) {
-                Storage::disk('public')->delete($blog->fotoBlog);
-            }
-            $blog->fotoBlog = $request->file('fotoBlog')->store('blog', 'public');
+            $file = $request->file('fotoBlog');
+            $tipe = $file->getClientOriginalExtension();
+            $data = file_get_contents($file->getRealPath());
+            $base64 = 'data:image/' . $tipe . ';base64,' . base64_encode($data);
+            $blog->fotoBlog = $base64;
         }
 
         $blog->save();
@@ -107,10 +114,8 @@ class c_blog extends Controller
     public function destroy(string $id)
     {
         $blog = Blog::findOrFail($id);
-        if ($blog->fotoBlog) {
-            Storage::disk('public')->delete($blog->fotoBlog);
-        }
         $blog->delete();
-        return back()->with('success', 'Artikel berhasil dihapus');
+
+        return redirect()->route('admin.blog.index')->with('success', 'Artikel berhasil dihapus');
     }
 }

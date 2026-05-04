@@ -1,7 +1,7 @@
 <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 px-6 bg-[#0f8629]/60 backdrop-blur-lg">
     <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-center h-17">
-            <a href="#" class="flex items-center gap-3 text-2xl font-bold text-white tracking-tight">
+            <a href="{{ route('landing') }}" class="flex items-center gap-3 text-2xl font-bold text-white tracking-tight">
                 <img src="{{ asset('images/icon.png') }}" class="w-10 h-auto drop-shadow-md" alt="Logo AGRIS">
                 <span>AGRIS</span>
             </a>
