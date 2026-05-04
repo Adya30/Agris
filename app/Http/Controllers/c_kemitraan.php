@@ -60,8 +60,6 @@ class c_kemitraan extends Controller
             'noTelp' => $request->noTelp,
             'detailAlamat' => $request->detailAlamat,
             'desaId' => $request->desaId
-        ],[
-            'required' => 'Data harus diisi!'
         ]);
 
         Kemitraan::updateOrCreate(
@@ -76,7 +74,7 @@ class c_kemitraan extends Controller
         return redirect()->route('kemitraan.index')->with('success', 'Pengajuan berhasil dikirim.');
     }
 
-    public function adminAction(Request $request, $id)
+    public function adminAction(Request $request, string $id)
     {
         $request->validate([
             'action' => 'required|in:setujui,tolak,hentikan',
@@ -86,20 +84,17 @@ class c_kemitraan extends Controller
 
         if ($request->action === 'setujui') {
             $kemitraan->update(['statusPengajuan' => 'Menunggu Upload MOU']);
-            $msg = 'Biodata disetujui. Menunggu agen mengunggah MOU.';
         } elseif ($request->action === 'tolak') {
             $kemitraan->update(['statusPengajuan' => 'Ditolak']);
-            $msg = 'Pengajuan kemitraan telah ditolak.';
         } elseif ($request->action === 'hentikan') {
             $kemitraan->update(['statusPengajuan' => 'Ditolak']);
             User::where('id', $kemitraan->userId)->update(['isActive' => 0]);
-            $msg = 'Kemitraan dihentikan. Agen dapat mengajukan ulang jika diperlukan.';
         }
 
-        return redirect()->route('admin.kemitraan.index')->with('success', $msg);
+        return redirect()->route('admin.kemitraan.show', $id)->with('success', 'Aksi berhasil dilakukan.');
     }
 
-    public function uploadMou(Request $request, $id)
+    public function uploadMou(Request $request, string $id)
     {
         $request->validate([
             'fileKemitraan' => 'required|mimes:pdf|max:10240',
@@ -121,23 +116,30 @@ class c_kemitraan extends Controller
         return redirect()->back()->with('success', 'File MOU berhasil diunggah.');
     }
 
-    public function verifyMou(Request $request, $id)
+    public function verifyMou(Request $request, string $id)
     {
         $request->validate([
-            'status' => 'required|in:Aktif,Ditolak',
+            'status' => 'required|in:Aktif,Menunggu Upload MOU',
         ]);
 
         $kemitraan = Kemitraan::findOrFail($id);
-        $kemitraan->update(['statusPengajuan' => $request->status]);
+
+        $updateData = ['statusPengajuan' => $request->status];
+
+        if ($request->status === 'Menunggu Upload MOU') {
+            $updateData['fileKemitraan'] = null;
+        }
+
+        $kemitraan->update($updateData);
 
         if ($request->status === 'Aktif') {
             User::where('id', $kemitraan->userId)->update(['isActive' => 1]);
         }
 
-        return redirect()->route('admin.kemitraan.index')->with('success', 'Verifikasi MOU selesai.');
+        return redirect()->route('admin.kemitraan.index')->with('success', 'Verifikasi dokumen selesai.');
     }
 
-    public function show($id)
+    public function show(string $id)
     {
         $kemitraan = Kemitraan::with(['user.desa.kecamatan.kabupaten.provinsi'])->findOrFail($id);
         return view('admin.kemitraan.show', compact('kemitraan'));
@@ -149,14 +151,13 @@ class c_kemitraan extends Controller
             $resDesa = Http::get("{$this->baseUrl}/village/{$desaId}.json")->json();
             if (!$resDesa) return;
 
-            $kecId = $resDesa['district_id'];
-            $resKec = Http::get("{$this->baseUrl}/district/{$kecId}.json")->json();
+            $kecId = substr($desaId, 0, 7);
+            $kabId = substr($desaId, 0, 4);
+            $provId = substr($desaId, 0, 2);
 
-            $kabId = $resKec['regency_id'];
-            $resKab = Http::get("{$this->baseUrl}/regency/{$kabId}.json")->json();
-
-            $provId = $resKab['province_id'];
             $resProv = Http::get("{$this->baseUrl}/province/{$provId}.json")->json();
+            $resKab = Http::get("{$this->baseUrl}/regency/{$kabId}.json")->json();
+            $resKec = Http::get("{$this->baseUrl}/district/{$kecId}.json")->json();
 
             Provinsi::firstOrCreate(['id' => $provId], ['namaProvinsi' => $resProv['name']]);
             Kabupaten::firstOrCreate(['id' => $kabId], ['provinsiId' => $provId, 'namaKabupaten' => $resKab['name']]);

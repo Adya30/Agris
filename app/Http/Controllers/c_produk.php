@@ -24,12 +24,17 @@ class c_produk extends Controller
             $query->whereHas('kategori', fn($q) => $q->where('mutu', $request->mutu));
         }
 
+        if ($request->karung) {
+            $query->whereHas('kategori', fn($q) => $q->where('karung', $request->karung));
+        }
+
         $produks = $query->latest()->paginate(12)->withQueryString();
 
         $daftarJenis = KategoriProduk::distinct()->pluck('jenisKategori');
         $daftarMutu = KategoriProduk::distinct()->pluck('mutu');
+        $daftarKarung = KategoriProduk::distinct()->orderBy('karung', 'asc')->pluck('karung');
 
-        return view('agen.produk.index', compact('produks', 'daftarJenis', 'daftarMutu'));
+        return view('agen.produk.index', compact('produks', 'daftarJenis', 'daftarMutu', 'daftarKarung'));
     }
 
     public function showAgen(string $id)

@@ -16,9 +16,12 @@
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
-                <!-- Chat link untuk Mobile di sebelah Profil -->
-                <a href="#" class="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-green-600/30 text-white hover:bg-green-600/60 transition-all">
+                <a href="#" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/30 text-white hover:bg-green-600/60 transition-all relative group">
                     <i class="fa-solid fa-comments text-lg"></i>
+                    <span class="absolute -top-1 -right-1 flex h-4 w-4 md:hidden">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
+                    </span>
                 </a>
 
                 <div class="relative hidden md:block">
@@ -53,7 +56,6 @@
         </div>
     </div>
 
-    <!-- Sub Navbar Desktop -->
     <div class="bg-[#46A302] hidden md:block border-t border-white/5">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex justify-center items-center gap-10 h-11 text-white/90 text-sm font-bold tracking-wide uppercase">
@@ -61,17 +63,13 @@
                 <a href="{{ route('agen.produk.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.produk.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Produk</a>
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Transaksi</a>
                 <a href="{{ route('kemitraan.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.kemitraan.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Kemitraan</a>
-                <!-- Link Chat Desktop sementara # -->
-                <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Chat</a>
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Konsultasi</a>
             </div>
         </div>
     </div>
 
-    <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-2xl absolute w-full left-0 animate-fade-in-down max-h-[calc(100vh-80px)] overflow-y-auto">
         <div class="px-6 py-6 space-y-4">
-            <!-- User Info di Mobile -->
             <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                 <div class="h-14 w-14 overflow-hidden rounded-full border-2 border-[#0f8629]">
                     <img src="{{ auth()->user()->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
@@ -95,7 +93,6 @@
                 <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
                     <i class="fa-solid fa-handshake mr-3 w-5 text-center"></i> Kemitraan
                 </a>
-                <!-- Link Chat Mobile sementara # -->
                 <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
                     <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Chat
                 </a>

@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Detail Mitra - AGRIS')
+
 @section('content')
 <div class="max-w-5xl mx-auto pt-4 pb-12 px-4">
     <div class="mb-8 flex items-center justify-between">
@@ -158,14 +160,14 @@
                                 </form>
                                 <form id="formTolakMou" action="{{ route('admin.kemitraan.verifyMou', $kemitraan->id) }}" method="POST">
                                     @csrf
-                                    <input type="hidden" name="status" value="Ditolak">
+                                    <input type="hidden" name="status" value="Menunggu Upload MOU">
                                     <button type="button" onclick="triggerModal('modalTolakMou')" class="w-full py-3.5 bg-white text-red-600 border border-red-100 font-bold rounded-xl hover:bg-red-50 transition-all uppercase text-xs tracking-widest">Tolak Dokumen</button>
                                 </form>
                             @endif
 
                             @if($kemitraan->statusPengajuan == 'Ditolak')
                                 <div class="p-4 bg-red-50 border border-red-100 rounded-2xl text-center">
-                                    <p class="text-xs font-black text-red-600 uppercase tracking-widest">Status: Pengajuan Ditolak/Dihentikan</p>
+                                    <p class="text-xs font-black text-red-600 uppercase tracking-widest">Status : Pengajuan Ditolak</p>
                                 </div>
                             @endif
 
@@ -182,27 +184,21 @@
     </div>
 </div>
 
-<x-modal id="modalHentikan" message="Apakah Anda yakin ingin menghentikan kemitraan ini? Agen harus mengajukan ulang untuk bergabung kembali." confirmText="Iya, Hentikan" cancelText="Batal" confirmId="btnConfirmHentikan" cancelId="btnCancelHentikan" />
+<x-modal id="modalHentikan" message="Apakah Anda yakin ingin menghentikan kemitraan ini? Agen harus mengajukan ulang." confirmText="Iya, Hentikan" cancelText="Batal" confirmId="btnConfirmHentikan" cancelId="btnCancelHentikan" />
 <x-modal id="modalSetujuiBiodata" message="Setujui biodata agen dan lanjut ke tahap pengunggahan MOU?" confirmText="Setujui" cancelText="Batal" confirmId="btnConfirmSetujui" cancelId="btnCancelSetujui" />
-<x-modal id="modalTolakBiodata" message="Yakin ingin menolak pengajuan kemitraan ini?" confirmText="Tolak" cancelText="Batal" confirmId="btnConfirmTolakBio" cancelId="btnCancelTolakBio" />
+<x-modal id="modalTolakBiodata" message="Yakin ingin menolak pengajuan ini? Agen akan diminta mengisi ulang biodata." confirmText="Tolak" cancelText="Batal" confirmId="btnConfirmTolakBio" cancelId="btnCancelTolakBio" />
 <x-modal id="modalAktifkan" message="Dokumen MOU sudah sesuai? Klik iya untuk mengaktifkan status kemitraan agen." confirmText="Aktifkan" cancelText="Batal" confirmId="btnConfirmAktif" cancelId="btnCancelAktif" />
-<x-modal id="modalTolakMou" message="Tolak dokumen MOU karena tidak sesuai/tidak valid?" confirmText="Tolak" cancelText="Batal" confirmId="btnConfirmTolakMou" cancelId="btnCancelTolakMou" />
+<x-modal id="modalTolakMou" message="Tolak dokumen MOU? Agen akan diminta mengunggah ulang dokumen yang valid." confirmText="Tolak" cancelText="Batal" confirmId="btnConfirmTolakMou" cancelId="btnCancelTolakMou" />
 
 <script>
     function triggerModal(id) {
-        if (typeof openModal === 'function') {
-            openModal(id);
-        } else {
-            document.getElementById(id).classList.remove('hidden');
-        }
+        if (typeof openModal === 'function') { openModal(id); }
+        else { document.getElementById(id).classList.remove('hidden'); }
     }
 
     function closeModalManual(id) {
-        if (typeof closeModal === 'function') {
-            closeModal(id);
-        } else {
-            document.getElementById(id).classList.add('hidden');
-        }
+        if (typeof closeModal === 'function') { closeModal(id); }
+        else { document.getElementById(id).classList.add('hidden'); }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
