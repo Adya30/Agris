@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Kemitraan Admin - AGRIS')
+
 @section('content')
 <div class="max-w-6xl mx-auto pt-4 pb-12">
     <div class="mb-8 flex justify-between items-end px-4 md:px-0">

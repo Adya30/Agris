@@ -1,5 +1,7 @@
 @extends('layouts.agen')
 
+@section('title', 'Profil Agen - AGRIS')
+
 @section('content')
 <div class="max-w-full mx-auto py-8">
     <div class="flex flex-col lg:flex-row gap-4 items-start">

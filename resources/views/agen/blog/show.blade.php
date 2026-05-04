@@ -1,5 +1,7 @@
 @extends('layouts.agen')
 
+@section('title', 'Detail Blog - AGRIS')
+
 @section('content')
 <div class="max-w-4xl mx-auto pt-4 pb-12">
     <div class="mb-10 flex items-center justify-between">
