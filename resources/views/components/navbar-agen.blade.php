@@ -16,12 +16,8 @@
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
-                <a href="#" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/30 text-white hover:bg-green-600/60 transition-all relative group">
+                <a href="{{ route('agen.chat.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/30 text-white hover:bg-green-600/60 transition-all relative group">
                     <i class="fa-solid fa-comments text-lg"></i>
-                    <span class="absolute -top-1 -right-1 flex h-4 w-4 md:hidden">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
-                    </span>
                 </a>
 
                 <div class="relative hidden md:block">

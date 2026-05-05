@@ -1,6 +1,6 @@
 @extends('layouts.agen')
 
-@section('title', 'Pengajuan Mitra - AGRIS')
+@section('title', 'Status Kemitraan - AGRIS')
 
 @section('content')
 <div class="max-w-4xl mx-auto pt-4 pb-12 px-4 md:px-0">
@@ -10,39 +10,70 @@
     </div>
 
     @if(!$kemitraan || $kemitraan->statusPengajuan == 'Ditolak')
-    <div class="bg-white rounded-3xl border border-gray-100 p-12 text-center shadow-sm">
-        <div class="w-20 h-20 {{ !$kemitraan ? 'bg-green-50 text-[#58CC02]' : 'bg-red-50 text-red-500' }} rounded-full flex items-center justify-center mx-auto mb-6">
-            <i class="fa-solid {{ !$kemitraan ? 'fa-handshake' : 'fa-circle-xmark' }} text-3xl"></i>
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 md:p-12 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="text-center md:text-left">
+                <div class="w-16 h-16 {{ !$kemitraan ? 'bg-green-50 text-[#58CC02]' : 'bg-red-50 text-red-500' }} rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
+                    <i class="fa-solid {{ !$kemitraan ? 'fa-handshake' : 'fa-circle-xmark' }} text-2xl"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-4 leading-tight">
+                    {{ !$kemitraan ? 'Buka Akses Produk Unggulan AGRIS' : 'Pengajuan Ditolak' }}
+                </h2>
+                <p class="text-gray-500 mb-8 leading-relaxed">
+                    {{ !$kemitraan
+                        ? 'Untuk menjaga kualitas distribusi, pembelian seluruh produk hanya dapat dilakukan oleh mitra resmi. Segera lengkapi kemitraan Anda untuk mulai bertransaksi.'
+                        : 'Mohon maaf, pengajuan kemitraan Anda ditolak oleh admin karena dokumen MOU atau profil tidak memenuhi kriteria. Silakan ajukan ulang kembali.' }}
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    {{-- Tombol diubah menjadi button agar bisa divalidasi JS --}}
+                    <button type="button" onclick="checkProfileAndRedirect('{{ route('kemitraan.create') }}')" class="inline-flex items-center justify-center px-8 py-4 {{ !$kemitraan ? 'bg-[#58CC02]' : 'bg-red-500' }} text-white font-bold rounded-2xl hover:opacity-90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        {{ !$kemitraan ? 'Ajukan Kemitraan Sekarang' : 'Ajukan Ulang Sekarang' }}
+                        <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 rounded-4xl p-8 border border-gray-100">
+                <h3 class="font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <i class="fa-solid {{ !$kemitraan ? 'fa-gem text-yellow-500' : 'fa-circle-exclamation text-red-500' }}"></i>
+                    {{ !$kemitraan ? 'Keunggulan Mitra Resmi' : 'Catatan Penolakan' }}
+                </h3>
+                <div class="space-y-5">
+                    @if(!$kemitraan)
+                        <div class="flex gap-4">
+                            <div class="w-10 h-10 shrink-0 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#58CC02]">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm">Akses Eksklusif Produk</p>
+                                <p class="text-xs text-gray-500">Satu-satunya jalur legal untuk melakukan pembelian produk AGRIS.</p>
+                            </div>
+                        </div>
+                    @else
+                        <p class="text-xs text-gray-500 leading-relaxed">
+                            Penolakan biasanya terjadi jika file PDF tidak terbaca, data tidak sesuai dengan identitas, atau tanda tangan MOU tidak lengkap. Pastikan Anda memeriksa kembali dokumen sebelum mengajukan ulang.
+                        </p>
+                    @endif
+                </div>
+            </div>
         </div>
-        <h2 class="text-xl font-bold text-gray-800 mb-2">
-            {{ !$kemitraan ? 'Mulai Kemitraan' : 'Pengajuan Ditolak' }}
-        </h2>
-        <p class="text-gray-500 mb-8 max-w-md mx-auto">
-            {{ !$kemitraan
-                ? 'Bergabunglah menjadi mitra resmi untuk mendapatkan akses penuh ke fitur distribusi produk.'
-                : 'Maaf, pengajuan biodata Anda ditolak. Silakan periksa kembali data Anda dan ajukan ulang.' }}
-        </p>
-        <a href="{{ route('kemitraan.create') }}" class="inline-flex items-center px-8 py-3 {{ !$kemitraan ? 'bg-[#58CC02]' : 'bg-red-500' }} text-white font-bold rounded-2xl hover:opacity-90 transition-all shadow-lg">
-            {{ !$kemitraan ? 'Isi Form Biodata' : 'Ajukan Ulang Biodata' }}
-        </a>
     </div>
     @else
     @php
         $steps = [
-            'diproses' => 1,
-            'Menunggu Upload MOU' => 2,
-            'Menunggu Verifikasi MOU' => 3,
-            'Aktif' => 4
+            'Menunggu Upload MOU' => 1,
+            'Menunggu Verifikasi MOU' => 2,
+            'Aktif' => 3
         ];
-        $currentStep = $steps[$kemitraan->statusPengajuan] ?? 0;
+        $currentStep = $steps[$kemitraan->statusPengajuan] ?? 1;
     @endphp
 
-    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm mb-6">
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
         <div class="relative flex items-center justify-between mb-16 px-4">
             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 z-0"></div>
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#58CC02] transition-all duration-500 z-0" style="width: {{ ($currentStep - 1) * 33.33 }}%"></div>
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#58CC02] transition-all duration-500 z-0" style="width: {{ ($currentStep - 1) * 50 }}%"></div>
 
-            @foreach(['Biodata', 'Persetujuan', 'Upload MOU', 'Selesai'] as $index => $label)
+            @foreach(['Upload MOU', 'Verifikasi', 'Selesai'] as $index => $label)
             <div class="relative z-10 flex flex-col items-center">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all {{ $currentStep > $index ? 'bg-[#58CC02] text-white' : ($currentStep == $index + 1 ? 'bg-white border-4 border-[#58CC02] text-[#58CC02]' : 'bg-white border-4 border-gray-100 text-gray-300') }}">
                     @if($currentStep > $index + 1) <i class="fa-solid fa-check text-xs"></i> @else <span class="text-xs">{{ $index + 1 }}</span> @endif
@@ -55,31 +86,24 @@
         <div class="mt-20 pt-8 border-t border-gray-50">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center p-6 bg-gray-50 rounded-3xl border border-gray-100">
                 <div>
-                    <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Status Pengajuan</p>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Status Saat Ini</p>
                     <div class="flex items-center gap-3">
                         <h3 class="text-xl font-bold text-gray-800">{{ strtoupper($kemitraan->statusPengajuan) }}</h3>
-                        @if($kemitraan->statusPengajuan == 'Aktif') <i class="fa-solid fa-circle-check text-[#58CC02] text-xl"></i> @endif
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-3">
                     @if($kemitraan->statusPengajuan == 'Menunggu Upload MOU')
-                        <a href="{{ asset('templates/template_mou.docx') }}" download class="w-full py-3 bg-white border-2 border-dashed border-gray-200 text-gray-600 text-xs font-bold rounded-xl hover:border-[#58CC02] hover:text-[#58CC02] transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-download"></i> Unduh Template MOU
-                        </a>
-                        <button type="button" id="btnTriggerFile" class="w-full py-4 bg-blue-600 text-white text-xs font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
-                            <i class="fa-solid fa-file-arrow-up text-sm"></i> Unggah Dokumen
+                        <button type="button" id="btnTriggerFile" class="w-full py-4 bg-blue-600 text-white text-xs font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-all uppercase tracking-widest">
+                            <i class="fa-solid fa-file-arrow-up mr-2"></i> Unggah Dokumen
                         </button>
                     @elseif($kemitraan->statusPengajuan == 'Menunggu Verifikasi MOU')
-                        <div class="flex flex-col gap-2">
-                            <div class="flex items-center justify-center gap-3 text-blue-600 font-bold bg-blue-50 py-4 rounded-xl border border-blue-100 text-xs uppercase tracking-widest">
-                                <i class="fa-solid fa-spinner fa-spin"></i> Dokumen Sedang Direview
-                            </div>
-                            <button type="button" id="btnTriggerFile" class="text-[10px] text-gray-400 hover:text-blue-600 underline">Ganti file jika salah?</button>
+                        <div class="py-4 bg-blue-50 text-blue-600 text-center rounded-xl font-bold text-xs uppercase tracking-widest">
+                            Dokumen Dalam Proses Review
                         </div>
                     @elseif($kemitraan->statusPengajuan == 'Aktif')
-                        <div class="flex items-center justify-center gap-3 text-[#58CC02] font-bold bg-green-50 py-4 rounded-xl border border-green-100 text-xs uppercase tracking-widest">
-                            <i class="fa-solid fa-shield-check"></i> Kemitraan Aktif
+                        <div class="py-4 bg-green-50 text-[#58CC02] text-center rounded-xl font-bold text-xs uppercase tracking-widest">
+                            <i class="fa-solid fa-circle-check mr-2"></i> Kemitraan Aktif
                         </div>
                     @endif
                 </div>
@@ -89,69 +113,49 @@
     @endif
 </div>
 
-<div id="modalUpload" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-[2.5rem] w-full max-w-md p-10 shadow-2xl transform transition-all scale-95" id="modalContent">
-        <div class="text-center mb-8">
-            <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 rotate-3">
-                <i class="fa-solid fa-file-pdf text-3xl"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800">Konfirmasi</h3>
-            <p class="text-gray-500 text-sm mt-3 leading-relaxed">Apakah dokumen yang Anda pilih sudah benar?</p>
-        </div>
-        <div class="flex flex-col gap-3">
-            <button id="btnSubmitUpload" class="w-full py-4 bg-[#58CC02] text-white font-bold rounded-2xl hover:bg-[#46a302] transition-all shadow-lg uppercase tracking-widest text-xs">Iya, Unggah</button>
-            <button id="btnCancelUpload" class="w-full py-4 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition-all uppercase tracking-widest text-xs text-center">Batal</button>
-        </div>
-    </div>
-</div>
+<x-modal
+    id="modalLengkapiProfil"
+    title="Profil Belum Lengkap"
+    message="Harap lengkapi profil dulu sebelum pengajuan"
+    confirmText="Lengkapi Sekarang"
+    cancelText="Nanti Saja"
+    confirmId="btnLengkapiSekarang"
+    cancelId="btnTutupModalProfil"
+/>
 
-<form id="upload-form" action="{{ $kemitraan ? route('kemitraan.uploadMou', $kemitraan->id) : '#' }}" method="POST" enctype="multipart/form-data" class="hidden">
+<form id="upload-form" action="{{ $kemitraan ? route('kemitraan.uploadMou', $kemitraan->id) : route('kemitraan.store') }}" method="POST" enctype="multipart/form-data" class="hidden">
     @csrf
-    <input type="file" name="fileKemitraan" id="inputManualFile" accept=".pdf">
+    <input type="file" name="fileKemitraan" id="inputManualFile" accept=".pdf" onchange="this.form.submit()">
 </form>
 
 <script>
-    const modal = document.getElementById('modalUpload');
-    const modalContent = document.getElementById('modalContent');
-    const fileInput = document.getElementById('inputManualFile');
-    const triggerBtn = document.getElementById('btnTriggerFile');
-    const form = document.getElementById('upload-form');
+    function checkProfileAndRedirect(targetUrl) {
+        // Cek kelengkapan data user dari variable Auth Laravel yang dikirim ke JS
+        const isComplete = @json(!empty(Auth::user()->namaLengkap) && !empty(Auth::user()->noTelp) && !empty(Auth::user()->desaId) && !empty(Auth::user()->detailAlamat));
 
-    function openModal() {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        setTimeout(() => modalContent.classList.remove('scale-95'), 10);
-    }
-
-    function closeModal() {
-        modalContent.classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            fileInput.value = '';
-        }, 200);
-    }
-
-    triggerBtn?.addEventListener('click', () => fileInput.click());
-
-    fileInput?.addEventListener('change', function() {
-        if(this.files.length > 0) {
-            if (this.files[0].type !== "application/pdf") {
-                alert("Mohon unggah file dalam format PDF.");
-                this.value = '';
-                return;
-            }
-            openModal();
+        if (isComplete) {
+            window.location.href = targetUrl;
+        } else {
+            openModal('modalLengkapiProfil');
         }
-    });
+    }
 
-    document.getElementById('btnSubmitUpload')?.addEventListener('click', function() {
-        this.disabled = true;
-        this.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengunggah...';
-        form.submit();
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        @if(session('modalIncomplete'))
+            openModal('modalLengkapiProfil');
+        @endif
 
-    document.getElementById('btnCancelUpload')?.addEventListener('click', closeModal);
-    window.onclick = function(event) { if (event.target == modal) closeModal(); }
+        document.getElementById('btnLengkapiSekarang')?.addEventListener('click', function() {
+            window.location.href = "{{ route('admin.profile') }}";
+        });
+
+        document.getElementById('btnTutupModalProfil')?.addEventListener('click', function() {
+            closeModal('modalLengkapiProfil');
+        });
+
+        document.getElementById('btnTriggerFile')?.addEventListener('click', () => {
+            document.getElementById('inputManualFile').click();
+        });
+    });
 </script>
 @endsection
