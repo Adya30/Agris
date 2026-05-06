@@ -132,7 +132,7 @@
     </form>
 </div>
 
-<x-modal id="modalKonfirmasiProduk" title="Konfirmasi" message="Simpan data produk baru ke sistem?" confirmText="Iya" cancelText="Batal" confirmId="btnSubmitForm" cancelId="btnCloseModal" />
+<x-modal id="modalKonfirmasiProduk" title="Konfirmasi" message="Apakah anda yakin ingin menambah produk ini?" confirmText="Iya" cancelText="Batal" confirmId="btnSubmitForm" cancelId="btnCloseModal" />
 
 <script>
     function previewImage(input) {

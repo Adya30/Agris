@@ -10,7 +10,7 @@
         </a>
         <div class="flex gap-3">
             <a href="{{ route('admin.blog.edit', $blog->id) }}" class="bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-600 transition-all shadow-lg shadow-blue-100">
-                <i class="fa-solid fa-pen-to-square"></i> Edit
+               <i class="fa-solid fa-pen-to-square"></i> Edit
             </a>
             <button type="button" onclick="openModal('modalHapus')" class="bg-red-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-red-600 transition-all shadow-lg shadow-red-100">
                 <i class="fa-solid fa-trash"></i> Hapus
@@ -31,7 +31,7 @@
                     <img src="{{ $blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin') }}" class="h-full w-full object-cover rounded-full">
                 </div>
                 <div>
-                    <h4 class="font-bold text-gray-900">{{ $blog->user->name ?? 'Admin Agris' }}</h4>
+                    <h4 class="font-bold text-gray-900">Tanggal Upload</h4>
                     <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">{{ $blog->tanggalBlog->format('d F Y') }}</p>
                 </div>
             </div>

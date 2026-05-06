@@ -42,8 +42,8 @@
                                  class="h-full w-full object-cover">
                         </div>
                         <div>
-                            <p class="text-base font-black text-gray-900 leading-none mb-1">{{ $blog->user->username ?? 'Admin' }}</p>
-                            <p class="text-xs font-bold text-gray-400">{{ $blog->tanggalBlog->diffForHumans() }}</p>
+                            <p class="text-base font-black text-gray-900 leading-none mb-1">Tanggal Upload</p>
+                            <p class="text-xs font-bold text-gray-400">{{ $blog->tanggalBlog->format('d F Y') }}</p>
                         </div>
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-300 group-hover:bg-[#58CC02] group-hover:text-white transition-all duration-300">

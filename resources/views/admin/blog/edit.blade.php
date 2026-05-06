@@ -77,7 +77,7 @@
 
                     <div class="mt-8 flex gap-3">
                         <button type="button" onclick="openModal('modalKonfirmasiBlog')" class="flex-2 bg-[#58CC02] text-white py-3.5 rounded-xl font-bold active:bg-[#46a302] transition shadow-sm">
-                            Simpan Perubahan
+                            Simpan
                         </button>
                         <a href="{{ route('admin.blog.index') }}" class="flex-1 bg-gray-100 text-center text-gray-600 py-3.5 rounded-xl font-bold hover:bg-gray-200 transition">
                             Batal
@@ -89,7 +89,7 @@
     </form>
 </div>
 
-<x-modal id="modalKonfirmasiBlog" title="Konfirmasi Update" message="Apakah Anda yakin ingin memperbarui data blog ini?" confirmText="Iya, Simpan" cancelText="Batal" confirmId="btnSubmitForm" cancelId="btnCloseModal" />
+<x-modal id="modalKonfirmasiBlog" title="Konfirmasi" message="Apakah yakin ingin mengubah blog?" confirmText="Iya" cancelText="Batal" confirmId="btnSubmitForm" cancelId="btnCloseModal" />
 
 <script>
     function previewImage(input) {

@@ -58,7 +58,7 @@
                 <a href="{{ route('agen.blog.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.blog.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Blog</a>
                 <a href="{{ route('agen.produk.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.produk.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Produk</a>
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Transaksi</a>
-                <a href="{{ route('kemitraan.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.kemitraan.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Kemitraan</a>
+                <a href="{{ route('kemitraan.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('kemitraan.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Kemitraan</a>
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Konsultasi</a>
             </div>
         </div>
@@ -106,7 +106,7 @@
 
 <div class="h-20 md:h-28"></div>
 
-<x-modal id="logoutModal" title="Konfirmasi Logout" message="Apakah Anda yakin ingin keluar dari AGRIS?" confirmText="Iya" cancelText="Batal" confirmId="confirmLogoutBtn" cancelId="closeLogoutBtn" />
+<x-modal id="logoutModal" title="Konfirmasi Logout" message="Apakah Anda yakin ingin keluar?" confirmText="Iya" cancelText="Batal" confirmId="confirmLogoutBtn" cancelId="closeLogoutBtn" />
 
 <form id="logoutFormReal" action="{{ route('logout') }}" method="POST" class="hidden">
     @csrf

@@ -14,7 +14,7 @@ class c_kemitraan extends Controller
         $user = Auth::user();
 
         if ($user->isAdmin) {
-            $kemitraans = Kemitraan::with('user')->latest()->get();
+            $kemitraans = Kemitraan::with(['user.desa.kecamatan.kabupaten.provinsi'])->latest()->get();
             return view('admin.kemitraan.index', compact('kemitraans'));
         }
 
@@ -26,7 +26,6 @@ class c_kemitraan extends Controller
     {
         $user = Auth::user();
 
-        // VALIDASI PROFIL: Jika data belum lengkap, lempar ke profil dengan sinyal modal
         if (empty($user->namaLengkap) || empty($user->noTelp) || empty($user->desaId) || empty($user->detailAlamat)) {
             return redirect()->route('admin.profile')->with('modalIncomplete', true);
         }
@@ -79,7 +78,7 @@ class c_kemitraan extends Controller
             User::where('id', $kemitraan->userId)->update(['isActive' => 0]);
         }
 
-        return redirect()->route('admin.kemitraan.show', $id)->with('success', 'Aksi berhasil dilakukan.');
+        return redirect()->route('admin.kemitraan.show', $id)->with('success', 'Kemitraan Berhasil Dihapus');
     }
 
     public function uploadMou(Request $request, string $id)
@@ -98,7 +97,7 @@ class c_kemitraan extends Controller
             'statusPengajuan' => 'Menunggu Verifikasi MOU'
         ]);
 
-        return redirect()->back()->with('success', 'File MOU berhasil diunggah.');
+        return redirect()->back()->with('success', 'File MOU berhasil di upload.');
     }
 
     public function verifyMou(Request $request, string $id)
@@ -114,19 +113,21 @@ class c_kemitraan extends Controller
                 'statusPengajuan' => 'Ditolak',
                 'fileKemitraan' => null
             ]);
-            return redirect()->route('admin.kemitraan.index')->with('success', 'Dokumen MOU ditolak.');
+
+            return redirect()->route('admin.kemitraan.show', $id);
         }
 
         if ($request->status === 'Aktif') {
             $kemitraan->update(['statusPengajuan' => 'Aktif']);
             User::where('id', $kemitraan->userId)->update(['isActive' => 1]);
-            return redirect()->route('admin.kemitraan.index')->with('success', 'Verifikasi dokumen selesai.');
+
+            return redirect()->route('admin.kemitraan.show', $id)->with('success', 'Verifikasi dokumen selesai dan mitra telah aktif.');
         }
     }
 
     public function show(string $id)
     {
-        $kemitraan = Kemitraan::with('user')->findOrFail($id);
+        $kemitraan = Kemitraan::with(['user.desa.kecamatan.kabupaten.provinsi'])->findOrFail($id);
         return view('admin.kemitraan.show', compact('kemitraan'));
     }
 }

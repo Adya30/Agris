@@ -10,7 +10,7 @@
         </a>
         <div>
             <h1 class="text-2xl font-extrabold text-gray-800">Stok Kosong</h1>
-            <p class="text-gray-500 text-sm">Daftar benih yang tidak aktif atau stoknya habis</p>
+            <p class="text-gray-500 text-sm">Daftar benih kosong</p>
         </div>
     </div>
 
@@ -53,7 +53,7 @@
                         <td class="px-6 py-4 text-gray-400 text-xs italic">Dihapus {{ $item->deleted_at->diffForHumans() }}</td>
                         <td class="px-6 py-3 text-right">
                             <a href="{{ route('admin.produk.edit', $item->id) }}" class="inline-block bg-blue-50 text-blue-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition">
-                                Restock
+                                Edit
                             </a>
                         </td>
                     </tr>
@@ -62,7 +62,7 @@
                         <td colspan="5" class="py-20 text-center">
                             <div class="flex flex-col items-center">
                                 <i class="fa-solid fa-circle-check text-5xl text-[#58CC02]/20 mb-4"></i>
-                                <p class="text-gray-400 font-medium">Arsip kosong. Semua benih tersedia di dashboard utama.</p>
+                                <p class="text-gray-400 font-medium">Tidak Ada Stok Benih yang Habis</p>
                             </div>
                         </td>
                     </tr>
@@ -101,14 +101,14 @@
                         <p class="text-xs text-red-500 font-bold">Stok {{ $item->stok }} · <span class="text-gray-400 font-normal italic">{{ $item->deleted_at->diffForHumans() }}</span></p>
                     </div>
                     <a href="{{ route('admin.produk.edit', $item->id) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm">
-                        Restock
+                        Edit
                     </a>
                 </div>
             </div>
             @empty
             <div class="py-16 text-center px-4">
                 <i class="fa-solid fa-circle-check text-5xl text-[#58CC02]/20 mb-4"></i>
-                <p class="text-gray-400 text-sm font-medium">Arsip kosong. Semua benih tersedia di dashboard utama.</p>
+                <p class="text-gray-400 text-sm font-medium">Tidak Ada Stok Benih yang Habis</p>
             </div>
             @endforelse
         </div>

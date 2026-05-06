@@ -88,15 +88,7 @@
     </div>
 </div>
 
-<x-modal
-    id="modalHapus"
-    title="Arsip Produk?"
-    message="Produk akan dipindahkan ke tempat sampah, stok otomatis menjadi 0, dan tidak akan tampil di halaman Agen."
-    confirmText="Iya"
-    cancelText="Batal"
-    confirmId="btnConfirmDelete"
-    cancelId="btnCancelDelete"
-/>
+<x-modal id="modalHapus" title="Konfirmasi" message="Apakah anda yakin ingin menghapus produk?" confirmText="Iya" cancelText="Batal" confirmId="btnConfirmDelete" cancelId="btnCancelDelete" />
 
 <form id="delete-form" action="{{ route('admin.produk.destroy', $item->id) }}" method="POST" class="hidden">
     @csrf

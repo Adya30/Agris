@@ -69,7 +69,7 @@
     </div>
 </header>
 
-<x-modal id="logoutModal" title="Konfirmasi Logout" message="Apakah Anda yakin ingin keluar?" confirmText="Iya, Keluar"
+<x-modal id="logoutModal" title="Konfirmasi" message="Apakah Anda yakin ingin keluar?" confirmText="Iya"
     cancelText="Batal" confirmId="confirmLogoutBtn" cancelId="closeLogoutBtn" />
 
 <form id="logoutFormReal" action="{{ route('logout') }}" method="POST" class="hidden">

@@ -26,7 +26,7 @@
                 <i class="fa-solid fa-check text-sm"></i>
             </div>
             <div class="ms-3">
-                <div class="text-sm font-bold text-green-800">Berhasil</div>
+                <div class="text-sm font-bold text-green-800">Pesan</div>
                 <div class="text-xs text-green-700 mt-0.5">{{ session('success') }}</div>
             </div>
         </div>

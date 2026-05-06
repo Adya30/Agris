@@ -140,7 +140,7 @@ class c_produk extends Controller
             'fotoProduk' => 'nullable|image|mimes:jpeg,png,jpg|max:10048',
             'deskripsi'  => 'nullable|string',
         ],[
-            'required'  => 'Data harus diisi!',
+            'required'  => 'Data wajib diisi!',
             'numeric'   => 'Data harus berupa angka!'
         ]);
 
@@ -177,7 +177,7 @@ class c_produk extends Controller
         $produk = Produk::findOrFail($id);
         $produk->update(['stok' => 0]);
         $produk->delete();
-        return redirect()->route('admin.produk.index')->with('success', 'Produk diarsipkan.');
+        return redirect()->route('admin.produk.index')->with('success', 'Produk berhasil dihapus.');
     }
 
     public function trash()

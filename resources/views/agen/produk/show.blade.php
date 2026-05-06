@@ -4,10 +4,12 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto pt-6 pb-12 px-4 md:px-0">
-    <nav class="flex mb-8 text-sm font-medium text-gray-500" aria-label="Breadcrumb">
-        <i class="fa-solid fa-chevron-left mx-3 text-12 "></i>
-        <span class="text-gray-800">Detail Produk</span>
-    </nav>
+    <div class="flex items-center gap-3 pb-5">
+        <a href="{{ route('agen.produk.index') }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition shadow-sm">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1 class="text-xl font-bold text-gray-800">Detail Produk</h1>
+    </div>
 
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="grid grid-cols-1 md:grid-cols-2">

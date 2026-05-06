@@ -104,7 +104,7 @@
 
                 <div id="actionContainer" class="hidden mt-8">
                     <button type="button" onclick="openModal('uploadModal')" class="w-full py-4 bg-[#58CC02] text-white font-black rounded-2xl shadow-lg shadow-green-100 uppercase tracking-widest hover:opacity-90 transition-all">
-                        Kirim Dokumen & Ajukan
+                        Kirim
                     </button>
                 </div>
             </form>
@@ -112,7 +112,7 @@
     </div>
 </div>
 
-<x-modal id="uploadModal" title="Konfirmasi" message="Apakah file MOU yang Anda pilih sudah benar?" confirmText="Ya, Unggah" cancelText="Batal" confirmId="btnFinalSubmit" cancelId="btnCancelUpload" />
+<x-modal id="uploadModal" title="Konfirmasi" message="Yakin untuk mengajukan kemitraan?" confirmText="Iya" cancelText="Batal" confirmId="btnFinalSubmit" cancelId="btnCancelUpload" />
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

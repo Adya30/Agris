@@ -126,7 +126,7 @@
 
                     <div class="mt-8 flex gap-3">
                         <button type="button" onclick="openModal('modalUpdateProduk')" class="flex-2 bg-[#58CC02] text-white px-6 py-3.5 rounded-xl font-bold active:bg-[#46a302] transition shadow-sm">
-                            Simpan Perubahan
+                            Simpan
                         </button>
                         <a href="{{ route('admin.produk.index') }}" class="flex-1 bg-gray-100 text-center text-gray-600 py-3.5 rounded-xl font-bold hover:bg-gray-200 transition">
                             Batal
@@ -138,7 +138,7 @@
     </form>
 </div>
 
-<x-modal id="modalUpdateProduk" title="Konfirmasi" message="Simpan perubahan data produk?" confirmText="Iya, Update" cancelText="Batal" confirmId="btnSubmitForm" cancelId="btnCloseModal" />
+<x-modal id="modalUpdateProduk" title="Konfirmasi" message="Apakah anda yakin ingin mengubah produk ini?" confirmText="Iya" cancelText="Batal" confirmId="btnSubmitForm" cancelId="btnCloseModal" />
 
 <script>
     const dataKategori = @json($kategoris);

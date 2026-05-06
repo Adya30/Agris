@@ -39,7 +39,7 @@
             </div>
         </nav>
 
-        <div class="p-6 mt-auto border-t border-white/10 hidden md:block">
+        {{-- <div class="p-6 mt-auto border-t border-white/10 hidden md:block">
             <div class="flex items-center gap-3">
                 <div class="h-10 w-10 overflow-hidden rounded-full border-2 border-white">
                     <img src="{{ auth()->user()->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
@@ -49,7 +49,7 @@
                     <span class="text-xs text-white/70 uppercase font-bold">Admin</span>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 </aside>
 

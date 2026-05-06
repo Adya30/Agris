@@ -12,10 +12,10 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->ulid('id')->primary();
             $table->foreignUlid('id_pengirim')->constrained('users')->cascadeOnDelete();
-            $table->string('id_penerima');
+            $table->string('id_penerima', 36)->index();
             $table->text('pesan')->nullable();
-            $table->longText('foto_chat')->nullable();
-            $table->enum('status', ['terkirim','dibaca'])->default('terkirim');
+            $table->string('foto_chat')->nullable();
+            $table->enum('status', ['terkirim', 'dibaca'])->default('terkirim');
             $table->dateTime('waktu_chat');
             $table->timestamps();
 

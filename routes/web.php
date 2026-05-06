@@ -48,6 +48,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
+    Route::get('/chat/{id}', [c_chat::class, 'show'])->name('chat.show');
+    Route::post('/chat', [c_chat::class, 'store'])->name('chat.store');
+    Route::delete('/chat/{id}', [c_chat::class, 'destroy'])->name('chat.destroy');
+
     Route::prefix('agen')->middleware('isUser')->group(function () {
         Route::get('/profile', [c_profile::class, 'show'])->name('agen.profile');
         Route::put('/profile', [c_profile::class, 'update'])->name('agen.profile.update');
@@ -64,8 +68,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/kemitraan/upload-mou/{id}', [c_kemitraan::class, 'uploadMou'])->name('kemitraan.uploadMou');
 
         Route::get('/chat', [c_chat::class, 'index'])->name('agen.chat.index');
-        Route::post('/chat', [c_chat::class, 'store'])->name('agen.chat.store');
-        Route::delete('/chat/{id}', [c_chat::class, 'destroy'])->name('agen.chat.destroy');
     });
 
     Route::prefix('admin')->middleware('isAdmin')->name('admin.')->group(function () {
@@ -90,9 +92,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/kemitraan/verify-mou/{id}', [c_kemitraan::class, 'verifyMou'])->name('kemitraan.verifyMou');
 
         Route::get('/chat', [c_chat::class, 'index'])->name('chat.index');
-        Route::get('/chat/{id}', [c_chat::class, 'show'])->name('chat.show');
-        Route::post('/chat', [c_chat::class, 'store'])->name('chat.store');
-        Route::delete('/chat/{id}', [c_chat::class, 'destroy'])->name('chat.destroy');
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

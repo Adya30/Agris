@@ -25,9 +25,8 @@
                         : 'Mohon maaf, pengajuan kemitraan Anda ditolak oleh admin karena dokumen MOU atau profil tidak memenuhi kriteria. Silakan ajukan ulang kembali.' }}
                 </p>
                 <div class="flex flex-col sm:flex-row gap-3">
-                    {{-- Tombol diubah menjadi button agar bisa divalidasi JS --}}
                     <button type="button" onclick="checkProfileAndRedirect('{{ route('kemitraan.create') }}')" class="inline-flex items-center justify-center px-8 py-4 {{ !$kemitraan ? 'bg-[#58CC02]' : 'bg-red-500' }} text-white font-bold rounded-2xl hover:opacity-90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                        {{ !$kemitraan ? 'Ajukan Kemitraan Sekarang' : 'Ajukan Ulang Sekarang' }}
+                        {{ !$kemitraan ? 'Ajukan Kerjasama' : 'Ajukan Ulang Sekarang' }}
                         <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
                     </button>
                 </div>
@@ -113,16 +112,7 @@
     @endif
 </div>
 
-<x-modal
-    id="modalLengkapiProfil"
-    title="Profil Belum Lengkap"
-    message="Harap lengkapi profil dulu sebelum pengajuan"
-    confirmText="Lengkapi Sekarang"
-    cancelText="Nanti Saja"
-    confirmId="btnLengkapiSekarang"
-    cancelId="btnTutupModalProfil"
-/>
-
+<x-modal id="modalLengkapiProfil" title="Profil Belum Lengkap" message="Harap lengkapi profil dulu sebelum pengajuan" confirmText="Lengkapi" cancelText="Nanti Saja" confirmId="btnLengkapiSekarang" cancelId="btnTutupModalProfil" />
 <form id="upload-form" action="{{ $kemitraan ? route('kemitraan.uploadMou', $kemitraan->id) : route('kemitraan.store') }}" method="POST" enctype="multipart/form-data" class="hidden">
     @csrf
     <input type="file" name="fileKemitraan" id="inputManualFile" accept=".pdf" onchange="this.form.submit()">
@@ -130,7 +120,6 @@
 
 <script>
     function checkProfileAndRedirect(targetUrl) {
-        // Cek kelengkapan data user dari variable Auth Laravel yang dikirim ke JS
         const isComplete = @json(!empty(Auth::user()->namaLengkap) && !empty(Auth::user()->noTelp) && !empty(Auth::user()->desaId) && !empty(Auth::user()->detailAlamat));
 
         if (isComplete) {

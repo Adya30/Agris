@@ -57,7 +57,7 @@ class c_blog extends Controller
 
         $blog->save();
 
-        return redirect()->route('admin.blog.index')->with('success', 'Artikel berhasil diterbitkan');
+        return redirect()->route('admin.blog.index')->with('success', 'Blog berhasil dibuat');
     }
 
     public function show(string $id)
@@ -108,7 +108,7 @@ class c_blog extends Controller
 
         $blog->save();
 
-        return redirect()->route('admin.blog.index')->with('success', 'Artikel berhasil diperbarui');
+        return redirect()->route('admin.blog.index')->with('success', 'Blog berhasil diubah');
     }
 
     public function destroy(string $id)

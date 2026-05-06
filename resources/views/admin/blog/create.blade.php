@@ -52,7 +52,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Konten Blog</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Isi Blog</label>
                             <textarea name="isiBlog" id="editor" rows="10"
                                 @class([ 'w-full px-4 py-3 rounded-xl border outline-none transition focus:border-[#58CC02] resize-none', 'border-red-500' => $errors->has('isiBlog'), 'border-gray-300' => !$errors->has('isiBlog'), ])
                                 placeholder="Tuliskan isi blog di sini...">{{ old('isiBlog') }}</textarea>
@@ -64,7 +64,7 @@
                         <div class="bg-gray-50 p-4 rounded-xl flex items-center gap-3">
                             <i class="fa-solid fa-calendar-day text-[#58CC02]"></i>
                             <div>
-                                <p class="text-[10px] uppercase font-bold text-gray-400 leading-none">Tanggal Terbit</p>
+                                <p class="text-[10px] uppercase font-bold text-gray-400 leading-none">Tanggal</p>
                                 <p class="text-sm font-bold text-gray-700">{{ date('d F Y') }}</p>
                             </div>
                         </div>

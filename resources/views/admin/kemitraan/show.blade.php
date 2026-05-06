@@ -4,14 +4,14 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto pt-4 pb-12 px-4">
-    <div class="mb-8 flex items-center justify-between">
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-            <a href="{{ route('admin.kemitraan.index') }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition shadow-sm">
+            <a href="{{ route('admin.kemitraan.index') }}" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition shadow-sm">
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Detail Kemitraan Agen</h1>
-                <p class="text-gray-500 text-sm">Validasi dokumen MOU untuk mengaktifkan status mitra.</p>
+                <h1 class="text-xl md:text-2xl font-bold text-gray-800">Detail Kemitraan Agen</h1>
+                <p class="text-gray-500 text-xs md:text-sm">Validasi dokumen MOU untuk mengaktifkan status mitra.</p>
             </div>
         </div>
 
@@ -19,8 +19,8 @@
         <form id="formHentikan" action="{{ route('admin.kemitraan.action', $kemitraan->id) }}" method="POST">
             @csrf
             <input type="hidden" name="action" value="hentikan">
-            <button type="button" onclick="triggerModal('modalHentikan')" class="px-6 py-2.5 bg-red-50 text-red-600 font-bold rounded-xl border border-red-100 hover:bg-red-600 hover:text-white transition-all flex items-center gap-2">
-                <i class="fa-solid fa-ban"></i> Nonaktifkan Mitra
+            <button type="button" onclick="triggerModal('modalHentikan')" class="w-full md:w-auto px-6 py-2.5 bg-red-500 text-white font-bold rounded-xl border border-red-100 hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2 text-sm">
+                Hapus Kemitraan
             </button>
         </form>
         @endif
@@ -36,45 +36,45 @@
         $isFailed = $kemitraan->statusPengajuan == 'Ditolak';
     @endphp
 
-    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm mb-8">
+    <div class="bg-white rounded-3xl border border-gray-100 p-6 md:p-8 shadow-sm mb-8">
         <div class="relative flex items-center justify-between mb-16 px-4">
             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 z-0"></div>
             <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 {{ $isFailed ? 'bg-red-500' : 'bg-[#58CC02]' }} transition-all duration-500 z-0" style="width: {{ $isFailed ? '100' : ($currentStep - 1) * 50 }}%"></div>
 
-            @foreach(['Upload MOU', 'Verifikasi Dokumen', 'Selesai'] as $index => $label)
+            @foreach(['Upload MOU', 'Verifikasi', 'Selesai'] as $index => $label)
             <div class="relative z-10 flex flex-col items-center">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all {{ $isFailed ? 'bg-red-500 text-white' : ($currentStep > $index ? 'bg-[#58CC02] text-white' : ($currentStep == $index + 1 ? 'bg-white border-4 border-[#58CC02] text-[#58CC02]' : 'bg-white border-4 border-gray-100 text-gray-300')) }}">
+                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-bold transition-all {{ $isFailed ? 'bg-red-500 text-white' : ($currentStep > $index ? 'bg-[#58CC02] text-white' : ($currentStep == $index + 1 ? 'bg-white border-4 border-[#58CC02] text-[#58CC02]' : 'bg-white border-4 border-gray-100 text-gray-300')) }}">
                     @if($isFailed)
-                        <i class="fa-solid fa-xmark text-xs"></i>
+                        <i class="fa-solid fa-xmark text-[10px]"></i>
                     @elseif($currentStep > $index + 1)
-                        <i class="fa-solid fa-check text-xs"></i>
+                        <i class="fa-solid fa-check text-[10px]"></i>
                     @else
-                        <span class="text-xs">{{ $index + 1 }}</span>
+                        <span class="text-[10px]">{{ $index + 1 }}</span>
                     @endif
                 </div>
-                <span class="absolute top-12 text-[10px] font-black uppercase tracking-widest whitespace-nowrap {{ $isFailed ? 'text-red-500' : ($currentStep >= $index + 1 ? 'text-[#58CC02]' : 'text-gray-400') }}">{{ $label }}</span>
+                <span class="absolute top-10 md:top-12 text-[8px] md:text-[10px] font-black uppercase tracking-widest whitespace-nowrap {{ $isFailed ? 'text-red-500' : ($currentStep >= $index + 1 ? 'text-[#58CC02]' : 'text-gray-400') }}">{{ $label }}</span>
             </div>
             @endforeach
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
             <div class="lg:col-span-2 space-y-6">
                 <div>
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Profil Agen</h3>
                     <div class="flex flex-col md:flex-row gap-6 p-6 bg-gray-50 rounded-3xl border border-gray-100">
-                        <img src="{{ $kemitraan->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($kemitraan->user->namaLengkap).'&background=58CC02&color=fff' }}" class="w-24 h-24 rounded-2xl object-cover shadow-sm">
-                        <div class="space-y-3 flex-1">
+                        <img src="{{ $kemitraan->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($kemitraan->user->namaLengkap).'&background=58CC02&color=fff' }}" class="w-24 h-24 rounded-2xl object-cover shadow-sm self-center md:self-start">
+                        <div class="space-y-4 flex-1">
                             <div>
                                 <p class="text-[10px] font-bold text-gray-400 uppercase">Nama Lengkap</p>
                                 <p class="font-bold text-gray-800 text-lg">{{ $kemitraan->user->namaLengkap }}</p>
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <p class="text-[10px] font-bold text-gray-400 uppercase">Email</p>
-                                    <p class="text-sm font-medium text-gray-700">{{ $kemitraan->user->email }}</p>
+                                    <p class="text-sm font-medium text-gray-700 break-all">{{ $kemitraan->user->email }}</p>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-bold text-gray-400 uppercase">WhatsApp</p>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase">No. Telp.</p>
                                     <p class="text-sm font-medium text-gray-700">{{ $kemitraan->user->noTelp ?? '-' }}</p>
                                 </div>
                             </div>
@@ -84,15 +84,26 @@
 
                 <div class="p-6 bg-white border border-gray-100 rounded-3xl">
                     <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-map-marked-alt text-[#58CC02]"></i> Informasi Alamat
+                        <i class="fa-solid fa-map-marked-alt text-[#58CC02]"></i> Alamat
                     </h4>
-                    <p class="text-sm text-gray-600 leading-relaxed italic">
-                        "{{ $kemitraan->user->detailAlamat ?? 'Alamat tidak tersedia.' }}"
-                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 mb-6">
+                    <div class="py-3 px-4 rounded-2xl border border-gray-200 bg-gray-50/50 font-medium text-black text-sm leading-relaxed">
+                        @if($kemitraan->user->desa)
+                            {{ $kemitraan->user->detailAlamat }},
+                            Desa {{ $kemitraan->user->desa->namaDesa }},
+                            Kec. {{ $kemitraan->user->desa->kecamatan->namaKecamatan }},
+                            {{ $kemitraan->user->desa->kecamatan->kabupaten->namaKabupaten }},
+                            Provinsi {{ $kemitraan->user->desa->kecamatan->kabupaten->provinsi->namaProvinsi }}
+                        @else
+                            <span class="text-gray-400 italic">Alamat belum lengkap</span>
+                        @endif
+                    </div>
+
                     <div class="mt-6 pt-6 border-t border-gray-50 flex justify-between items-center">
                         <div>
                             <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Tanggal Pengajuan</p>
-                            <p class="text-sm font-bold text-gray-800">{{ $kemitraan->tanggalPengajuan->format('d F Y, H:i') }}</p>
+                            <p class="text-sm font-bold text-gray-800">{{ $kemitraan->tanggalPengajuan->format('d F Y') }}</p>
                         </div>
                     </div>
                 </div>
@@ -120,12 +131,12 @@
                                 <form id="formAktifkan" action="{{ route('admin.kemitraan.verifyMou', $kemitraan->id) }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="status" value="Aktif">
-                                    <button type="button" onclick="triggerModal('modalAktifkan')" class="w-full py-3.5 bg-[#58CC02] text-white font-bold rounded-xl shadow-lg shadow-green-100 hover:bg-[#46a302] transition-all uppercase text-xs tracking-widest">Terima Dokumen</button>
+                                    <button type="button" onclick="triggerModal('modalAktifkan')" class="w-full py-3.5 bg-[#58CC02] text-white font-bold rounded-xl shadow-lg shadow-green-100 hover:bg-[#46a302] transition-all uppercase text-xs tracking-widest">Setujui Pengajuan</button>
                                 </form>
                                 <form id="formTolakMou" action="{{ route('admin.kemitraan.verifyMou', $kemitraan->id) }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="status" value="Ditolak">
-                                    <button type="button" onclick="triggerModal('modalTolakMou')" class="w-full py-3.5 bg-white text-red-600 border border-red-100 font-bold rounded-xl hover:bg-red-50 transition-all uppercase text-xs tracking-widest">Tolak Dokumen</button>
+                                    <button type="button" onclick="triggerModal('modalTolakMou')" class="w-full py-3.5 bg-white text-red-600 border border-red-100 font-bold rounded-xl hover:bg-red-50 transition-all uppercase text-xs tracking-widest">Tolak Pengajuan</button>
                                 </form>
                             @endif
 
@@ -148,9 +159,9 @@
     </div>
 </div>
 
-<x-modal id="modalHentikan" message="Hentikan kemitraan agen ini? User akan dinonaktifkan." confirmText="Hentikan" cancelText="Batal" confirmId="btnConfirmHentikan" cancelId="btnCancelHentikan" />
-<x-modal id="modalAktifkan" message="Aktifkan status kemitraan agen berdasarkan dokumen MOU ini?" confirmText="Aktifkan" cancelText="Batal" confirmId="btnConfirmAktif" cancelId="btnCancelAktif" />
-<x-modal id="modalTolakMou" message="Tolak dokumen MOU? Agen harus memulai pengajuan dari awal." confirmText="Tolak" cancelText="Batal" confirmId="btnConfirmTolakMou" cancelId="btnCancelTolakMou" />
+<x-modal id="modalHentikan" message="Apakah anda yakin ingin menghapus kerja sama Agen?" confirmText="Iya" cancelText="Batal" confirmId="btnConfirmHentikan" cancelId="btnCancelHentikan" />
+<x-modal id="modalAktifkan" message="Yakin untuk menyutujui pengajuan Mitra?" confirmText="Iya" cancelText="Batal" confirmId="btnConfirmAktif" cancelId="btnCancelAktif" />
+<x-modal id="modalTolakMou" message="Yakin ingin menolak pengajuan kemitraan ini?" confirmText="Iya" cancelText="Batal" confirmId="btnConfirmTolakMou" cancelId="btnCancelTolakMou" />
 
 <script>
     function triggerModal(id) {

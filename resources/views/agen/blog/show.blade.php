@@ -23,7 +23,7 @@
                     <img src="{{ $blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin') }}" class="h-full w-full object-cover rounded-full">
                 </div>
                 <div>
-                    <h4 class="font-bold text-gray-900">{{ $blog->user->name ?? 'Admin Agris' }}</h4>
+                    <h4 class="font-bold text-gray-900">Tanggal Upload</h4>
                     <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">{{ $blog->tanggalBlog->format('d F Y') }}</p>
                 </div>
             </div>

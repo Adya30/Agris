@@ -164,7 +164,7 @@ class AuthController extends Controller
         );
 
         Auth::login($user, true);
-        return $this->redirectByRole($user);
+        return $this->redirectByRole($user)->with('success', 'Login Berhasil');
     }
 
     private function redirectByRole($user)
@@ -172,7 +172,7 @@ class AuthController extends Controller
         if ($user->isAdmin) {
             return redirect()->intended(route('admin.produk.index'));
         }
-        return redirect()->intended(route('agen.profile'));
+        return redirect()->intended(route('agen.produk.index'));
     }
 
     public function logout(Request $request)

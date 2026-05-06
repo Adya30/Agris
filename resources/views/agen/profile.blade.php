@@ -130,7 +130,7 @@
     </div>
 </div>
 
-<x-modal id="confirmModal" message="Apakah Anda yakin ingin memperbarui data profil agen?" confirmText="Ya, Simpan" cancelText="Batal" confirmId="btnSubmitProfile" cancelId="btnCloseProfileModal" />
+<x-modal id="confirmModal" message="Apakah yakin melakukan perubahan profil?" confirmText="Iya" cancelText="Batal" confirmId="btnSubmitProfile" cancelId="btnCloseProfileModal" />
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
