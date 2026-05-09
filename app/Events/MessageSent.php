@@ -25,7 +25,6 @@ class MessageSent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         $penerima = is_array($this->chat) ? $this->chat['id_penerima'] : $this->chat->id_penerima;
-        $pengirim = is_array($this->chat) ? $this->chat['id_pengirim'] : $this->chat->id_pengirim;
 
         if ($penerima === 'GLOBAL') {
             return [new Channel('chat.global')];
@@ -33,7 +32,6 @@ class MessageSent implements ShouldBroadcast
 
         return [
             new PrivateChannel('chat.' . $penerima),
-            new PrivateChannel('chat.' . $pengirim),
         ];
     }
 

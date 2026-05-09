@@ -18,6 +18,7 @@ class c_chat extends Controller
             $users = User::where('isAdmin', false)->get();
             return view('admin.chat.index', compact('users'));
         }
+
         $admin = User::where('isAdmin', true)->first();
         $chats = Chat::where(function($q) use ($user, $admin) {
             $q->where(function($inner) use ($user, $admin) {
@@ -39,9 +40,11 @@ class c_chat extends Controller
         }
         $targetUser = User::findOrFail($id);
         $chats = Chat::where(function($q) use ($user, $targetUser) {
-            $q->where('id_pengirim', $user->id)->where('id_penerima', $targetUser->id);
-        })->orWhere(function($q) use ($user, $targetUser) {
-            $q->where('id_pengirim', $targetUser->id)->where('id_penerima', $user->id);
+            $q->where(function($inner) use ($user, $targetUser) {
+                $inner->where('id_pengirim', $user->id)->where('id_penerima', $targetUser->id);
+            })->orWhere(function($inner) use ($user, $targetUser) {
+                $inner->where('id_pengirim', $targetUser->id)->where('id_penerima', $user->id);
+            });
         })->orderBy('waktu_chat', 'asc')->get();
 
         Chat::where('id_pengirim', $targetUser->id)->where('id_penerima', $user->id)->where('status', 'terkirim')->update(['status' => 'dibaca']);
@@ -86,9 +89,7 @@ class c_chat extends Controller
     {
         try {
             $chat = Chat::where('id', $id)->where('id_pengirim', Auth::id())->firstOrFail();
-
             broadcast(new MessageSent(['id' => $chat->id, 'id_penerima' => $chat->id_penerima, 'id_pengirim' => $chat->id_pengirim], true))->toOthers();
-
             if ($chat->foto_chat) {
                 Storage::disk('public')->delete($chat->foto_chat);
             }

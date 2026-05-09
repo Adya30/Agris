@@ -3,7 +3,7 @@ window.previewImage = function(input, previewId = 'previewImg', placeholderId = 
     const placeholder = document.getElementById(placeholderId);
     const container = document.getElementById(containerId);
     const clientError = document.getElementById(errorId);
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const maxSize = 10 * 1024 * 1024;
 
     if (clientError) {
         clientError.classList.add('hidden');
