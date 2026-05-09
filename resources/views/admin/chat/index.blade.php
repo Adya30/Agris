@@ -3,13 +3,13 @@
 
 @section('content')
 <div class="flex flex-col md:flex-row bg-slate-100 relative h-[calc(100vh-64px)] overflow-hidden" id="chat-app" v-cloak>
-    <div :class="activeTarget ? 'hidden md:flex' : 'flex'" class="w-full md:w-80 flex-col bg-white border-r border-slate-200 shrink-0 h-full shadow-xl">
+    <div :class="activeTarget ? 'hidden md:flex' : 'flex'" class="w-full md:w-80 flex-col bg-white border-r border-gray-100 shrink-0 h-full shadow-xl">
         <div class="h-20 px-6 flex items-center justify-between border-b border-slate-100 shrink-0 bg-white">
             <div class="flex flex-col">
-                <h1 class="text-xl font-black text-green-700 leading-none">AGRIS</h1>
-                <span class="text-[10px] font-bold text-slate-400 tracking-[0.2em] uppercase">Messenger</span>
+                <h1 class="text-xl font-bold text-green-700 leading-none">AGRIS</h1>
+                <span class="text-[10px] font-bold text-slate-400 uppercase">Chat User</span>
             </div>
-            <button @click="openGlobalChat" :class="activeTarget === 'GLOBAL' ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-700'" class="px-3 py-2 rounded-xl text-[10px] font-black transition-all hover:scale-105 active:scale-95 shadow-sm">
+            <button @click="openGlobalChat" :class="activeTarget === 'GLOBAL' ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-700'" class="px-3 py-2 rounded-xl text-[10px] font-bold transition-all hover:scale-105 active:scale-95 shadow-sm">
                 BROADCAST
             </button>
         </div>
@@ -37,46 +37,64 @@
                     <button @click="activeTarget = null" class="md:hidden p-2 -ml-2 text-slate-400"><i class="fa-solid fa-chevron-left"></i></button>
                     <img :src="activeTargetPhoto" class="w-11 h-11 rounded-2xl object-cover">
                     <div class="min-w-0">
-                        <h2 class="font-black text-slate-800 text-sm uppercase truncate">@{{ activeTargetName }}</h2>
+                        <h2 class="font-bold text-slate-800 text-sm uppercase truncate">@{{ activeTargetName }}</h2>
                     </div>
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 custom-scrollbar" id="chat-container">
+            <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 custom-scrollbar bg-[#f8fafc]" id="chat-container">
                 <div v-for="chat in chats" :key="chat.id" :class="chat.id_pengirim == @js(Auth::id()) ? 'flex justify-end' : 'flex justify-start'">
-                    <div class="max-w-[85%] md:max-w-[70%] group relative flex items-end gap-3">
-                        <div v-if="chat.id_pengirim == @js(Auth::id())">
-                            <button @click.stop="toggleMenu(chat.id)" class="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-red-500"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                            <div v-if="activeMenu === chat.id" class="absolute right-0 bottom-full mb-2 w-32 bg-white rounded-xl shadow-2xl border z-50">
-                                <button @click="deleteChat(chat.id)" class="w-full text-left px-4 py-2 text-[11px] font-bold text-red-600">HAPUS</button>
+                    <div class="max-w-[85%] md:max-w-[70%] group flex items-start gap-1">
+                        <div v-if="chat.id_pengirim == @js(Auth::id())" class="flex items-center self-center gap-1 order-1">
+                            <div v-if="activeMenu === chat.id" class="animate-in fade-in slide-in-from-right-1 duration-200">
+                                <button @click.prevent="deleteChat(chat.id)" class="bg-white px-3 py-1.5 rounded-lg shadow-md border border-slate-100 text-[10px] font-black text-red-600 hover:bg-red-50 whitespace-nowrap">
+                                    HAPUS
+                                </button>
                             </div>
+                            <button @click.stop="toggleMenu(chat.id)" class="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-green-600 transition-all">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
                         </div>
-                        <div :class="chat.id_penerima == 'GLOBAL' ? 'bg-amber-400 text-amber-950' : (chat.id_pengirim == @js(Auth::id()) ? 'bg-green-600 text-white rounded-tr-none' : 'bg-white text-slate-700 border rounded-tl-none')" class="px-4 py-3 rounded-3xl shadow-sm">
+
+                        <div :class="chat.id_penerima == 'GLOBAL' ? 'bg-amber-400 text-amber-950 order-2' : (chat.id_pengirim == @js(Auth::id()) ? 'bg-green-600 text-white rounded-tr-none order-2' : 'bg-white text-slate-700 border-none rounded-tl-none order-2')" class="px-4 py-3 rounded-3xl shadow-sm">
                             <div v-if="chat.foto_chat" class="mb-2 rounded-xl overflow-hidden">
                                 <img :src="chat.foto_chat.startsWith('http') ? chat.foto_chat : '/storage/' + chat.foto_chat" class="w-full max-h-96 object-cover">
                             </div>
                             <p class="text-sm font-medium">@{{ chat.pesan }}</p>
-                            <div class="flex justify-end mt-1 text-[9px] font-bold">@{{ formatTime(chat.waktu_chat) }}</div>
+                            <div class="flex justify-end items-center gap-1.5 mt-1 text-[9px] font-bold opacity-80">
+                                <span>@{{ formatTime(chat.waktu_chat) }}</span>
+                                <template v-if="chat.id_pengirim == @js(Auth::id()) && chat.id_penerima !== 'GLOBAL'">
+                                    <i v-if="chat.status === 'dibaca'" class="fa-solid fa-check-double text-blue-200"></i>
+                                    <i v-else class="fa-solid fa-check text-green-200"></i>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="p-4 bg-white border-t border-slate-200">
-                <div v-if="imagePreview" class="mb-4 p-3 bg-green-50 rounded-2xl flex justify-between">
+                <div v-if="imagePreview" class="mb-4 p-3 bg-green-50 rounded-2xl flex justify-between items-center">
                     <span class="text-xs font-bold text-green-800">@{{ selectedFile?.name }}</span>
                     <button @click="cancelImage" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="flex items-center gap-3 bg-slate-100 p-2 rounded-[2rem]">
+                <div class="flex items-center gap-3 bg-slate-100 p-2 rounded-4xl">
                     <label class="w-12 h-12 flex items-center justify-center text-slate-400 cursor-pointer">
-                        <i class="fa-solid fa-paperclip text-xl"></i>
+                        <i class="fa-solid fa-image"></i>
                         <input type="file" @change="handleFileUpload" class="hidden" id="file-input-field">
                     </label>
-                    <input type="text" v-model="newMessage" @keyup.enter="sendChat" placeholder="Tulis pesan..." class="flex-1 bg-transparent border-none focus:ring-0 text-sm">
-                    <button @click="sendChat" class="bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
+                    <input type="text" v-model="newMessage" @keyup.enter="sendChat" placeholder="Tulis pesan..." class="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm">
+                    <button @click="sendChat" class="bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center shrink-0"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </template>
+
+        <div v-else class="flex-1 flex items-center justify-center p-8 md:p-16 bg-white">
+            <div class="w-full h-full border-2 border-dashed border-slate-200 rounded-[50px] flex flex-col items-center justify-center text-center p-8">
+                <i class="fa-solid fa-comments text-7xl text-slate-200 mb-6"></i>
+                <h3 class="text-xl font-bold text-slate-400 uppercase tracking-[0.4em]">Menu Chat</h3>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -140,6 +158,7 @@
             const deleteChat = (id) => {
                 axios.delete(`/chat/${id}`).then(() => {
                     chats.value = chats.value.filter(c => c.id !== id);
+                    activeMenu.value = null;
                 });
             };
 
