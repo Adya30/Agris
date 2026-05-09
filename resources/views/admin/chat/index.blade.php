@@ -1,32 +1,49 @@
 @extends('layouts.admin')
-@section('title', 'Chat - AGRIS')
+@section('title', 'Chat Admin - AGRIS')
 
 @section('content')
-<div class="flex flex-col md:flex-row bg-slate-100 relative h-[calc(100vh-64px)] overflow-hidden" id="chat-app" v-cloak>
+<div class="fixed inset-0 bg-slate-100 z-200 flex flex-col md:flex-row overflow-hidden" id="chat-app" v-cloak>
     <div :class="activeTarget ? 'hidden md:flex' : 'flex'" class="w-full md:w-80 flex-col bg-white border-r border-gray-100 shrink-0 h-full shadow-xl">
-        <div class="h-20 px-6 flex items-center justify-between border-b border-slate-100 shrink-0 bg-white">
-            <div class="flex flex-col">
-                <h1 class="text-xl font-bold text-green-700 leading-none">AGRIS</h1>
-                <span class="text-[10px] font-bold text-slate-400 uppercase">Chat User</span>
+        <div class="px-6 py-4 flex flex-col border-b border-slate-100 shrink-0 bg-white gap-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-50 text-slate-400 transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                    <div class="flex flex-col">
+                        <h1 class="text-lg font-black text-green-700 leading-none">AGRIS</h1>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Panel Chat Admin</span>
+                    </div>
+                </div>
+                <button @click="openGlobalChat" :class="activeTarget === 'GLOBAL' ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-700'" class="px-3 py-2 rounded-xl text-[10px] font-bold transition-all hover:scale-105 active:scale-95 shadow-sm">
+                    BROADCAST
+                </button>
             </div>
-            <button @click="openGlobalChat" :class="activeTarget === 'GLOBAL' ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-700'" class="px-3 py-2 rounded-xl text-[10px] font-bold transition-all hover:scale-105 active:scale-95 shadow-sm">
-                BROADCAST
-            </button>
+
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" v-model="searchQuery" placeholder="Cari agen..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border-none rounded-xl text-xs focus:ring-2 focus:ring-green-500 transition-all">
+            </div>
         </div>
 
         <div class="flex-1 overflow-y-auto custom-scrollbar">
-            @foreach($users as $u)
-            <div @click="loadChat(@js($u->id), @js($u->namaLengkap ?? 'Agen'), @js($u->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($u->namaLengkap ?? 'U').'&background=dcfce7&color=15803d'))"
-                 :class="activeTarget == @js($u->id) ? 'bg-green-50 border-r-4 border-green-600' : 'hover:bg-slate-50 border-r-4 border-transparent'"
+            <div v-for="u in filteredUsers" :key="u.id"
+                 @click="loadChat(u.id, u.namaLengkap, u.fotoProfil)"
+                 :class="activeTarget == u.id ? 'bg-green-50 border-r-4 border-green-600' : 'hover:bg-slate-50 border-r-4 border-transparent'"
                  class="p-4 border-b border-slate-50 cursor-pointer transition-all flex items-center gap-4">
                 <div class="relative shrink-0">
-                    <img src="{{ $u->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($u->namaLengkap ?? 'U').'&background=dcfce7&color=15803d' }}" class="w-12 h-12 rounded-2xl object-cover shadow-md border-2 border-white">
+                    <img :src="u.fotoProfil" class="w-12 h-12 rounded-full object-cover shadow-md border-2 border-white">
+                    <div v-if="unreadUsers.includes(u.id)" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white rounded-full"></div>
                 </div>
                 <div class="min-w-0 flex-1">
-                    <p class="font-bold text-slate-800 text-sm truncate">{{ $u->namaLengkap ?? 'Agen' }}</p>
+                    <p class="font-bold text-slate-800 text-sm truncate">@{{ u.namaLengkap }}</p>
+                    <div class="flex items-center gap-1 mt-0.5">
+                        <span :class="u.isActive ? 'text-green-600' : 'text-yellow-400'" class="text-[10px] font-bold">
+                            @{{ u.isActive ? 'Mitra Aktif' : 'Mitra Non-Aktif' }}
+                        </span>
+                    </div>
                 </div>
             </div>
-            @endforeach
         </div>
     </div>
 
@@ -34,19 +51,24 @@
         <template v-if="activeTarget">
             <div class="h-20 px-6 flex items-center justify-between border-b border-slate-200 shrink-0 bg-white/80 backdrop-blur-md z-20 shadow-sm">
                 <div class="flex items-center gap-4">
-                    <button @click="activeTarget = null" class="md:hidden p-2 -ml-2 text-slate-400"><i class="fa-solid fa-chevron-left"></i></button>
-                    <img :src="activeTargetPhoto" class="w-11 h-11 rounded-2xl object-cover">
+                    <button @click="activeTarget = null" class="md:hidden w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <img :src="activeTargetPhoto" class="w-11 h-11 rounded-full object-cover shadow-sm border border-slate-200">
                     <div class="min-w-0">
                         <h2 class="font-bold text-slate-800 text-sm uppercase truncate">@{{ activeTargetName }}</h2>
                     </div>
                 </div>
+                <button @click="activeTarget = null" class="hidden md:flex w-10 h-10 items-center justify-center rounded-full text-slate-300 hover:text-red-500 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
             </div>
 
             <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 custom-scrollbar bg-[#f8fafc]" id="chat-container">
                 <div v-for="chat in chats" :key="chat.id" :class="chat.id_pengirim == @js(Auth::id()) ? 'flex justify-end' : 'flex justify-start'">
                     <div class="max-w-[85%] md:max-w-[70%] group flex items-start gap-1">
                         <div v-if="chat.id_pengirim == @js(Auth::id())" class="flex items-center self-center gap-1 order-1">
-                            <div v-if="activeMenu === chat.id" class="animate-in fade-in slide-in-from-right-1 duration-200">
+                            <div v-if="activeMenu === chat.id">
                                 <button @click.prevent="deleteChat(chat.id)" class="bg-white px-3 py-1.5 rounded-lg shadow-md border border-slate-100 text-[10px] font-black text-red-600 hover:bg-red-50 whitespace-nowrap">
                                     HAPUS
                                 </button>
@@ -56,7 +78,7 @@
                             </button>
                         </div>
 
-                        <div :class="chat.id_penerima == 'GLOBAL' ? 'bg-amber-400 text-amber-950 order-2' : (chat.id_pengirim == @js(Auth::id()) ? 'bg-green-600 text-white rounded-tr-none order-2' : 'bg-white text-slate-700 border-none rounded-tl-none order-2')" class="px-4 py-3 rounded-3xl shadow-sm">
+                        <div :class="chat.id_penerima == 'GLOBAL' ? 'bg-amber-400 text-amber-950 order-2 rounded-2xl' : (chat.id_pengirim == @js(Auth::id()) ? 'bg-green-600 text-white rounded-tr-none order-2' : 'bg-white text-slate-700 border-none rounded-tl-none order-2')" class="px-4 py-3 rounded-3xl shadow-sm">
                             <div v-if="chat.foto_chat" class="mb-2 rounded-xl overflow-hidden">
                                 <img :src="chat.foto_chat.startsWith('http') ? chat.foto_chat : '/storage/' + chat.foto_chat" class="w-full max-h-96 object-cover">
                             </div>
@@ -79,20 +101,23 @@
                     <button @click="cancelImage" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="flex items-center gap-3 bg-slate-100 p-2 rounded-4xl">
-                    <label class="w-12 h-12 flex items-center justify-center text-slate-400 cursor-pointer">
+                    <label class="w-12 h-12 flex items-center justify-center text-slate-400 cursor-pointer hover:text-green-600">
                         <i class="fa-solid fa-image"></i>
                         <input type="file" @change="handleFileUpload" class="hidden" id="file-input-field">
                     </label>
                     <input type="text" v-model="newMessage" @keyup.enter="sendChat" placeholder="Tulis pesan..." class="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm">
-                    <button @click="sendChat" class="bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center shrink-0"><i class="fa-solid fa-paper-plane"></i></button>
+                    <button @click="sendChat" class="bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center shrink-0 active:scale-95 transition-transform"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </template>
 
         <div v-else class="flex-1 flex items-center justify-center p-8 md:p-16 bg-white">
-            <div class="w-full h-full border-2 border-dashed border-slate-200 rounded-[50px] flex flex-col items-center justify-center text-center p-8">
-                <i class="fa-solid fa-comments text-7xl text-slate-200 mb-6"></i>
-                <h3 class="text-xl font-bold text-slate-400 uppercase tracking-[0.4em]">Menu Chat</h3>
+            <div class="w-full h-full border-4 border-dashed border-slate-50 rounded-[50px] flex flex-col items-center justify-center text-center p-8">
+                <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-comments text-4xl text-slate-200"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-300 uppercase tracking-[0.4em]">Pusat Pesan</h3>
+                <p class="text-slate-400 text-xs mt-2 font-bold uppercase tracking-widest">Pilih agen untuk memulai percakapan</p>
             </div>
         </div>
     </div>
@@ -100,9 +125,15 @@
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script>
-    const { createApp, ref, onMounted, nextTick } = Vue;
+    const { createApp, ref, onMounted, nextTick, computed } = Vue;
     createApp({
         setup() {
+            const users = ref(@js($users).map(u => ({
+                id: u.id,
+                namaLengkap: u.namaLengkap || 'Agen',
+                isActive: u.isActive,
+                fotoProfil: u.fotoProfil || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.namaLengkap || 'U')}&background=dcfce7&color=15803d`
+            })));
             const chats = ref([]);
             const activeTarget = ref(null);
             const activeTargetName = ref('');
@@ -111,6 +142,14 @@
             const selectedFile = ref(null);
             const imagePreview = ref(false);
             const activeMenu = ref(null);
+            const searchQuery = ref('');
+            const unreadUsers = ref([]);
+
+            const filteredUsers = computed(() => {
+                return users.value.filter(u =>
+                    u.namaLengkap.toLowerCase().includes(searchQuery.value.toLowerCase())
+                );
+            });
 
             const scrollToBottom = () => nextTick(() => {
                 const el = document.getElementById('chat-container');
@@ -121,6 +160,7 @@
                 activeTarget.value = id;
                 activeTargetName.value = name;
                 activeTargetPhoto.value = photo;
+                unreadUsers.value = unreadUsers.value.filter(uid => uid !== id);
                 axios.get(`/chat/${id}`).then(res => {
                     chats.value = res.data.chats;
                     scrollToBottom();
@@ -152,7 +192,8 @@
 
             const cancelImage = () => {
                 selectedFile.value = null; imagePreview.value = false;
-                if(document.getElementById('file-input-field')) document.getElementById('file-input-field').value = '';
+                const field = document.getElementById('file-input-field');
+                if(field) field.value = '';
             };
 
             const deleteChat = (id) => {
@@ -178,10 +219,23 @@
                         window.Echo.private(`chat.${@js(Auth::id())}`).listen('.MessageSent', (e) => {
                             if (e.is_delete) {
                                 chats.value = chats.value.filter(c => c.id !== e.chat.id);
-                            } else if (activeTarget.value == e.chat.id_pengirim || (activeTarget.value == e.chat.id_penerima && e.chat.id_penerima != 'GLOBAL')) {
-                                if (!chats.value.some(c => c.id === e.chat.id)) {
-                                    chats.value.push(e.chat);
-                                    scrollToBottom();
+                            } else if (e.is_read_update) {
+                                chats.value.forEach(c => {
+                                    if (c.id_pengirim == @js(Auth::id()) && c.id_penerima == e.chat.id_pengirim) {
+                                        c.status = 'dibaca';
+                                    }
+                                });
+                            } else {
+                                if (activeTarget.value == e.chat.id_pengirim) {
+                                    if (!chats.value.some(c => c.id === e.chat.id)) {
+                                        chats.value.push(e.chat);
+                                        scrollToBottom();
+                                        axios.get(`/chat/${e.chat.id_pengirim}`);
+                                    }
+                                } else {
+                                    if (!unreadUsers.value.includes(e.chat.id_pengirim)) {
+                                        unreadUsers.value.push(e.chat.id_pengirim);
+                                    }
                                 }
                             }
                         });
@@ -195,7 +249,7 @@
                 }, 500);
             });
 
-            return { chats, activeTarget, activeTargetName, activeTargetPhoto, newMessage, imagePreview, selectedFile, activeMenu, loadChat, openGlobalChat, sendChat, handleFileUpload, cancelImage, deleteChat, formatTime, toggleMenu };
+            return { users, filteredUsers, unreadUsers, searchQuery, chats, activeTarget, activeTargetName, activeTargetPhoto, newMessage, imagePreview, selectedFile, activeMenu, loadChat, openGlobalChat, sendChat, handleFileUpload, cancelImage, deleteChat, formatTime, toggleMenu };
         }
     }).mount('#chat-app');
 </script>

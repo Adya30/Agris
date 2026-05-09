@@ -15,24 +15,20 @@ class MessageSent implements ShouldBroadcast
 
     public $chat;
     public $isDelete;
+    public $isReadUpdate;
 
-    public function __construct($chat, $isDelete = false)
+    public function __construct($chat, $isDelete = false, $isReadUpdate = false)
     {
         $this->chat = $chat;
         $this->isDelete = $isDelete;
+        $this->isReadUpdate = $isReadUpdate;
     }
 
     public function broadcastOn(): array
     {
         $penerima = is_array($this->chat) ? $this->chat['id_penerima'] : $this->chat->id_penerima;
-
-        if ($penerima === 'GLOBAL') {
-            return [new Channel('chat.global')];
-        }
-
-        return [
-            new PrivateChannel('chat.' . $penerima),
-        ];
+        if ($penerima === 'GLOBAL') return [new Channel('chat.global')];
+        return [new PrivateChannel('chat.' . $penerima)];
     }
 
     public function broadcastAs(): string
@@ -44,7 +40,8 @@ class MessageSent implements ShouldBroadcast
     {
         return [
             'chat' => $this->chat,
-            'is_delete' => $this->isDelete
+            'is_delete' => $this->isDelete,
+            'is_read_update' => $this->isReadUpdate
         ];
     }
 }

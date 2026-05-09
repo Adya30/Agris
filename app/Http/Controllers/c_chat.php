@@ -28,6 +28,13 @@ class c_chat extends Controller
             });
         })->orWhere('id_penerima', 'GLOBAL')->orderBy('waktu_chat', 'asc')->get();
 
+        Chat::where('id_pengirim', $admin->id)->where('id_penerima', $user->id)->where('status', 'terkirim')->update(['status' => 'dibaca']);
+
+        $lastChat = $chats->where('id_pengirim', $admin->id)->last();
+        if($lastChat) {
+            broadcast(new MessageSent(['id_penerima' => $admin->id, 'id_pengirim' => $user->id, 'status' => 'dibaca'], false, true))->toOthers();
+        }
+
         return view('agen.chat.index', compact('chats', 'admin'));
     }
 
@@ -38,6 +45,7 @@ class c_chat extends Controller
             $chats = Chat::where('id_penerima', 'GLOBAL')->orderBy('waktu_chat', 'asc')->get();
             return response()->json(['target' => ['id' => 'GLOBAL', 'name' => 'PENGUMUMAN GLOBAL'], 'chats' => $chats]);
         }
+
         $targetUser = User::findOrFail($id);
         $chats = Chat::where(function($q) use ($user, $targetUser) {
             $q->where(function($inner) use ($user, $targetUser) {
@@ -48,6 +56,9 @@ class c_chat extends Controller
         })->orderBy('waktu_chat', 'asc')->get();
 
         Chat::where('id_pengirim', $targetUser->id)->where('id_penerima', $user->id)->where('status', 'terkirim')->update(['status' => 'dibaca']);
+
+        broadcast(new MessageSent(['id_penerima' => $targetUser->id, 'id_pengirim' => $user->id, 'status' => 'dibaca'], false, true))->toOthers();
+
         return response()->json(['target' => $targetUser, 'chats' => $chats]);
     }
 

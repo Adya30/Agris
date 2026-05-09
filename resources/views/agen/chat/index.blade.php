@@ -2,17 +2,24 @@
 @section('title', 'Chat - AGRIS')
 
 @section('content')
-<div class="bg-slate-100 h-[calc(100vh-64px)] overflow-hidden" id="chat-app" v-cloak>
-    <div class="max-w-5xl mx-auto h-full flex flex-col bg-white shadow-2xl">
-        <div class="h-20 px-6 flex items-center justify-between border-b border-slate-200 bg-white z-20">
-            <div class="flex items-center gap-4">
-                <img src="{{ $admin->fotoProfil ?? 'https://ui-avatars.com/api/?name=Admin&background=15803d&color=fff' }}" class="w-12 h-12 rounded-2xl object-cover">
+<div class="fixed inset-0 bg-slate-100 z-50 overflow-hidden" id="chat-app" v-cloak>
+    <div class="max-w-full mx-auto h-full flex flex-col bg-white shadow-2xl relative">
+        <div class="h-20 px-4 md:px-6 flex items-center justify-between border-b border-slate-200 bg-white z-20">
+            <div class="flex items-center gap-3 md:gap-4">
+                <a href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-600 transition-colors">
+                    <i class="fa-solid fa-arrow-left text-lg"></i>
+                </a>
+
+                <img src="{{ $admin->fotoProfil ?? 'https://ui-avatars.com/api/?name=Admin&background=15803d&color=fff' }}" class="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover">
+
                 <div class="flex flex-col">
-                    <h2 class="font-bold text-slate-800 text-sm uppercase">Pusat Layanan</h2>
-                    <span class="text-[10px] font-bold text-green-600">Terhubung dengan Admin</span>
+                    <h2 class="font-bold text-slate-800 text-xs md:text-sm uppercase leading-tight">Pusat Layanan Admin</h2>
                 </div>
             </div>
-            <i class="fa-solid fa-comments text-slate-200 text-xl"></i>
+
+            <div class="flex items-center gap-4">
+                <i class="fa-solid fa-comments text-slate-200 text-xl hidden md:block"></i>
+            </div>
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 bg-[#f8fafc]" id="chat-container">
@@ -143,9 +150,18 @@
                         window.Echo.private(`chat.${@js(Auth::id())}`).listen('.MessageSent', (e) => {
                             if (e.is_delete) {
                                 chats.value = chats.value.filter(c => c.id !== e.chat.id);
-                            } else if (!chats.value.some(c => c.id === e.chat.id)) {
-                                chats.value.push(e.chat);
-                                scrollToBottom();
+                            } else if (e.is_read_update) {
+                                chats.value.forEach(c => {
+                                    if (c.id_pengirim == @js(Auth::id()) && c.id_penerima == e.chat.id_pengirim) {
+                                        c.status = 'dibaca';
+                                    }
+                                });
+                            } else {
+                                if (!chats.value.some(c => c.id === e.chat.id)) {
+                                    chats.value.push(e.chat);
+                                    scrollToBottom();
+                                    axios.get(`/chat/${e.chat.id_pengirim}`);
+                                }
                             }
                         });
                         window.Echo.channel('chat.global').listen('.MessageSent', (e) => {
