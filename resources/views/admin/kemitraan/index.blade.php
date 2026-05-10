@@ -3,7 +3,7 @@
 @section('title', 'Kemitraan Admin - AGRIS')
 
 @section('content')
-<div class="max-w-6xl mx-auto pt-4 pb-12 px-4">
+<div class="w-full pt-4 pb-12 px-4 sm:px-6 lg:px-8">
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-gray-800">Manajemen Kemitraan</h1>
         <p class="text-gray-500 text-sm">Verifikasi data pengajuan agen baru.</p>
@@ -60,7 +60,7 @@
         </table>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 md:hidden">
+    <div class="grid grid-cols-1 gap-2 md:hidden">
         @foreach($kemitraans as $item)
         <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
             <div class="flex justify-between items-start mb-4">

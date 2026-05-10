@@ -18,6 +18,7 @@
             <div class="flex items-center gap-3 shrink-0">
                 <a href="{{ route('agen.chat.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/30 text-white hover:bg-green-600/60 transition-all relative group">
                     <i class="fa-solid fa-comments text-lg"></i>
+                    <div id="chat-notification-dot" class="hidden absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-red-500 border-2 border-[#0f8629] rounded-full"></div>
                 </a>
 
                 <div class="relative hidden md:block">
@@ -34,7 +35,7 @@
                         </div>
                     </button>
 
-                    <div id="dropdownMenu" class="hidden absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-60">
+                    <div id="dropdownMenu" class="hidden absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-60 opacity-0 scale-95 transition-all duration-200 origin-top-right">
                         <a href="{{ route('agen.profile') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition font-semibold">
                             <i class="fa-regular fa-id-card mr-3 text-[#0f8629] text-lg"></i> Profil Saya
                         </a>
@@ -59,12 +60,11 @@
                 <a href="{{ route('agen.produk.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.produk.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Produk</a>
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Transaksi</a>
                 <a href="{{ route('kemitraan.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('kemitraan.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Kemitraan</a>
-                <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Konsultasi</a>
             </div>
         </div>
     </div>
 
-    <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-2xl absolute w-full left-0 animate-fade-in-down max-h-[calc(100vh-80px)] overflow-y-auto">
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-2xl absolute w-full left-0 max-h-[calc(100vh-80px)] overflow-y-auto opacity-0 -translate-y-2 transition-all duration-200">
         <div class="px-6 py-6 space-y-4">
             <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                 <div class="h-14 w-14 overflow-hidden rounded-full border-2 border-[#0f8629]">
@@ -77,27 +77,25 @@
             </div>
 
             <div class="grid grid-cols-1 gap-2">
-                <a href="{{ route('agen.blog.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.blog.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base">
+                <a href="{{ route('agen.blog.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.blog.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base text-left">
                     <i class="fa-solid fa-newspaper mr-3 w-5 text-center"></i> Blog
                 </a>
-                <a href="{{ route('agen.produk.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.produk.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base">
+                <a href="{{ route('agen.produk.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.produk.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base text-left">
                     <i class="fa-solid fa-box mr-3 w-5 text-center"></i> Produk
                 </a>
-                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
+                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base text-left">
                     <i class="fa-solid fa-receipt mr-3 w-5 text-center"></i> Transaksi
                 </a>
-                <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
+                <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base text-left">
                     <i class="fa-solid fa-handshake mr-3 w-5 text-center"></i> Kemitraan
                 </a>
-                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
+                <a href="{{ route('agen.chat.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base text-left relative">
                     <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Chat
-                </a>
-                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
-                    <i class="fa-solid fa-headset mr-3 w-5 text-center"></i> Konsultasi
+                    <div id="chat-notification-dot-mobile" class="hidden ml-2 w-2 h-2 bg-red-500 rounded-full"></div>
                 </a>
                 <div class="my-2 border-t border-gray-100"></div>
-                <button type="button" class="logoutMobileBtn w-full flex items-center py-4 px-4 rounded-xl hover:bg-red-50 font-black text-red-500 transition-all">
-                    <i class="fa-solid fa-right-from-bracket mr-3 w-5 text-center"></i> Logout dari Akun
+                <button type="button" class="logoutMobileBtn w-full flex items-center py-4 px-4 rounded-xl hover:bg-red-50 font-black text-red-500 transition-all text-left">
+                    <i class="fa-solid fa-right-from-bracket mr-3 w-5 text-center"></i> Logout
                 </button>
             </div>
         </div>
@@ -119,52 +117,61 @@ document.addEventListener('DOMContentLoaded', function() {
     const dropdownBtn = document.getElementById('dropdownBtn');
     const dropdownMenu = document.getElementById('dropdownMenu');
     const dropdownArrow = document.getElementById('dropdownArrow');
+    const chatDot = document.getElementById('chat-notification-dot');
+    const chatDotMobile = document.getElementById('chat-notification-dot-mobile');
 
-    const closeAllMenus = () => {
-        dropdownMenu?.classList.add('hidden');
-        mobileMenu?.classList.add('hidden');
-        if (dropdownArrow) dropdownArrow.style.transform = 'rotate(0deg)';
+    const animateToggle = (el, show) => {
+        if (show) {
+            el.classList.remove('hidden');
+            setTimeout(() => {
+                el.classList.remove('opacity-0', 'scale-95', '-translate-y-2');
+                el.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+            }, 10);
+        } else {
+            el.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
+            el.classList.add('opacity-0', 'scale-95', '-translate-y-2');
+            setTimeout(() => el.classList.add('hidden'), 200);
+        }
     };
 
     dropdownBtn?.addEventListener('click', function(e) {
         e.stopPropagation();
-        mobileMenu?.classList.add('hidden');
-        const isHidden = dropdownMenu.classList.toggle('hidden');
-        if (dropdownArrow) dropdownArrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+        const isHidden = dropdownMenu.classList.contains('hidden');
+        if (isHidden) animateToggle(mobileMenu, false);
+        animateToggle(dropdownMenu, isHidden);
+        if (dropdownArrow) dropdownArrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
     });
 
     hamburger?.addEventListener('click', function(e) {
         e.stopPropagation();
-        dropdownMenu?.classList.add('hidden');
-        mobileMenu.classList.toggle('hidden');
+        const isHidden = mobileMenu.classList.contains('hidden');
+        if (isHidden) animateToggle(dropdownMenu, false);
+        animateToggle(mobileMenu, isHidden);
     });
 
     document.addEventListener('click', function(e) {
         if (!e.target.closest('#dropdownBtn') && !e.target.closest('#dropdownMenu')) {
-            dropdownMenu?.classList.add('hidden');
+            animateToggle(dropdownMenu, false);
             if (dropdownArrow) dropdownArrow.style.transform = 'rotate(0deg)';
         }
         if (!e.target.closest('#hamburger') && !e.target.closest('#mobileMenu')) {
-            mobileMenu?.classList.add('hidden');
+            animateToggle(mobileMenu, false);
         }
     });
 
-    document.getElementById('logoutBtnTrigger')?.addEventListener('click', () => {
-        closeAllMenus();
-        openModal('logoutModal');
-    });
+    if (window.Echo) {
+        window.Echo.private(`chat.${@js(auth()->id())}`)
+            .listen('.MessageSent', (e) => {
+                if (!window.location.href.includes('chat')) {
+                    chatDot?.classList.remove('hidden');
+                    chatDotMobile?.classList.remove('hidden');
+                }
+            });
+    }
 
-    document.querySelector('.logoutMobileBtn')?.addEventListener('click', () => {
-        closeAllMenus();
-        openModal('logoutModal');
-    });
-
-    document.getElementById('confirmLogoutBtn')?.addEventListener('click', function() {
-        document.getElementById('logoutFormReal')?.submit();
-    });
-
-    document.getElementById('closeLogoutBtn')?.addEventListener('click', function() {
-        closeModal('logoutModal');
-    });
+    document.getElementById('logoutBtnTrigger')?.addEventListener('click', () => openModal('logoutModal'));
+    document.querySelector('.logoutMobileBtn')?.addEventListener('click', () => openModal('logoutModal'));
+    document.getElementById('confirmLogoutBtn')?.addEventListener('click', () => document.getElementById('logoutFormReal')?.submit());
+    document.getElementById('closeLogoutBtn')?.addEventListener('click', () => closeModal('logoutModal'));
 });
 </script>

@@ -15,15 +15,29 @@
             <div>
                 <h3 class="text-lg font-semibold mb-4">Navigasi</h3>
                 <ul class="space-y-2 text-gray-400 text-sm">
-                    <li><a href="#" class="hover:text-white transition">Blog</a></li>
+                    <li>
+                        <a href="{{ route('agen.blog.index') }}" class="hover:text-white transition {{ Route::is('agen.blog.*') ? 'text-white font-bold' : '' }}">
+                            Blog
+                        </a>
+                    </li>
                     <li>
                         <a href="{{ route('agen.produk.index') }}" class="hover:text-white transition {{ Route::is('agen.produk.*') ? 'text-white font-bold' : '' }}">
                             Produk
                         </a>
                     </li>
-                    <li><a href="#" class="hover:text-white transition">Transaksi</a></li>
-                    <li><a href="#" class="hover:text-white transition">Kemitraan</a></li>
-                    <li><a href="#" class="hover:text-white transition">Chat</a></li>
+                    <li>
+                        <a href="#" class="hover:text-white transition">Transaksi</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('kemitraan.index') }}" class="hover:text-white transition {{ Route::is('kemitraan.*') ? 'text-white font-bold' : '' }}">
+                            Kemitraan
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('agen.chat.index') }}" class="hover:text-white transition {{ Route::is('agen.chat.*') ? 'text-white font-bold' : '' }}">
+                            Chat
+                        </a>
+                    </li>
                     <li><a href="#" class="hover:text-white transition">Konsultasi</a></li>
                 </ul>
             </div>
@@ -43,9 +57,8 @@
                 </ul>
 
                 <div class="flex gap-4 mt-8 text-xl">
-                    <a href="#" class="text-gray-400 hover:text-[#58CC02] transition"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-[#58CC02] transition"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-[#58CC02] transition"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="https://www.tiktok.com/@skas.official/" target="_blank" class="text-gray-400 hover:text-[#58CC02] transition"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/skas.official/" target="_blank" class="text-gray-400 hover:text-[#58CC02] transition"><i class="fa-brands fa-instagram"></i></a>
                 </div>
             </div>
 

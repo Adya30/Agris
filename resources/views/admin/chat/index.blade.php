@@ -7,7 +7,7 @@
         <div class="px-6 py-4 flex flex-col border-b border-slate-100 shrink-0 bg-white gap-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <a href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-50 text-slate-400 transition-colors">
+                    <a href="{{ route('admin.produk.index') }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-50 text-slate-400 transition-colors">
                         <i class="fa-solid fa-arrow-left"></i>
                     </a>
                     <div class="flex flex-col">

@@ -6,7 +6,7 @@
     <div class="max-w-full mx-auto h-full flex flex-col bg-white shadow-2xl relative">
         <div class="h-20 px-4 md:px-6 flex items-center justify-between border-b border-slate-200 bg-white z-20">
             <div class="flex items-center gap-3 md:gap-4">
-                <a href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-600 transition-colors">
+                <a href="{{ route('agen.produk.index') }}" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-600 transition-colors">
                     <i class="fa-solid fa-arrow-left text-lg"></i>
                 </a>
 
