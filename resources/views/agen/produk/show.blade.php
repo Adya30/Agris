@@ -3,7 +3,7 @@
 @section('title', $item->namaProduk . ' - Detail Produk')
 
 @section('content')
-<div class="max-w-7xl mx-auto pt-6 pb-12 px-4 md:px-0">
+<div class="max-w-7xl mx-auto pt-8 pb-12 px-4 md:px-0">
     <div class="flex items-center gap-3 pb-5">
         <a href="{{ route('agen.produk.index') }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition shadow-sm">
             <i class="fa-solid fa-arrow-left"></i>
@@ -14,11 +14,13 @@
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="grid grid-cols-1 md:grid-cols-2">
             <div class="p-6 md:p-10 bg-gray-50 flex items-center justify-center">
-                <div class="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg bg-white">
+                <div class="relative w-full rounded-2xl overflow-hidden shadow-lg bg-white">
                     @if($item->fotoProduk)
-                        <img src="{{ $item->fotoProduk }}" class="w-full h-full object-cover" alt="{{ $item->namaProduk }}">
+                        <img src="{{ $item->fotoProduk }}"
+                            class="w-full h-auto max-h-150 object-contain mx-auto display-block"
+                            alt="{{ $item->namaProduk }}">
                     @else
-                        <div class="flex flex-col items-center justify-center h-full text-gray-300">
+                        <div class="flex flex-col items-center justify-center aspect-square text-gray-300">
                             <i class="fa-solid fa-image text-8xl mb-4"></i>
                             <p class="font-bold">Foto tidak tersedia</p>
                         </div>

@@ -3,7 +3,7 @@
 @section('title', 'Detail Blog - AGRIS')
 
 @section('content')
-<div class="max-w-4xl mx-auto pt-4 pb-12">
+<div class="max-w-4xl mx-auto pt-8 pb-12">
     <div class="mb-10 flex items-center justify-between">
         <a href="{{ route('agen.blog.index') }}" class="w-12 h-12 rounded-2xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all">
             <i class="fa-solid fa-arrow-left"></i>

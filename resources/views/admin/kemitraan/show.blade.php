@@ -62,7 +62,9 @@
                 <div>
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Profil Agen</h3>
                     <div class="flex flex-col md:flex-row gap-6 p-6 bg-gray-50 rounded-3xl border border-gray-100">
-                        <img src="{{ $kemitraan->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($kemitraan->user->namaLengkap).'&background=58CC02&color=fff' }}" class="w-24 h-24 rounded-2xl object-cover shadow-sm self-center md:self-start">
+                        <img src="{{ $kemitraan->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($kemitraan->user->namaLengkap).'&background=58CC02&color=fff' }}"
+                            class="w-24 h-24 rounded-2xl object-cover shadow-sm self-center md:self-start"
+                            alt="Foto Profil">
                         <div class="space-y-4 flex-1">
                             <div>
                                 <p class="text-[10px] font-bold text-gray-400 uppercase">Nama Lengkap</p>
@@ -87,17 +89,18 @@
                         <i class="fa-solid fa-map-marked-alt text-[#58CC02]"></i> Alamat
                     </h4>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 mb-6">
-                    <div class="py-3 px-4 rounded-2xl border border-gray-200 bg-gray-50/50 font-medium text-black text-sm leading-relaxed">
-                        @if($kemitraan->user->desa)
-                            {{ $kemitraan->user->detailAlamat }},
-                            Desa {{ $kemitraan->user->desa->namaDesa }},
-                            Kec. {{ $kemitraan->user->desa->kecamatan->namaKecamatan }},
-                            {{ $kemitraan->user->desa->kecamatan->kabupaten->namaKabupaten }},
-                            Provinsi {{ $kemitraan->user->desa->kecamatan->kabupaten->provinsi->namaProvinsi }}
-                        @else
-                            <span class="text-gray-400 italic">Alamat belum lengkap</span>
-                        @endif
+                    <div class="grid grid-cols-1 gap-y-4 mb-6">
+                        <div class="py-3 px-4 rounded-2xl border border-gray-200 bg-gray-50/50 font-medium text-black text-sm leading-relaxed">
+                            @if($kemitraan->user->desa)
+                                {{ $kemitraan->user->detailAlamat }},
+                                Desa {{ $kemitraan->user->desa->namaDesa }},
+                                Kec. {{ $kemitraan->user->desa->kecamatan->namaKecamatan }},
+                                {{ $kemitraan->user->desa->kecamatan->kabupaten->namaKabupaten }},
+                                Provinsi {{ $kemitraan->user->desa->kecamatan->kabupaten->provinsi->namaProvinsi }}
+                            @else
+                                <span class="text-gray-400 italic">Alamat belum lengkap</span>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="mt-6 pt-6 border-t border-gray-50 flex justify-between items-center">
@@ -117,9 +120,9 @@
                             @if($kemitraan->fileKemitraan)
                                 <i class="fa-solid fa-file-pdf text-5xl text-red-500 mb-3"></i>
                                 <p class="text-xs font-bold text-gray-800 mb-4 uppercase">File Dokumen MOU</p>
-                                <a href="data:application/pdf;base64,{{ $kemitraan->fileKemitraan }}" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2.5 bg-gray-800 text-white text-xs font-bold rounded-xl hover:bg-black transition-all">
+                                <button type="button" onclick="previewBase64Pdf('{{ $kemitraan->fileKemitraan }}')" class="w-full inline-flex justify-center items-center px-4 py-2.5 bg-gray-800 text-white text-xs font-bold rounded-xl hover:bg-black transition-all border-none cursor-pointer">
                                     <i class="fa-solid fa-eye mr-2"></i> Preview PDF
-                                </a>
+                                </button>
                             @else
                                 <i class="fa-solid fa-file-circle-question text-5xl text-gray-200 mb-3"></i>
                                 <p class="text-xs font-medium text-gray-400 italic">File tidak tersedia</p>
@@ -131,12 +134,17 @@
                                 <form id="formAktifkan" action="{{ route('admin.kemitraan.verifyMou', $kemitraan->id) }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="status" value="Aktif">
-                                    <button type="button" onclick="triggerModal('modalAktifkan')" class="w-full py-3.5 bg-[#58CC02] text-white font-bold rounded-xl shadow-lg shadow-green-100 hover:bg-[#46a302] transition-all uppercase text-xs tracking-widest">Setujui Pengajuan</button>
+                                    <button type="button" onclick="triggerModal('modalAktifkan')" class="w-full py-3.5 bg-[#58CC02] text-white font-bold rounded-xl shadow-lg shadow-green-100 hover:bg-[#46a302] transition-all uppercase text-xs tracking-widest cursor-pointer border-none">
+                                        Setujui Pengajuan
+                                    </button>
                                 </form>
+
                                 <form id="formTolakMou" action="{{ route('admin.kemitraan.verifyMou', $kemitraan->id) }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="status" value="Ditolak">
-                                    <button type="button" onclick="triggerModal('modalTolakMou')" class="w-full py-3.5 bg-white text-red-600 border border-red-100 font-bold rounded-xl hover:bg-red-50 transition-all uppercase text-xs tracking-widest">Tolak Pengajuan</button>
+                                    <button type="button" onclick="triggerModal('modalTolakMou')" class="w-full py-3.5 bg-white text-red-600 border border-red-100 font-bold rounded-xl hover:bg-red-50 transition-all uppercase text-xs tracking-widest cursor-pointer">
+                                        Tolak Pengajuan
+                                    </button>
                                 </form>
                             @endif
 
@@ -164,6 +172,18 @@
 <x-modal id="modalTolakMou" message="Yakin ingin menolak pengajuan kemitraan ini?" confirmText="Iya" cancelText="Batal" confirmId="btnConfirmTolakMou" cancelId="btnCancelTolakMou" />
 
 <script>
+    function previewBase64Pdf(base64String) {
+        const byteCharacters = atob(base64String);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], {type: 'application/pdf'});
+        const fileURL = URL.createObjectURL(blob);
+        window.open(fileURL, '_blank');
+    }
+
     function triggerModal(id) {
         const modal = document.getElementById(id);
         if (typeof openModal === 'function') { openModal(id); }

@@ -57,7 +57,7 @@
                 </ul>
 
                 <div class="flex gap-4 mt-8 text-xl">
-                    <a href="https://www.tiktok.com/@skas.official/" target="_blank" class="text-gray-400 hover:text-[#58CC02] transition"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="https://www.tiktok.com/@skas.official?_t=ZS-8wWtyVtbfV7&_r=1" target="_blank" class="text-gray-400 hover:text-[#58CC02] transition"><i class="fa-brands fa-tiktok"></i></a>
                     <a href="https://www.instagram.com/skas.official/" target="_blank" class="text-gray-400 hover:text-[#58CC02] transition"><i class="fa-brands fa-instagram"></i></a>
                 </div>
             </div>

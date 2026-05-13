@@ -3,7 +3,7 @@
 @section('title', 'Daftar Produk - AGRIS')
 
 @section('content')
-<div class="max-w-7xl mx-auto pt-2 pb-10">
+<div class="max-w-7xl mx-auto pt-8 pb-10">
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 px-4 md:px-0 gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Daftar Produk</h1>

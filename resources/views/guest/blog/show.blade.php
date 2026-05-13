@@ -7,10 +7,13 @@
 
 <section class="relative pt-32 pb-24 bg-white px-6">
     <div class="max-w-4xl mx-auto">
-        <div class="mb-10 flex items-center justify-between">
-            <a href="{{ route('guest.blog.index') }}" class="w-12 h-12 rounded-2xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all">
-                <i class="fa-solid fa-arrow-left"></i>
-            </a>
+        <div class="flex items-center gap-2 mb-5">
+            <div class="flex justify-between">
+                <a href="{{ route('guest.blog.index') }}" class="w-12 h-12 rounded-2xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+            </div>
+            <span class="font-bold text-2xl items-center">Detail Blog</span>
         </div>
 
         <div class="bg-white rounded-[48px] border border-gray-100 shadow-sm overflow-hidden">
@@ -26,7 +29,7 @@
                         <img src="{{ $blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin') }}" class="h-full w-full object-cover rounded-full">
                     </div>
                     <div>
-                        <h4 class="font-bold text-gray-900">{{ $blog->user->name ?? 'Admin Agris' }}</h4>
+                        <h4 class="font-bold text-gray-900">{{ $blog->user->name ?? 'Admin' }}</h4>
                         <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">{{ $blog->tanggalBlog->format('d F Y') }}</p>
                     </div>
                 </div>

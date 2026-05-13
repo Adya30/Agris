@@ -28,7 +28,7 @@
                 <div v-if="chat.id_penerima == 'GLOBAL'" class="w-full max-w-2xl bg-linear-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-4 shadow-sm">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="bg-amber-500 text-white p-1.5 rounded-lg text-[10px]"><i class="fa-solid fa-bullhorn"></i></span>
-                        <span class="text-[10px] font-bold text-amber-700 uppercase">Pusat Informasi</span>
+                        <span class="text-[10px] font-bold text-amber-700 uppercase">Pengumuman</span>
                         <span class="text-[9px] font-bold text-amber-600 ml-auto">@{{ formatTime(chat.waktu_chat) }}</span>
                     </div>
                     <p class="text-sm text-amber-900 font-semibold">@{{ chat.pesan }}</p>

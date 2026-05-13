@@ -84,7 +84,7 @@
                 <img src="{{ asset('images/about.jpg') }}" class="rounded-3xl shadow-2xl w-full object-cover h-87.5 md:h-125">
                 <div class="absolute -bottom-6 -right-6 bg-white p-6 rounded-3xl shadow-xl border border-gray-100 hidden lg:block">
                     <p class="text-slate-900 font-extrabold text-4xl">10+</p>
-                    <p class="text-gray-400 text-xs font-black uppercase tracking-widest">Tahun Berdiri</p>
+                    <p class="text-gray-400 text-xs font-black uppercase tracking-widest">Terpercaya</p>
                 </div>
             </div>
         </div>

@@ -6,15 +6,15 @@
 <div class="max-w-7xl mx-auto pt-4 pb-12">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
         <div>
-            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Blog</h1>
+            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Blog</h1>
             <p class="text-gray-500 font-medium pt-1">Buat dan bagikan cerita Anda</p>
         </div>
-        <a href="{{ route('admin.blog.create') }}" class="bg-[#58CC02] hover:bg-[#46A302] text-white px-8 py-4 rounded-2xl font-black shadow-xl shadow-green-100 transition-all flex items-center gap-3">
+        <a href="{{ route('admin.blog.create') }}" class="bg-[#58CC02] hover:bg-[#46A302] text-white px-8 py-4 rounded-2xl font-bold transition-all flex items-center gap-3">
             <i class="fa-solid fa-plus"></i> Buat Blog
         </a>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
         @forelse($blogs as $blog)
         <div class="group relative bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl flex flex-col border border-gray-100">
             <a href="{{ route('admin.blog.show', $blog->id) }}" class="absolute inset-0 z-20" aria-label="Lihat {{ $blog->judulBlog }}"></a>
@@ -29,7 +29,7 @@
             </div>
 
             <div class="p-10 flex flex-col flex-1">
-                <h3 class="text-3xl font-black text-gray-900 mb-5 leading-tight transition-colors">
+                <h3 class="text-3xl font-bold text-gray-900 mb-5 leading-tight transition-colors">
                     {{ $blog->judulBlog }}
                 </h3>
                 <div class="text-gray-500 text-base leading-relaxed line-clamp-3 mb-10">
@@ -42,7 +42,7 @@
                                  class="h-full w-full object-cover">
                         </div>
                         <div>
-                            <p class="text-base font-black text-gray-900 leading-none mb-1">Tanggal Upload</p>
+                            <p class="text-base font-bold text-gray-900 leading-none mb-1">Tanggal Upload</p>
                             <p class="text-xs font-bold text-gray-400">{{ $blog->tanggalBlog->format('d F Y') }}</p>
                         </div>
                     </div>

@@ -5,14 +5,19 @@
 @section('content')
 <div class="max-w-4xl mx-auto pt-4 pb-12">
     <div class="mb-10 flex items-center justify-between">
-        <a href="{{ route('admin.blog.index') }}" class="w-12 h-12 rounded-2xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all">
-            <i class="fa-solid fa-arrow-left"></i>
-        </a>
+        <div class="flex justify-center items-center">
+            <a href="{{ route('admin.blog.index') }}" class="w-12 h-12 rounded-2xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <span class="text-3xl pl-3 font-bold">Detail Blog</span>
+        </div>
+
         <div class="flex gap-3">
-            <a href="{{ route('admin.blog.edit', $blog->id) }}" class="bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-600 transition-all shadow-lg shadow-blue-100">
+            <a href="{{ route('admin.blog.edit', $blog->id) }}" class="bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-600 transition-all">
                <i class="fa-solid fa-pen-to-square"></i> Edit
             </a>
-            <button type="button" onclick="openModal('modalHapus')" class="bg-red-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-red-600 transition-all shadow-lg shadow-red-100">
+            <button type="button" onclick="openModal('modalHapus')" class="bg-red-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-red-600 transition-all">
                 <i class="fa-solid fa-trash"></i> Hapus
             </button>
         </div>
@@ -53,7 +58,7 @@
     </div>
 </div>
 
-<x-modal id="modalHapus" title="Hapus Artikel?" message="Artikel akan dihapus secara permanen dari sistem dan tidak dapat dikembalikan." confirmText="Iya" cancelText="Batal" confirmId="btnConfirmDelete" cancelId="btnCancelDelete" />
+<x-modal id="modalHapus" title="Hapus Artikel?" message="Yakin ingin menghapus blog?" confirmText="Iya" cancelText="Batal" confirmId="btnConfirmDelete" cancelId="btnCancelDelete" />
 
 <form id="delete-form" action="{{ route('admin.blog.destroy', $blog->id) }}" method="POST" class="hidden">
     @csrf

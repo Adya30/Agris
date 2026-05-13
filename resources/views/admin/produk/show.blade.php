@@ -19,12 +19,12 @@
 
     <div class="bg-white rounded-3xl border border-gray-200 overflow-hidden mx-4 md:mx-0 shadow-sm">
         <div class="flex flex-col lg:flex-row">
-            <div class="lg:w-2/5 bg-gray-50 p-8 flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-gray-100">
-                <div class="w-full aspect-square rounded-2xl overflow-hidden shadow-inner bg-white">
+            <div class="lg:w-2/5 bg-gray-50 p-4 md:p-8 flex flex-col items-center justify-start border-b lg:border-b-0 lg:border-r border-gray-100">
+                <div class="w-full rounded-2xl overflow-hidden bg-white">
                     @if($item->fotoProduk)
-                        <img src="{{ $item->fotoProduk }}" class="w-full h-full object-cover">
+                        <img src="{{ $item->fotoProduk }}" class="w-full h-auto max-h-125 object-contain mx-auto">
                     @else
-                        <div class="flex flex-col items-center justify-center h-full text-gray-300">
+                        <div class="flex flex-col items-center justify-center aspect-square text-gray-300">
                             <i class="fa-solid fa-image text-6xl mb-2"></i>
                             <p class="text-xs font-medium">Tidak ada foto</p>
                         </div>
