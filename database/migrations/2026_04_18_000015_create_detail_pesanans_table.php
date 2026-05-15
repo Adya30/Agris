@@ -6,13 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('detail_pesanans', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
             $table->ulid('id')->primary();
             $table->foreignUlid('pesananId')->constrained('pesanans')->cascadeOnDelete();
             $table->foreignUlid('produkId')->constrained('produks')->restrictOnDelete();
@@ -23,9 +19,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('detail_pesanans');

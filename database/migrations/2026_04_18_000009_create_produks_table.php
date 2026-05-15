@@ -6,13 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('produks', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
             $table->ulid('id')->primary();
             $table->foreignUlid('kategoriId')->constrained('kategori_produks')->restrictOnDelete();
             $table->longText('fotoProduk')->nullable();
@@ -26,9 +22,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('produks');

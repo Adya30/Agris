@@ -6,22 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('provinsis', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
             $table->string('id', 20)->primary();
             $table->string('namaProvinsi', 255);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('provinsis');

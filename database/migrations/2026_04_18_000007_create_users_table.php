@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -21,10 +18,8 @@ return new class extends Migration
             $table->string('detailAlamat', 200)->nullable();
             $table->boolean('isAdmin')->default(false)->index();
             $table->boolean('isActive')->default(false)->index();
-
             $table->string('desaId', 20)->nullable()->index();
             $table->foreign('desaId')->references('id')->on('desas')->nullOnDelete();
-
             $table->rememberToken();
             $table->timestamps();
             $table->timestamp('email_verified_at')->nullable();
@@ -37,7 +32,6 @@ return new class extends Migration
         });
 
         Schema::create('sessions', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
             $table->string('id')->primary();
             $table->foreignUlid('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
@@ -47,9 +41,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

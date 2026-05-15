@@ -17,7 +17,7 @@ class AdminSeeder extends Seeder
             'noTelp'      => '08123456789',
             'isActive'    => true,
             'isAdmin'     => true,
-            'detailAlamat'=> 'Kantor Pusat Tanamin',
+            'detailAlamat'=> 'Jl. Manyar Gg. Kelapa',
         ]);
     }
 }
