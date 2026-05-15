@@ -102,8 +102,13 @@
                     </div>
                 </div>
 
+                <div id="errorMessage" class="hidden mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl items-center gap-3 text-red-600 text-sm">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Format file tidak didukung. Mohon unggah file dalam format PDF.</span>
+                </div>
+
                 <div id="actionContainer" class="hidden mt-8">
-                    <button type="button" onclick="openModal('uploadModal')" class="w-full py-4 bg-[#58CC02] text-white font-black rounded-2xl shadow-lg shadow-green-100 uppercase tracking-widest hover:opacity-90 transition-all">
+                    <button type="button" onclick="openModal('uploadModal')" class="w-full py-4 bg-[#58CC02] text-white font-black rounded-2xl shadow-lg shadow-green-100 uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer border-none">
                         Kirim
                     </button>
                 </div>
@@ -120,6 +125,7 @@
         const uploadPlaceholder = document.getElementById('uploadPlaceholder');
         const previewContainer = document.getElementById('previewContainer');
         const actionContainer = document.getElementById('actionContainer');
+        const errorMessage = document.getElementById('errorMessage');
         const previewName = document.getElementById('previewName');
         const previewSize = document.getElementById('previewSize');
         const btnViewPdf = document.getElementById('btnViewPdf');
@@ -131,11 +137,14 @@
         fileInput.addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const file = this.files[0];
+
                 if (file.type !== 'application/pdf') {
-                    alert('Hanya file PDF yang diperbolehkan.');
+                    errorMessage.classList.remove('hidden');
                     this.value = '';
                     return;
                 }
+
+                errorMessage.classList.add('hidden');
                 previewName.innerText = file.name;
                 previewSize.innerText = (file.size / 1024).toFixed(1) + ' KB';
 
@@ -161,6 +170,7 @@
                 URL.revokeObjectURL(pdfUrl);
                 pdfUrl = null;
             }
+            errorMessage.classList.add('hidden');
             uploadPlaceholder.classList.remove('hidden');
             previewContainer.classList.add('hidden');
             actionContainer.classList.add('hidden');
@@ -175,6 +185,15 @@
         document.getElementById('btnCancelUpload').addEventListener('click', () => {
             closeModal('uploadModal');
         });
+
+        if (window.Echo) {
+            window.Echo.channel('kemitraan-status')
+                .listen('.KemitraanUpdated', (e) => {
+                    if (e.id == "{{ $kemitraan->id ?? '' }}") {
+                        window.location.reload();
+                    }
+                });
+        }
     });
 </script>
 @endsection

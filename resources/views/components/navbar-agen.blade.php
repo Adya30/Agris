@@ -1,4 +1,4 @@
-<nav class="fixed top-0 w-full z-50 shadow-md border-b border-white/10 transition-all duration-300">
+<nav class="fixed top-0 w-full z-55 shadow-md border-b border-white/10 transition-all duration-300">
     <div class="bg-[#0f8629] py-3 px-4 md:px-6">
         <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
             <a href="{{ route('agen.produk.index') }}" class="flex items-center gap-2 shrink-0">
@@ -16,7 +16,7 @@
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
-                <a href="{{ route('agen.chat.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all relative group">
+                <a href="{{ route('agen.chat.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all relative">
                     <i class="fa-solid fa-comments text-lg"></i>
                     <div id="chat-notification-dot" class="hidden absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-[#0f8629] rounded-full"></div>
                 </a>
@@ -24,12 +24,12 @@
                 <div class="relative hidden md:block">
                     <button id="dropdownBtn" type="button" class="group flex items-center gap-3 rounded-full bg-green-600/50 p-1 pr-4 transition-all hover:bg-white/20 focus:outline-none">
                         <div class="h-9 w-9 overflow-hidden rounded-full border-2 border-white pointer-events-none">
-                            <img src="{{ auth()->user()->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
+                            <img src="{{ auth()->user()->fotoProfil ? asset(auth()->user()->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->namaLengkap ?? auth()->user()->username).'&background=random' }}" class="h-full w-full object-cover">
                         </div>
                         <div class="flex items-center gap-2 pointer-events-none text-white text-left">
                             <div class="flex flex-col leading-tight">
                                 <span class="text-sm font-bold">{{ auth()->user()->username }}</span>
-                                <span class="text-xs font-bold ">Profil</span>
+                                <span class="text-xs font-bold">Profil</span>
                             </div>
                             <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300" id="dropdownArrow"></i>
                         </div>
@@ -54,48 +54,50 @@
     </div>
 
     <div class="bg-[#19a201] hidden md:block border-t border-white/5 shadow-inner">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex justify-center items-center gap-10 h-11 text-white/95 text-sm font-bold tracking-wide uppercase">
-                <a href="{{ route('agen.blog.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.blog.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Blog</a>
-                <a href="{{ route('agen.produk.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.produk.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Produk</a>
-                <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Transaksi</a>
-                <a href="{{ route('kemitraan.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('kemitraan.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Kemitraan</a>
+        <div class="max-w-7xl mx-auto px-6 text-white/95 text-sm font-bold tracking-wide uppercase">
+            <div class="flex justify-center items-center gap-10 h-11">
+                @php $navs = [['agen.blog.*', 'Blog', route('agen.blog.index')], ['agen.produk.*', 'Produk', route('agen.produk.index')], [null, 'Transaksi', '#'], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]]; @endphp
+                @foreach($navs as $nav)
+                    <a href="{{ $nav[2] }}" class="hover:text-white transition-all py-1 border-b-2 {{ $nav[0] && Route::is($nav[0]) ? 'border-white' : 'border-transparent' }} hover:border-white">
+                        {{ $nav[1] }}
+                    </a>
+                @endforeach
             </div>
         </div>
     </div>
 
-    <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-2xl absolute w-full left-0 max-h-[calc(100vh-80px)] overflow-y-auto opacity-0 -translate-y-2 transition-all duration-200">
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-2xl absolute w-full left-0 max-h-[calc(100vh)] overflow-y-auto opacity-0 -translate-y-2 transition-all duration-200">
         <div class="px-6 py-6 space-y-4">
-            <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+            <div class="flex items-center gap-4 p-4 bg-gray-100 rounded-2xl border border-gray-100">
                 <div class="h-14 w-14 overflow-hidden rounded-full border-2 border-[#0f8629]">
-                    <img src="{{ auth()->user()->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
+                    <img src="{{ auth()->user()->fotoProfil ? asset(auth()->user()->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->namaLengkap ?? auth()->user()->username).'&background=random' }}" class="h-full w-full object-cover">
                 </div>
                 <div>
                     <h4 class="font-bold text-gray-900 text-lg">{{ auth()->user()->username }}</h4>
-                    <a href="{{ route('agen.profile') }}" class="text-sm font-bold text-[#0f8629] hover:underline">Lihat Profil</a>
+                    <a href="{{ route('agen.profile') }}" class="text-sm font-bold text-[#0f8629] hover:underline">Profil</a>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 gap-2">
-                <a href="{{ route('agen.blog.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.blog.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base">
-                    <i class="fa-solid fa-newspaper mr-3 w-5 text-center text-lg"></i> Blog
+                <a href="{{ route('agen.blog.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.blog.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold">
+                    <i class="fa-solid fa-newspaper mr-3 w-5 text-lg"></i> Blog
                 </a>
-                <a href="{{ route('agen.produk.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.produk.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base">
-                    <i class="fa-solid fa-box mr-3 w-5 text-center text-lg"></i> Produk
+                <a href="{{ route('agen.produk.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.produk.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold">
+                    <i class="fa-solid fa-box mr-3 w-5 text-lg"></i> Produk
                 </a>
-                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
-                    <i class="fa-solid fa-receipt mr-3 w-5 text-center text-lg"></i> Transaksi
+                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700">
+                    <i class="fa-solid fa-receipt mr-3 w-5 text-lg"></i> Transaksi
                 </a>
-                <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
-                    <i class="fa-solid fa-handshake mr-3 w-5 text-center text-lg"></i> Kemitraan
+                <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('kemitraan.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold">
+                    <i class="fa-solid fa-handshake mr-3 w-5 text-lg"></i> Kemitraan
                 </a>
-                <a href="{{ route('agen.chat.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base relative">
-                    <i class="fa-solid fa-comments mr-3 w-5 text-center text-lg"></i> Chat
+                <a href="{{ route('agen.chat.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 relative">
+                    <i class="fa-solid fa-comments mr-3 w-5 text-lg"></i> Chat
                     <div id="chat-notification-dot-mobile" class="hidden ml-auto w-2.5 h-2.5 bg-red-500 rounded-full"></div>
                 </a>
                 <div class="my-2 border-t border-gray-100"></div>
                 <button type="button" class="logoutMobileBtn w-full flex items-center py-4 px-4 rounded-xl hover:bg-red-50 font-bold text-red-500 transition-all text-left">
-                    <i class="fa-solid fa-right-from-bracket mr-3 w-5 text-center text-lg"></i> Logout
+                    <i class="fa-solid fa-right-from-bracket mr-3 w-5 text-lg"></i> Logout
                 </button>
             </div>
         </div>
@@ -106,71 +108,65 @@
 
 <x-modal id="logoutModal" title="Konfirmasi Logout" message="Apakah Anda yakin ingin keluar?" confirmText="Iya" cancelText="Batal" confirmId="confirmLogoutBtn" cancelId="closeLogoutBtn" />
 
-<form id="logoutFormReal" action="{{ route('logout') }}" method="POST" class="hidden">
-    @csrf
-</form>
+<form id="logoutFormReal" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const dropdownBtn = document.getElementById('dropdownBtn');
-    const dropdownMenu = document.getElementById('dropdownMenu');
-    const dropdownArrow = document.getElementById('dropdownArrow');
-    const chatDot = document.getElementById('chat-notification-dot');
-    const chatDotMobile = document.getElementById('chat-notification-dot-mobile');
+    const el = {
+        hamburger: document.getElementById('hamburger'),
+        mobileMenu: document.getElementById('mobileMenu'),
+        dropdownBtn: document.getElementById('dropdownBtn'),
+        dropdownMenu: document.getElementById('dropdownMenu'),
+        dropdownArrow: document.getElementById('dropdownArrow'),
+        chatDot: document.getElementById('chat-notification-dot'),
+        chatDotMobile: document.getElementById('chat-notification-dot-mobile')
+    };
 
-    const animateToggle = (el, show) => {
+    const animateToggle = (target, show) => {
         if (show) {
-            el.classList.remove('hidden');
-            setTimeout(() => {
-                el.classList.remove('opacity-0', 'scale-95', '-translate-y-2');
-                el.classList.add('opacity-100', 'scale-100', 'translate-y-0');
-            }, 10);
+            target.classList.remove('hidden');
+            setTimeout(() => target.classList.remove('opacity-0', 'scale-95', '-translate-y-2'), 10);
         } else {
-            el.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
-            el.classList.add('opacity-0', 'scale-95', '-translate-y-2');
-            setTimeout(() => el.classList.add('hidden'), 200);
+            target.classList.add('opacity-0', 'scale-95', '-translate-y-2');
+            setTimeout(() => target.classList.add('hidden'), 200);
         }
     };
 
-    dropdownBtn?.addEventListener('click', function(e) {
+    el.dropdownBtn?.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isHidden = dropdownMenu.classList.contains('hidden');
-        if (isHidden) animateToggle(mobileMenu, false);
-        animateToggle(dropdownMenu, isHidden);
-        if (dropdownArrow) dropdownArrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        const isHidden = el.dropdownMenu.classList.contains('hidden');
+        if (isHidden) animateToggle(el.mobileMenu, false);
+        animateToggle(el.dropdownMenu, isHidden);
+        if (el.dropdownArrow) el.dropdownArrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
     });
 
-    hamburger?.addEventListener('click', function(e) {
+    el.hamburger?.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isHidden = mobileMenu.classList.contains('hidden');
-        if (isHidden) animateToggle(dropdownMenu, false);
-        animateToggle(mobileMenu, isHidden);
+        const isHidden = el.mobileMenu.classList.contains('hidden');
+        if (isHidden) animateToggle(el.dropdownMenu, false);
+        animateToggle(el.mobileMenu, isHidden);
     });
 
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', (e) => {
         if (!e.target.closest('#dropdownBtn') && !e.target.closest('#dropdownMenu')) {
-            animateToggle(dropdownMenu, false);
-            if (dropdownArrow) dropdownArrow.style.transform = 'rotate(0deg)';
+            animateToggle(el.dropdownMenu, false);
+            if (el.dropdownArrow) el.dropdownArrow.style.transform = 'rotate(0deg)';
         }
-        if (!e.target.closest('#hamburger') && !e.target.closest('#mobileMenu')) {
-            animateToggle(mobileMenu, false);
-        }
+        if (!e.target.closest('#hamburger') && !e.target.closest('#mobileMenu')) animateToggle(el.mobileMenu, false);
     });
 
     if (window.Echo) {
-        window.Echo.private(`chat.${@js(auth()->id())}`)
-            .listen('.MessageSent', (e) => {
-                if (!window.location.href.includes('chat')) {
-                    chatDot?.classList.remove('hidden');
-                    chatDotMobile?.classList.remove('hidden');
-                }
-            });
+        window.Echo.private(`chat.${@js(auth()->id())}`).listen('.MessageSent', () => {
+            if (!window.location.href.includes('chat')) {
+                el.chatDot?.classList.remove('hidden');
+                el.chatDotMobile?.classList.remove('hidden');
+            }
+        });
     }
 
-    document.getElementById('logoutBtnTrigger')?.addEventListener('click', () => openModal('logoutModal'));
-    document.querySelector('.logoutMobileBtn')?.addEventListener('click', () => openModal('logoutModal'));
+    const logout = () => openModal('logoutModal');
+    document.getElementById('logoutBtnTrigger')?.addEventListener('click', logout);
+    document.querySelector('.logoutMobileBtn')?.addEventListener('click', logout);
     document.getElementById('confirmLogoutBtn')?.addEventListener('click', () => document.getElementById('logoutFormReal')?.submit());
     document.getElementById('closeLogoutBtn')?.addEventListener('click', () => closeModal('logoutModal'));
 });

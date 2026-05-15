@@ -58,7 +58,7 @@
     </div>
 </div>
 
-<x-modal id="modalHapus" title="Hapus Artikel?" message="Yakin ingin menghapus blog?" confirmText="Iya" cancelText="Batal" confirmId="btnConfirmDelete" cancelId="btnCancelDelete" />
+<x-modal id="modalHapus" title="Hapus Blog?" message="Yakin ingin menghapus blog?" confirmText="Iya" cancelText="Batal" confirmId="btnConfirmDelete" cancelId="btnCancelDelete" />
 
 <form id="delete-form" action="{{ route('admin.blog.destroy', $blog->id) }}" method="POST" class="hidden">
     @csrf

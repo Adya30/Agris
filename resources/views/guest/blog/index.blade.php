@@ -67,7 +67,7 @@
             @empty
             <div class="col-span-full py-24 text-center bg-white rounded-[40px] border-2 border-dashed border-gray-200">
                 <i class="fa-solid fa-box-open text-6xl text-gray-200 mb-6"></i>
-                <p class="text-gray-400 text-lg font-bold">Belum ada artikel yang diterbitkan.</p>
+                <p class="text-gray-400 text-lg font-bold">Belum ada blog yang diterbitkan.</p>
             </div>
             @endforelse
         </div>

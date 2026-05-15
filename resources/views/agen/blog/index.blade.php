@@ -56,7 +56,7 @@
             <div class="mb-3">
                 <i class="fa-solid fa-box-open text-3xl text-gray-200"></i>
             </div>
-            <p class="text-gray-400 text-sm font-bold">Belum ada artikel yang tersedia.</p>
+            <p class="text-gray-400 text-sm font-bold">Belum ada blog yang tersedia.</p>
         </div>
         @endforelse
     </div>

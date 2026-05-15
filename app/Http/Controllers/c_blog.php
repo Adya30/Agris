@@ -116,6 +116,6 @@ class c_blog extends Controller
         $blog = Blog::findOrFail($id);
         $blog->delete();
 
-        return redirect()->route('admin.blog.index')->with('success', 'Artikel berhasil dihapus');
+        return redirect()->route('admin.blog.index')->with('success', 'Blog berhasil dihapus');
     }
 }

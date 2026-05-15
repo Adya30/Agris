@@ -61,7 +61,7 @@
             <div class="mb-4">
                 <i class="fa-solid fa-box-open text-5xl text-gray-200"></i>
             </div>
-            <p class="text-gray-400 text-lg font-bold">Belum ada konten artikel yang diterbitkan.</p>
+            <p class="text-gray-400 text-lg font-bold">Belum ada Blog yang dibuat.</p>
         </div>
         @endforelse
     </div>

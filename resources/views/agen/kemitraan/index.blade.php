@@ -145,6 +145,15 @@
         document.getElementById('btnTriggerFile')?.addEventListener('click', () => {
             document.getElementById('inputManualFile').click();
         });
+
+        if (window.Echo) {
+            window.Echo.channel('kemitraan-status')
+                .listen('.KemitraanUpdated', (e) => {
+                    if (e.id == "{{ $kemitraan->id ?? '' }}") {
+                        window.location.reload();
+                    }
+                });
+        }
     });
 </script>
 @endsection

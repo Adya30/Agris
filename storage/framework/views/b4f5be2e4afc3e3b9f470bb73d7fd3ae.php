@@ -1,0 +1,98 @@
+<?php $__env->startSection('title', 'Detail Blog - AGRIS'); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="max-w-4xl mx-auto pt-4 pb-12">
+    <div class="mb-10 flex items-center justify-between">
+        <div class="flex justify-center items-center">
+            <a href="<?php echo e(route('admin.blog.index')); ?>" class="w-12 h-12 rounded-2xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <span class="text-3xl pl-3 font-bold">Detail Blog</span>
+        </div>
+
+        <div class="flex gap-3">
+            <a href="<?php echo e(route('admin.blog.edit', $blog->id)); ?>" class="bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-600 transition-all">
+               <i class="fa-solid fa-pen-to-square"></i> Edit
+            </a>
+            <button type="button" onclick="openModal('modalHapus')" class="bg-red-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-red-600 transition-all">
+                <i class="fa-solid fa-trash"></i> Hapus
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <?php if($blog->fotoBlog): ?>
+            <div class="w-full h-100 overflow-hidden">
+                <img src="<?php echo e($blog->fotoBlog); ?>" class="w-full h-full object-cover">
+            </div>
+        <?php endif; ?>
+
+        <div class="p-12">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 rounded-full bg-[#0f8629] flex items-center justify-center text-white font-bold overflow-hidden">
+                    <img src="<?php echo e($blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin')); ?>" class="h-full w-full object-cover rounded-full">
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900">Tanggal Upload</h4>
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest"><?php echo e($blog->tanggalBlog->format('d F Y')); ?></p>
+                </div>
+            </div>
+
+            <h1 class="text-4xl font-bold text-gray-900 leading-tight mb-8"><?php echo e($blog->judulBlog); ?></h1>
+
+            <div class="prose prose-lg prose-green max-w-none text-gray-600 leading-relaxed">
+                <?php
+                    $urlPattern = '/(https?:\/\/[^\s]+)/';
+                    $contentWithLinks = preg_replace(
+                        $urlPattern,
+                        '<a href="$1" target="_blank" class="text-blue-400 hover:underline font-bold transition-all">$1</a>',
+                        e($blog->isiBlog)
+                    );
+                ?>
+                <?php echo nl2br($contentWithLinks); ?>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php if (isset($component)) { $__componentOriginal9f64f32e90b9102968f2bc548315018c = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9f64f32e90b9102968f2bc548315018c = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modal','data' => ['id' => 'modalHapus','title' => 'Hapus Blog?','message' => 'Yakin ingin menghapus blog?','confirmText' => 'Iya','cancelText' => 'Batal','confirmId' => 'btnConfirmDelete','cancelId' => 'btnCancelDelete']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'modalHapus','title' => 'Hapus Blog?','message' => 'Yakin ingin menghapus blog?','confirmText' => 'Iya','cancelText' => 'Batal','confirmId' => 'btnConfirmDelete','cancelId' => 'btnCancelDelete']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9f64f32e90b9102968f2bc548315018c)): ?>
+<?php $attributes = $__attributesOriginal9f64f32e90b9102968f2bc548315018c; ?>
+<?php unset($__attributesOriginal9f64f32e90b9102968f2bc548315018c); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9f64f32e90b9102968f2bc548315018c)): ?>
+<?php $component = $__componentOriginal9f64f32e90b9102968f2bc548315018c; ?>
+<?php unset($__componentOriginal9f64f32e90b9102968f2bc548315018c); ?>
+<?php endif; ?>
+
+<form id="delete-form" action="<?php echo e(route('admin.blog.destroy', $blog->id)); ?>" method="POST" class="hidden">
+    <?php echo csrf_field(); ?>
+    <?php echo method_field('DELETE'); ?>
+</form>
+
+<script>
+    document.getElementById('btnConfirmDelete').addEventListener('click', function() {
+        this.disabled = true;
+        document.getElementById('delete-form').submit();
+    });
+
+    document.getElementById('btnCancelDelete').addEventListener('click', function() {
+        closeModal('modalHapus');
+    });
+</script>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\project\Agris\resources\views\admin\blog\show.blade.php ENDPATH**/ ?>

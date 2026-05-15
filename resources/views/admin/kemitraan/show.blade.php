@@ -62,7 +62,7 @@
                 <div>
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Profil Agen</h3>
                     <div class="flex flex-col md:flex-row gap-6 p-6 bg-gray-50 rounded-3xl border border-gray-100">
-                        <img src="{{ $kemitraan->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($kemitraan->user->namaLengkap).'&background=58CC02&color=fff' }}"
+                        <img src="{{ $kemitraan->user->fotoProfil ? asset($kemitraan->user->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode($kemitraan->user->namaLengkap).'&background=58CC02&color=fff' }}"
                             class="w-24 h-24 rounded-2xl object-cover shadow-sm self-center md:self-start"
                             alt="Foto Profil">
                         <div class="space-y-4 flex-1">
@@ -185,15 +185,23 @@
     }
 
     function triggerModal(id) {
-        const modal = document.getElementById(id);
-        if (typeof openModal === 'function') { openModal(id); }
-        else { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        if (typeof openModal === 'function') {
+            openModal(id);
+        } else {
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
     }
 
     function closeModalManual(id) {
-        const modal = document.getElementById(id);
-        if (typeof closeModal === 'function') { closeModal(id); }
-        else { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        if (typeof closeModal === 'function') {
+            closeModal(id);
+        } else {
+            const modal = document.getElementById(id);
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -204,9 +212,21 @@
         ];
 
         setups.forEach(setup => {
-            document.getElementById(setup.btn)?.addEventListener('click', () => document.getElementById(setup.form).submit());
+            document.getElementById(setup.btn)?.addEventListener('click', () => {
+                const form = document.getElementById(setup.form);
+                if(form) form.submit();
+            });
             document.getElementById(setup.cancel)?.addEventListener('click', () => closeModalManual(setup.modal));
         });
+
+        if (window.Echo) {
+            window.Echo.channel('kemitraan-status')
+                .listen('.KemitraanUpdated', (e) => {
+                    if (e.id == "{{ $kemitraan->id }}") {
+                        window.location.reload();
+                    }
+                });
+        }
     });
 </script>
 @endsection

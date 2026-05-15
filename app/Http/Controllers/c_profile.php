@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class c_profile extends Controller
 {
@@ -38,15 +39,15 @@ class c_profile extends Controller
             'password'         => 'nullable|min:8',
             'desaId'           => 'nullable',
         ], [
-            'required'                        => 'Data wajib diisi!',
-            'noTelp.numeric'                  => 'Nomor telepon harus berupa angka.',
-            'noTelp.unique'                   => 'Nomor Telpon sudah digunakan.',
-            'noTelp.digits_between'           => 'Nomor telepon harus antara 4 sampai 15 digit.',
-            'password.min'                    => 'Password baru minimal 8 karakter.',
-            'current_password.required_with'  => 'Konfirmasi password lama wajib diisi.',
-            'fotoProfil.image'                => 'File harus berupa gambar.',
-            'fotoProfil.mimes'                => 'Format gambar harus jpeg, png, atau jpg.',
-            'fotoProfil.max'                  => 'Ukuran gambar maksimal 10MB.'
+            'required'                       => 'Data wajib diisi!',
+            'noTelp.numeric'                 => 'Nomor telepon harus berupa angka.',
+            'noTelp.unique'                  => 'Nomor Telpon sudah digunakan.',
+            'noTelp.digits_between'          => 'Nomor telepon harus antara 4 sampai 15 digit.',
+            'password.min'                   => 'Password baru minimal 8 karakter.',
+            'current_password.required_with' => 'Konfirmasi password lama wajib diisi.',
+            'fotoProfil.image'               => 'File harus berupa gambar.',
+            'fotoProfil.mimes'               => 'Format gambar harus jpeg, png, atau jpg.',
+            'fotoProfil.max'                 => 'Ukuran gambar maksimal 10MB.'
         ]);
 
         if ($request->filled('password')) {
@@ -57,10 +58,12 @@ class c_profile extends Controller
         }
 
         if ($request->hasFile('fotoProfil')) {
-            $file = $request->file('fotoProfil');
-            $imageData = base64_encode(file_get_contents($file->getRealPath()));
-            $mimeType = $file->getClientMimeType();
-            $user->fotoProfil = 'data:' . $mimeType . ';base64,' . $imageData;
+            if ($user->fotoProfil && Storage::disk('public')->exists(str_replace('storage/', '', $user->fotoProfil))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $user->fotoProfil));
+            }
+
+            $path = $request->file('fotoProfil')->store('profile_photos', 'public');
+            $user->fotoProfil = 'storage/' . $path;
         }
 
         if ($request->filled('desaId')) {

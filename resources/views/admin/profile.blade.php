@@ -28,7 +28,7 @@
                 <div class="p-10 flex flex-col lg:flex-row gap-16">
                     <div class="w-full lg:w-1/3 flex flex-col items-center">
                         <div class="group relative w-64 h-64 rounded-full overflow-hidden shadow-xl bg-gray-50 border-4 border-white">
-                            <img id="previewFoto" src="{{ $user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($user->email ?? 'User') }}" class="w-full h-full object-cover">
+                            <img id="previewFoto" src="{{ $user->fotoProfil ? asset($user->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode($user->email ?? 'User') }}" class="w-full h-full object-cover">
                             <label for="fotoProfil" id="overlayFoto" class="hidden absolute inset-0 bg-black/40 items-center justify-center cursor-pointer transition">
                                 <i class="fas fa-camera text-white text-4xl"></i>
                             </label>
@@ -64,7 +64,6 @@
                                     <select id="provinsi" name="provinsiId" data-old="{{ $user->desa->kecamatan->kabupaten->provinsi->id ?? '' }}" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="">Pilih Provinsi</option>
                                     </select>
-                                     @error('desaId') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>
 
                                 <div>
@@ -75,7 +74,6 @@
                                     <select id="kabupaten" name="kabupatenId" data-old="{{ $user->desa->kecamatan->kabupaten->id ?? '' }}" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="">Pilih Kabupaten</option>
                                     </select>
-                                    @error('desaId') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>
 
                                 <div>
@@ -86,7 +84,6 @@
                                     <select id="kecamatan" name="kecamatanId" data-old="{{ $user->desa->kecamatan->id ?? '' }}" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="">Pilih Kecamatan</option>
                                     </select>
-                                     @error('desaId') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>
 
                                 <div>
@@ -97,7 +94,6 @@
                                     <select id="desa" name="desaId" data-old="{{ $user->desaId ?? '' }}" class="hidden form-input editable w-full rounded-2xl border-[#58CC02] bg-white py-3 px-4 text-sm focus:ring-0">
                                         <option value="{{ $user->desaId ?? '' }}">{{ $user->desa->namaDesa ?? 'Pilih Desa' }}</option>
                                     </select>
-                                     @error('desaId') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>
                             </div>
                             <div>
@@ -190,7 +186,6 @@
             button.addEventListener('click', function() {
                 const input = this.parentElement.querySelector('input');
                 const icon = this.querySelector('i');
-
                 if (input.type === 'password') {
                     input.type = 'text';
                     icon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -211,23 +206,15 @@
             });
         }
 
-        const btnSubmitProfile = document.getElementById('btnSubmitProfile');
-        if(btnSubmitProfile) {
-            btnSubmitProfile.addEventListener('click', () => {
-                form.submit();
-            });
-        }
+        document.getElementById('btnSubmitProfile')?.addEventListener('click', () => form.submit());
 
-        const btnCloseProfileModal = document.getElementById('btnCloseProfileModal');
-        if(btnCloseProfileModal) {
-            btnCloseProfileModal.addEventListener('click', () => {
-                if (typeof closeModal === 'function') {
-                    closeModal('confirmModal');
-                } else {
-                    document.getElementById('confirmModal').classList.add('hidden');
-                }
-            });
-        }
+        document.getElementById('btnCloseProfileModal')?.addEventListener('click', () => {
+            if (typeof closeModal === 'function') {
+                closeModal('confirmModal');
+            } else {
+                document.getElementById('confirmModal').classList.add('hidden');
+            }
+        });
 
         document.getElementById('fotoProfil').addEventListener('change', function() {
             if (this.files && this.files[0]) {

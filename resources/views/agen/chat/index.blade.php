@@ -2,7 +2,7 @@
 @section('title', 'Chat - AGRIS')
 
 @section('content')
-<div class="fixed inset-0 bg-slate-100 z-50 overflow-hidden" id="chat-app" v-cloak>
+<div class="fixed inset-0 bg-slate-100 z-60 overflow-hidden" id="chat-app" v-cloak>
     <div class="max-w-full mx-auto h-full flex flex-col bg-white shadow-2xl relative">
         <div class="h-20 px-4 md:px-6 flex items-center justify-between border-b border-slate-200 bg-white z-20">
             <div class="flex items-center gap-3 md:gap-4">
