@@ -45,10 +45,6 @@
     @endif
 </div>
 
-@if(!Route::is('admin.profile'))
-    @include('components.sidebar-admin')
-@endif
-
 <div class="{{ !Route::is('admin.profile') ? 'md:ml-64' : '' }} transition-all duration-300">
     @include('components.topbar-admin')
 

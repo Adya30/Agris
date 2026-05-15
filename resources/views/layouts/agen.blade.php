@@ -51,6 +51,7 @@
         @yield('content')
     </main>
 
+    @include('components.konsul-bubble')
     @include('components.footer-agen')
 
 <script>

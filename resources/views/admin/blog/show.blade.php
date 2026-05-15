@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-[48px] border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         @if($blog->fotoBlog)
             <div class="w-full h-100 overflow-hidden">
                 <img src="{{ $blog->fotoBlog }}" class="w-full h-full object-cover">

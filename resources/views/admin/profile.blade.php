@@ -186,7 +186,6 @@
             cancelBtn.addEventListener('click', () => window.location.reload());
         }
 
-        // Fitur Toggle Password (Mata)
         document.querySelectorAll('.toggle-password').forEach(button => {
             button.addEventListener('click', function() {
                 const input = this.parentElement.querySelector('input');
@@ -202,7 +201,6 @@
             });
         });
 
-        // Modal Logic
         if(confirmBtn) {
             confirmBtn.addEventListener('click', () => {
                 if (typeof openModal === 'function') {
@@ -231,7 +229,6 @@
             });
         }
 
-        // Preview Foto
         document.getElementById('fotoProfil').addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const reader = new FileReader();

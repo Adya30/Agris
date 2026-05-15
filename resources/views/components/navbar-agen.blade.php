@@ -1,42 +1,42 @@
-<nav class="fixed top-0 w-full z-50 shadow-md border-b border-white/10">
-    <div class="bg-[#0f8629] py-3 px-6">
+<nav class="fixed top-0 w-full z-50 shadow-md border-b border-white/10 transition-all duration-300">
+    <div class="bg-[#0f8629] py-3 px-4 md:px-6">
         <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
-            <a href="{{ route('agen.produk.index') }}" class="flex items-center gap-2">
-                <img src="{{ asset('images/icon.png') }}" class="w-15 h-auto" alt="Logo AGRIS">
-                <span class="text-2xl font-bold text-white uppercase">AGRIS</span>
+            <a href="{{ route('agen.produk.index') }}" class="flex items-center gap-2 shrink-0">
+                <img src="{{ asset('images/icon.png') }}" class="w-12 h-auto" alt="Logo AGRIS">
+                <span class="text-2xl font-bold text-white uppercase tracking-tight">AGRIS</span>
             </a>
 
             <div class="flex-1 max-w-xl hidden md:block px-4">
-                <form action="{{ route('agen.produk.index') }}" method="GET" class="relative flex items-center bg-[#46A302] rounded-full p-1 shadow-inner border border-white/10 group">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari produk di AGRIS..." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none border-none placeholder-gray-400 transition-all">
+                <form action="{{ route('agen.produk.index') }}" method="GET" class="relative flex items-center bg-green-600/40 rounded-full p-1 border border-white/10 group">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none placeholder-gray-400 transition-all">
                     <button type="submit" class="px-4 text-white hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                        <i class="fa-solid fa-magnifying-glass text-base"></i>
                     </button>
                 </form>
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
-                <a href="{{ route('agen.chat.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/30 text-white hover:bg-green-600/60 transition-all relative group">
+                <a href="{{ route('agen.chat.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all relative group">
                     <i class="fa-solid fa-comments text-lg"></i>
-                    <div id="chat-notification-dot" class="hidden absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-red-500 border-2 border-[#0f8629] rounded-full"></div>
+                    <div id="chat-notification-dot" class="hidden absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-[#0f8629] rounded-full"></div>
                 </a>
 
                 <div class="relative hidden md:block">
-                    <button id="dropdownBtn" type="button" class="group flex items-center gap-3 rounded-full bg-green-600/30 p-1.5 pr-4 transition-all hover:bg-green-600/60 focus:outline-none">
-                        <div class="h-10 w-10 overflow-hidden rounded-full border-2 border-white pointer-events-none">
+                    <button id="dropdownBtn" type="button" class="group flex items-center gap-3 rounded-full bg-green-600/50 p-1 pr-4 transition-all hover:bg-white/20 focus:outline-none">
+                        <div class="h-9 w-9 overflow-hidden rounded-full border-2 border-white pointer-events-none">
                             <img src="{{ auth()->user()->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
                         </div>
-                        <div class="flex items-center gap-2 pointer-events-none text-white">
-                            <div class="flex flex-col items-start leading-tight">
-                                <span class="text-sm font-black">{{ auth()->user()->username }}</span>
-                                <span class="text-sm font-bold">Profil</span>
+                        <div class="flex items-center gap-2 pointer-events-none text-white text-left">
+                            <div class="flex flex-col leading-tight">
+                                <span class="text-sm font-bold">{{ auth()->user()->username }}</span>
+                                <span class="text-xs font-bold ">Profil</span>
                             </div>
                             <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300" id="dropdownArrow"></i>
                         </div>
                     </button>
 
-                    <div id="dropdownMenu" class="hidden absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-60 opacity-0 scale-95 transition-all duration-200 origin-top-right">
-                        <a href="{{ route('agen.profile') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition font-semibold">
+                    <div id="dropdownMenu" class="hidden absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-60 opacity-0 scale-95 transition-all duration-200 origin-top-right">
+                        <a href="{{ route('agen.profile') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition font-bold">
                             <i class="fa-regular fa-id-card mr-3 text-[#0f8629] text-lg"></i> Profil Saya
                         </a>
                         <div class="mx-4 border-t border-gray-100 my-1"></div>
@@ -53,9 +53,9 @@
         </div>
     </div>
 
-    <div class="bg-[#46A302] hidden md:block border-t border-white/5">
+    <div class="bg-[#19a201] hidden md:block border-t border-white/5 shadow-inner">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="flex justify-center items-center gap-10 h-11 text-white/90 text-sm font-bold tracking-wide uppercase">
+            <div class="flex justify-center items-center gap-10 h-11 text-white/95 text-sm font-bold tracking-wide uppercase">
                 <a href="{{ route('agen.blog.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.blog.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Blog</a>
                 <a href="{{ route('agen.produk.index') }}" class="hover:text-white transition-all py-1 border-b-2 {{ Route::is('agen.produk.*') ? 'border-white' : 'border-transparent' }} hover:border-white">Produk</a>
                 <a href="#" class="hover:text-white transition-all py-1 border-b-2 border-transparent hover:border-white">Transaksi</a>
@@ -71,38 +71,38 @@
                     <img src="{{ auth()->user()->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
                 </div>
                 <div>
-                    <h4 class="font-black text-gray-900 text-lg">{{ auth()->user()->username }}</h4>
+                    <h4 class="font-bold text-gray-900 text-lg">{{ auth()->user()->username }}</h4>
                     <a href="{{ route('agen.profile') }}" class="text-sm font-bold text-[#0f8629] hover:underline">Lihat Profil</a>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 gap-2">
-                <a href="{{ route('agen.blog.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.blog.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base text-left">
-                    <i class="fa-solid fa-newspaper mr-3 w-5 text-center"></i> Blog
+                <a href="{{ route('agen.blog.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.blog.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base">
+                    <i class="fa-solid fa-newspaper mr-3 w-5 text-center text-lg"></i> Blog
                 </a>
-                <a href="{{ route('agen.produk.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.produk.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base text-left">
-                    <i class="fa-solid fa-box mr-3 w-5 text-center"></i> Produk
+                <a href="{{ route('agen.produk.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.produk.*') ? 'bg-green-50 text-[#0f8629]' : 'hover:bg-gray-50 text-gray-700' }} font-bold text-base">
+                    <i class="fa-solid fa-box mr-3 w-5 text-center text-lg"></i> Produk
                 </a>
-                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base text-left">
-                    <i class="fa-solid fa-receipt mr-3 w-5 text-center"></i> Transaksi
+                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
+                    <i class="fa-solid fa-receipt mr-3 w-5 text-center text-lg"></i> Transaksi
                 </a>
-                <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base text-left">
-                    <i class="fa-solid fa-handshake mr-3 w-5 text-center"></i> Kemitraan
+                <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base">
+                    <i class="fa-solid fa-handshake mr-3 w-5 text-center text-lg"></i> Kemitraan
                 </a>
-                <a href="{{ route('agen.chat.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base text-left relative">
-                    <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Chat
-                    <div id="chat-notification-dot-mobile" class="hidden ml-2 w-2 h-2 bg-red-500 rounded-full"></div>
+                <a href="{{ route('agen.chat.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 text-base relative">
+                    <i class="fa-solid fa-comments mr-3 w-5 text-center text-lg"></i> Chat
+                    <div id="chat-notification-dot-mobile" class="hidden ml-auto w-2.5 h-2.5 bg-red-500 rounded-full"></div>
                 </a>
                 <div class="my-2 border-t border-gray-100"></div>
-                <button type="button" class="logoutMobileBtn w-full flex items-center py-4 px-4 rounded-xl hover:bg-red-50 font-black text-red-500 transition-all text-left">
-                    <i class="fa-solid fa-right-from-bracket mr-3 w-5 text-center"></i> Logout
+                <button type="button" class="logoutMobileBtn w-full flex items-center py-4 px-4 rounded-xl hover:bg-red-50 font-bold text-red-500 transition-all text-left">
+                    <i class="fa-solid fa-right-from-bracket mr-3 w-5 text-center text-lg"></i> Logout
                 </button>
             </div>
         </div>
     </div>
 </nav>
 
-<div class="h-20 md:h-28"></div>
+<div class="h-26 md:h-29"></div>
 
 <x-modal id="logoutModal" title="Konfirmasi Logout" message="Apakah Anda yakin ingin keluar?" confirmText="Iya" cancelText="Batal" confirmId="confirmLogoutBtn" cancelId="closeLogoutBtn" />
 

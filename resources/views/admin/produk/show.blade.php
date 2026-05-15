@@ -34,28 +34,28 @@
 
             <div class="lg:w-3/5 p-8 md:p-10">
                 <div class="flex flex-wrap gap-2 mb-4">
-                    <span class="text-[10px] font-black uppercase text-[#58CC02] bg-[#58CC02]/10 px-3 py-1 rounded-lg">
+                    <span class="text-[10px] font-bold uppercase text-[#58CC02] bg-[#58CC02]/10 px-3 py-1 rounded-lg">
                         {{ $item->kategori->jenisKategori }}
                     </span>
-                    <span class="text-[10px] font-black uppercase text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
-                        Mutu {{ $item->kategori->mutu }}
+                    <span class="text-[10px] font-bold uppercase text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
+                        {{ $item->kategori->karung }} Kg
                     </span>
-                    <span class="text-[10px] font-black uppercase text-gray-500 bg-gray-100 px-3 py-1 rounded-lg">
-                        Isi {{ $item->kategori->karung }} Kg
+                    <span class="text-[10px] font-bold uppercase text-orange-400 bg-orange-50 px-3 py-1 rounded-lg">
+                        {{ $item->kategori->mutu }}
                     </span>
                 </div>
 
                 <h2 class="text-3xl font-bold text-gray-800 mb-2">{{ $item->namaProduk }}</h2>
 
                 <div class="flex items-baseline gap-1 mb-8">
-                    <span class="text-3xl font-black text-[#58CC02]">Rp {{ number_format($item->harga, 0, ',', '.') }}</span>
+                    <span class="text-3xl font-bold text-[#58CC02]">Rp {{ number_format($item->harga, 0, ',', '.') }}</span>
                     <span class="text-gray-400 font-medium">/ Karung</span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-6 mb-8">
                     <div class="p-4 rounded-2xl bg-gray-50 border border-gray-100">
                         <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Stok Tersedia</p>
-                        <p class="text-xl font-black {{ $item->stok > 0 ? 'text-gray-700' : 'text-red-500' }}">
+                        <p class="text-xl font-bold {{ $item->stok > 0 ? 'text-gray-700' : 'text-red-500' }}">
                             {{ $item->stok }} <span class="text-sm font-medium">Karung</span>
                         </p>
                     </div>

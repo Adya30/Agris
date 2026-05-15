@@ -3,34 +3,35 @@
 @section('title', 'Detail Blog - AGRIS')
 
 @section('content')
-<div class="max-w-4xl mx-auto pt-8 pb-12">
-    <div class="mb-10 flex items-center justify-between">
-        <a href="{{ route('agen.blog.index') }}" class="w-12 h-12 rounded-2xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all">
-            <i class="fa-solid fa-arrow-left"></i>
+<div class="max-w-4xl mx-auto pb-12 px-4">
+    <div class="mb-6 flex items-center gap-4">
+        <a href="{{ route('agen.blog.index') }}" class="w-10 h-10 rounded-xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all hover:border-[#58CC02]">
+            <i class="fa-solid fa-arrow-left text-sm"></i>
         </a>
+        <h2 class="text-xl font-bold text-gray-800">Detail Blog</h2>
     </div>
 
-    <div class="bg-white rounded-[48px] border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden">
         @if($blog->fotoBlog)
-            <div class="w-full h-100 overflow-hidden">
+            <div class="w-full h-64 md:h-100 overflow-hidden">
                 <img src="{{ $blog->fotoBlog }}" class="w-full h-full object-cover">
             </div>
         @endif
 
-        <div class="p-12">
-            <div class="flex items-center gap-4 mb-8">
-                <div class="w-12 h-12 rounded-full bg-[#0f8629] flex items-center justify-center text-white font-bold">
-                    <img src="{{ $blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin') }}" class="h-full w-full object-cover rounded-full">
+        <div class="p-6 md:p-10 lg:p-12">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 rounded-full border border-gray-100 overflow-hidden shadow-sm">
+                    <img src="{{ $blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin') }}" class="h-full w-full object-cover">
                 </div>
                 <div>
-                    <h4 class="font-bold text-gray-900">Tanggal Upload</h4>
-                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">{{ $blog->tanggalBlog->format('d F Y') }}</p>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Tanggal Upload</p>
+                    <p class="text-sm font-bold text-gray-900 uppercase tracking-tight">{{ $blog->tanggalBlog->format('d F Y') }}</p>
                 </div>
             </div>
 
-            <h1 class="text-4xl font-bold text-gray-900 leading-tight mb-8">{{ $blog->judulBlog }}</h1>
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-8">{{ $blog->judulBlog }}</h1>
 
-            <div class="prose prose-lg prose-green max-w-none text-gray-600 leading-relaxed">
+            <div class="prose prose-sm md:prose-base prose-green max-w-none text-gray-600 leading-relaxed">
                 @php
                     $urlPattern = '/(https?:\/\/[^\s]+)/';
                     $contentWithLinks = preg_replace(
