@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class c_blog extends Controller
 {
@@ -48,11 +49,8 @@ class c_blog extends Controller
         $blog->tanggalBlog = now();
 
         if ($request->hasFile('fotoBlog')) {
-            $file = $request->file('fotoBlog');
-            $tipe = $file->getClientOriginalExtension();
-            $data = file_get_contents($file->getRealPath());
-            $base64 = 'data:image/' . $tipe . ';base64,' . base64_encode($data);
-            $blog->fotoBlog = $base64;
+            $path = $request->file('fotoBlog')->store('blog', 'public');
+            $blog->fotoBlog = $path;
         }
 
         $blog->save();
@@ -99,11 +97,11 @@ class c_blog extends Controller
         $blog->isiBlog = $request->isiBlog;
 
         if ($request->hasFile('fotoBlog')) {
-            $file = $request->file('fotoBlog');
-            $tipe = $file->getClientOriginalExtension();
-            $data = file_get_contents($file->getRealPath());
-            $base64 = 'data:image/' . $tipe . ';base64,' . base64_encode($data);
-            $blog->fotoBlog = $base64;
+            if ($blog->fotoBlog && Storage::disk('public')->exists($blog->fotoBlog)) {
+                Storage::disk('public')->delete($blog->fotoBlog);
+            }
+            $path = $request->file('fotoBlog')->store('blog', 'public');
+            $blog->fotoBlog = $path;
         }
 
         $blog->save();
@@ -114,6 +112,11 @@ class c_blog extends Controller
     public function destroy(string $id)
     {
         $blog = Blog::findOrFail($id);
+
+        if ($blog->fotoBlog && Storage::disk('public')->exists($blog->fotoBlog)) {
+            Storage::disk('public')->delete($blog->fotoBlog);
+        }
+
         $blog->delete();
 
         return redirect()->route('admin.blog.index')->with('success', 'Blog berhasil dihapus');

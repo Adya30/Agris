@@ -3,52 +3,51 @@
 @section('title', 'Detail Blog - AGRIS')
 
 @section('content')
-<div class="max-w-4xl mx-auto pt-4 pb-12">
-    <div class="mb-10 flex items-center justify-between">
-        <div class="flex justify-center items-center">
-            <a href="{{ route('admin.blog.index') }}" class="w-12 h-12 rounded-2xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all">
-                <i class="fa-solid fa-arrow-left"></i>
+<div class="max-w-4xl mx-auto pt-4 pb-12 px-4">
+    <div class="mb-8 flex items-center justify-between gap-4">
+        <div class="flex items-center">
+            <a href="{{ route('admin.blog.index') }}" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 bg-white shadow-sm transition-all">
+                <i class="fa-solid fa-arrow-left text-sm"></i>
             </a>
-
-            <span class="text-3xl pl-3 font-bold">Detail Blog</span>
+            <span class="text-2xl pl-3 font-bold text-gray-800">Detail Blog</span>
         </div>
 
-        <div class="flex gap-3">
-            <a href="{{ route('admin.blog.edit', $blog->id) }}" class="bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-600 transition-all">
-               <i class="fa-solid fa-pen-to-square"></i> Edit
+        <div class="flex gap-2">
+            <a href="{{ route('admin.blog.edit', $blog->id) }}" class="bg-blue-500 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-600 transition-all text-sm">
+               <i class="fa-solid fa-pen-to-square text-xs"></i> Edit
             </a>
-            <button type="button" onclick="openModal('modalHapus')" class="bg-red-500 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-red-600 transition-all">
-                <i class="fa-solid fa-trash"></i> Hapus
+            <button type="button" onclick="openModal('modalHapus')" class="bg-red-500 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-red-600 transition-all text-sm">
+                <i class="fa-solid fa-trash text-xs"></i> Hapus
             </button>
         </div>
     </div>
 
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
         @if($blog->fotoBlog)
-            <div class="w-full h-100 overflow-hidden">
-                <img src="{{ $blog->fotoBlog }}" class="w-full h-full object-cover">
+            <div class="w-full aspect-video max-h-100 overflow-hidden bg-gray-50">
+                <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover">
             </div>
         @endif
 
-        <div class="p-12">
-            <div class="flex items-center gap-4 mb-8">
-                <div class="w-12 h-12 rounded-full bg-[#0f8629] flex items-center justify-center text-white font-bold overflow-hidden">
-                    <img src="{{ $blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin') }}" class="h-full w-full object-cover rounded-full">
+        <div class="p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="h-8 w-8 overflow-hidden rounded-full border-2 border-white shadow-sm bg-gray-100 shrink-0">
+                    <img src="{{ $blog->user && $blog->user->fotoProfil ? asset($blog->user->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode(($blog->user->username ?? $blog->user->email) ?? 'Admin') }}" class="h-full w-full object-cover">
                 </div>
-                <div>
-                    <h4 class="font-bold text-gray-900">Tanggal Upload</h4>
-                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">{{ $blog->tanggalBlog->format('d F Y') }}</p>
+                <div class="min-w-0">
+                    <p class="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-0.5">Tanggal Upload</p>
+                    <p class="text-xs font-bold text-gray-700 truncate">{{ $blog->tanggalBlog->format('d M Y') }}</p>
                 </div>
             </div>
 
-            <h1 class="text-4xl font-bold text-gray-900 leading-tight mb-8">{{ $blog->judulBlog }}</h1>
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800 leading-snug mb-6">{{ $blog->judulBlog }}</h1>
 
-            <div class="prose prose-lg prose-green max-w-none text-gray-600 leading-relaxed">
+            <div class="prose prose-sm md:prose-base max-w-none text-gray-600 leading-relaxed">
                 @php
                     $urlPattern = '/(https?:\/\/[^\s]+)/';
                     $contentWithLinks = preg_replace(
                         $urlPattern,
-                        '<a href="$1" target="_blank" class="text-blue-400 hover:underline font-bold transition-all">$1</a>',
+                        '<a href="$1" target="_blank" class="text-blue-500 hover:underline font-bold transition-all">$1</a>',
                         e($blog->isiBlog)
                     );
                 @endphp

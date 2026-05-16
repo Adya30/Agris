@@ -65,7 +65,7 @@
             <div class="bg-white rounded-3xl border border-gray-100 p-3 md:p-5 shadow-sm hover:shadow-md transition flex flex-col h-full relative">
                 <div class="relative aspect-3/4 rounded-2xl overflow-hidden bg-gray-50 mb-4 flex items-center justify-center">
                     @if($item->fotoProduk)
-                        <img src="{{ $item->fotoProduk }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition duration-500" alt="{{ $item->namaProduk }}">
+                        <img src="{{ asset('storage/' . $item->fotoProduk) }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition duration-500" alt="{{ $item->namaProduk }}">
                     @else
                         <div class="flex items-center justify-center h-full text-gray-200">
                             <i class="fa-solid fa-image text-4xl"></i>
