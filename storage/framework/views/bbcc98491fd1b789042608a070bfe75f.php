@@ -1,19 +1,17 @@
-@extends('layouts.admin')
+<?php $__env->startSection('title', 'Profil Admin - AGRIS'); ?>
 
-@section('title', 'Profil Admin - AGRIS')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="max-w-full mx-auto py-4">
     <div class="flex flex-col lg:flex-row gap-3 items-start">
         <div class="w-full lg:w-auto">
-            <a href="{{ route('admin.produk.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 border text-white bg-[#58CC02] rounded-xl transition-all duration-300 text-xs font-bold group">
+            <a href="<?php echo e(route('admin.produk.index')); ?>" class="inline-flex items-center gap-1.5 px-4 py-2 border text-white bg-[#58CC02] rounded-xl transition-all duration-300 text-xs font-bold group">
                 <i class="fas fa-arrow-left"></i> Beranda
             </a>
         </div>
 
-        <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data" id="formProfile" class="flex-1 w-full">
-            @csrf
-            @method('PUT')
+        <form action="<?php echo e(route('admin.profile.update')); ?>" method="POST" enctype="multipart/form-data" id="formProfile" class="flex-1 w-full">
+            <?php echo csrf_field(); ?>
+            <?php echo method_field('PUT'); ?>
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-gray-50/50">
@@ -28,7 +26,7 @@
                 <div class="p-6 flex flex-col lg:flex-row gap-8">
                     <div class="w-full lg:w-1/4 flex flex-col items-center">
                         <div class="group relative w-40 h-40 rounded-full overflow-hidden shadow-md bg-gray-50 border-2 border-white">
-                            <img id="previewFoto" src="{{ $user->fotoProfil ? asset($user->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode($user->email ?? 'User') }}" class="w-full h-full object-cover">
+                            <img id="previewFoto" src="<?php echo e($user->fotoProfil ? asset($user->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode($user->email ?? 'User')); ?>" class="w-full h-full object-cover">
                             <label for="fotoProfil" id="overlayFoto" class="hidden absolute inset-0 bg-black/40 items-center justify-center cursor-pointer transition">
                                 <i class="fas fa-camera text-white text-2xl"></i>
                             </label>
@@ -44,13 +42,27 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Email</label>
-                                <input type="text" name="email" value="{{ old('email', $user->email) }}" class="form-input editable w-full rounded-xl border-gray-200 bg-gray-50/50 py-2 px-3 text-sm disabled:text-black transition-all font-medium" disabled>
-                                @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                <input type="text" name="email" value="<?php echo e(old('email', $user->email)); ?>" class="form-input editable w-full rounded-xl border-gray-200 bg-gray-50/50 py-2 px-3 text-sm disabled:text-black transition-all font-medium" disabled>
+                                <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-xs mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Nomor Telepon</label>
-                                <input type="text" name="noTelp" value="{{ old('noTelp', $user->noTelp) }}" class="form-input editable w-full rounded-xl border-gray-200 bg-gray-50/50 py-2 px-3 text-sm disabled:text-black transition-all font-medium" disabled>
-                                @error('noTelp') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                <input type="text" name="noTelp" value="<?php echo e(old('noTelp', $user->noTelp)); ?>" class="form-input editable w-full rounded-xl border-gray-200 bg-gray-50/50 py-2 px-3 text-sm disabled:text-black transition-all font-medium" disabled>
+                                <?php $__errorArgs = ['noTelp'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-xs mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
@@ -59,43 +71,47 @@
                                 <div>
                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Provinsi</label>
                                     <div id="provinsiView" class="py-2 px-3 text-sm rounded-xl border border-gray-200 bg-gray-50/50 font-medium text-black">
-                                        {{ $user->desa->kecamatan->kabupaten->provinsi->namaProvinsi ?? '-' }}
+                                        <?php echo e($user->desa->kecamatan->kabupaten->provinsi->namaProvinsi ?? '-'); ?>
+
                                     </div>
-                                    <select id="provinsi" name="provinsiId" data-old="{{ $user->desa->kecamatan->kabupaten->provinsi->id ?? '' }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
+                                    <select id="provinsi" name="provinsiId" data-old="<?php echo e($user->desa->kecamatan->kabupaten->provinsi->id ?? ''); ?>" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
                                         <option value="">Pilih Provinsi</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Kabupaten</label>
                                     <div id="kabupatenView" class="py-2 px-3 text-sm rounded-xl border border-gray-200 bg-gray-50/50 font-medium text-black">
-                                        {{ $user->desa->kecamatan->kabupaten->namaKabupaten ?? '-' }}
+                                        <?php echo e($user->desa->kecamatan->kabupaten->namaKabupaten ?? '-'); ?>
+
                                     </div>
-                                    <select id="kabupaten" name="kabupatenId" data-old="{{ $user->desa->kecamatan->kabupaten->id ?? '' }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
+                                    <select id="kabupaten" name="kabupatenId" data-old="<?php echo e($user->desa->kecamatan->kabupaten->id ?? ''); ?>" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
                                         <option value="">Pilih Kabupaten</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Kecamatan</label>
                                     <div id="kecamatanView" class="py-2 px-3 text-sm rounded-xl border border-gray-200 bg-gray-50/50 font-medium text-black">
-                                        {{ $user->desa->kecamatan->namaKecamatan ?? '-' }}
+                                        <?php echo e($user->desa->kecamatan->namaKecamatan ?? '-'); ?>
+
                                     </div>
-                                    <select id="kecamatan" name="kecamatanId" data-old="{{ $user->desa->kecamatan->id ?? '' }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
+                                    <select id="kecamatan" name="kecamatanId" data-old="<?php echo e($user->desa->kecamatan->id ?? ''); ?>" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
                                         <option value="">Pilih Kecamatan</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Desa</label>
                                     <div id="desaView" class="py-2 px-3 text-sm rounded-xl border border-gray-200 bg-gray-50/50 font-medium text-black">
-                                        {{ $user->desa->namaDesa ?? '-' }}
+                                        <?php echo e($user->desa->namaDesa ?? '-'); ?>
+
                                     </div>
-                                    <select id="desa" name="desaId" data-old="{{ $user->desaId ?? '' }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
-                                        <option value="{{ $user->desaId ?? '' }}">{{ $user->desa->namaDesa ?? 'Pilih Desa' }}</option>
+                                    <select id="desa" name="desaId" data-old="<?php echo e($user->desaId ?? ''); ?>" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
+                                        <option value="<?php echo e($user->desaId ?? ''); ?>"><?php echo e($user->desa->namaDesa ?? 'Pilih Desa'); ?></option>
                                     </select>
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Detail Alamat</label>
-                                <textarea name="detailAlamat" class="form-input editable w-full rounded-xl border-gray-200 bg-gray-50/50 py-2 px-3 text-sm disabled:text-black transition-all font-medium resize-none" rows="2" disabled>{{ old('detailAlamat', $user->detailAlamat) }}</textarea>
+                                <textarea name="detailAlamat" class="form-input editable w-full rounded-xl border-gray-200 bg-gray-50/50 py-2 px-3 text-sm disabled:text-black transition-all font-medium resize-none" rows="2" disabled><?php echo e(old('detailAlamat', $user->detailAlamat)); ?></textarea>
                             </div>
 
                             <div id="passwordSection" class="hidden mt-4 pt-4 border-t border-gray-100">
@@ -106,7 +122,14 @@
                                         <button type="button" class="toggle-password absolute right-3 top-8 text-gray-400 hover:text-[#58CC02]">
                                             <i class="fas fa-eye text-sm"></i>
                                         </button>
-                                        @error('current_password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                        <?php $__errorArgs = ['current_password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-xs mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                     </div>
                                     <div class="relative">
                                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Password Baru</label>
@@ -114,7 +137,14 @@
                                         <button type="button" class="toggle-password absolute right-3 top-8 text-gray-400 hover:text-[#58CC02]">
                                             <i class="fas fa-eye text-sm"></i>
                                         </button>
-                                        @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                        <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-red-500 text-xs mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                     </div>
                                 </div>
                                 <p class="text-[9px] text-gray-400 mt-2 italic">*Kosongkan bagian password jika tidak ingin mengubahnya.</p>
@@ -127,7 +157,26 @@
     </div>
 </div>
 
-<x-modal id="confirmModal" message="Apakah yakin melakukan perubahan profil?" confirmText="Iya" cancelText="Batal" confirmId="btnSubmitProfile" cancelId="btnCloseProfileModal" />
+<?php if (isset($component)) { $__componentOriginal9f64f32e90b9102968f2bc548315018c = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9f64f32e90b9102968f2bc548315018c = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modal','data' => ['id' => 'confirmModal','message' => 'Apakah yakin melakukan perubahan profil?','confirmText' => 'Iya','cancelText' => 'Batal','confirmId' => 'btnSubmitProfile','cancelId' => 'btnCloseProfileModal']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'confirmModal','message' => 'Apakah yakin melakukan perubahan profil?','confirmText' => 'Iya','cancelText' => 'Batal','confirmId' => 'btnSubmitProfile','cancelId' => 'btnCloseProfileModal']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9f64f32e90b9102968f2bc548315018c)): ?>
+<?php $attributes = $__attributesOriginal9f64f32e90b9102968f2bc548315018c; ?>
+<?php unset($__attributesOriginal9f64f32e90b9102968f2bc548315018c); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9f64f32e90b9102968f2bc548315018c)): ?>
+<?php $component = $__componentOriginal9f64f32e90b9102968f2bc548315018c; ?>
+<?php unset($__componentOriginal9f64f32e90b9102968f2bc548315018c); ?>
+<?php endif; ?>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -166,9 +215,9 @@
             }
         }
 
-        @if($errors->any())
+        <?php if($errors->any()): ?>
             activateEditMode();
-        @endif
+        <?php endif; ?>
 
         if(editBtn) {
             editBtn.addEventListener('click', (e) => {
@@ -233,4 +282,6 @@
         });
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\project\Agris\resources\views/admin/profile.blade.php ENDPATH**/ ?>

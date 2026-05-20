@@ -1,12 +1,11 @@
-@extends('layouts.agen')
-@section('title', 'Chat - AGRIS')
+<?php $__env->startSection('title', 'Chat - AGRIS'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="bg-slate-100 md: flex flex-col justify-center items-center" id="chat-app" v-cloak>
     <div class="w-full h-screen px-2 md: flex flex-col bg-white relative overflow-hidden">
         <div class="h-16 md:h-17 px-4 md:px-6 flex items-center justify-between border-b border-slate-200 bg-white shrink-0 z-20">
             <div class="flex items-center gap-3 md:gap-4">
-                <img src="{{ $admin && $admin->fotoProfil ? '/' . preg_replace('/^\/?(storage\/)?/', 'storage/', $admin->fotoProfil) : 'https://ui-avatars.com/api/?name=Admin&background=15803d&color=fff' }}" class="w-10 h-10 md:w-10 md:h-10 rounded-full object-cover shadow-sm border border-slate-200">
+                <img src="<?php echo e($admin && $admin->fotoProfil ? '/' . preg_replace('/^\/?(storage\/)?/', 'storage/', $admin->fotoProfil) : 'https://ui-avatars.com/api/?name=Admin&background=15803d&color=fff'); ?>" class="w-10 h-10 md:w-10 md:h-10 rounded-full object-cover shadow-sm border border-slate-200">
                 <div class="flex flex-col">
                     <h2 class="font-bold text-slate-800 text-xs md:uppercase leading-tight">Pusat Layanan Admin</h2>
                 </div>
@@ -17,21 +16,21 @@
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-[#f8fafc] custom-scrollbar" id="chat-container">
-            <div v-for="chat in chats" :key="chat.id" :class="chat.id_penerima == 'GLOBAL' ? 'flex justify-center' : (chat.id_pengirim == @js(Auth::id()) ? 'flex justify-end' : 'flex justify-start')">
+            <div v-for="chat in chats" :key="chat.id" :class="chat.id_penerima == 'GLOBAL' ? 'flex justify-center' : (chat.id_pengirim == <?php echo \Illuminate\Support\Js::from(Auth::id())->toHtml() ?> ? 'flex justify-end' : 'flex justify-start')">
                 <div v-if="chat.id_penerima == 'GLOBAL'" class="w-full max-w-2xl bg-linear-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-4 shadow-sm">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="bg-amber-500 text-white p-1.5 rounded-lg text-[10px]"><i class="fa-solid fa-bullhorn"></i></span>
                         <span class="text-[10px] font-bold text-amber-700 uppercase">Pengumuman</span>
-                        <span class="text-[9px] font-bold text-amber-600 ml-auto">@{{ formatTime(chat.waktu_chat) }}</span>
+                        <span class="text-[9px] font-bold text-amber-600 ml-auto">{{ formatTime(chat.waktu_chat) }}</span>
                     </div>
-                    <p class="text-sm text-amber-900 font-semibold">@{{ chat.pesan }}</p>
+                    <p class="text-sm text-amber-900 font-semibold">{{ chat.pesan }}</p>
                     <div v-if="chat.foto_chat" class="mt-3 rounded-xl overflow-hidden border-none shadow-sm">
                         <img :src="chat.foto_chat.startsWith('http') ? chat.foto_chat : '/' + chat.foto_chat.replace(/^\/?(storage\/)?/, 'storage/')" class="w-full max-h-60 object-cover">
                     </div>
                 </div>
 
                 <div v-else class="max-w-[85%] md:max-w-[70%] group flex items-start gap-1">
-                    <div v-if="chat.id_pengirim == @js(Auth::id())" class="flex items-center self-center gap-1 order-1">
+                    <div v-if="chat.id_pengirim == <?php echo \Illuminate\Support\Js::from(Auth::id())->toHtml() ?>" class="flex items-center self-center gap-1 order-1">
                         <div v-if="activeMenu === chat.id" class="animate-in fade-in slide-in-from-right-1 duration-200">
                             <button @click.prevent="deleteChat(chat.id)" class="bg-white px-3 py-1.5 rounded-lg shadow-md border border-slate-100 text-[10px] font-black text-red-600 hover:bg-red-50 whitespace-nowrap">
                                 HAPUS
@@ -42,14 +41,14 @@
                         </button>
                     </div>
 
-                    <div :class="[chat.id_pengirim == @js(Auth::id()) ? 'bg-green-600 text-white rounded-tr-none order-2' : 'bg-white text-slate-700 rounded-tl-none border-none order-2']" class="px-4 py-3 rounded-3xl shadow-sm">
+                    <div :class="[chat.id_pengirim == <?php echo \Illuminate\Support\Js::from(Auth::id())->toHtml() ?> ? 'bg-green-600 text-white rounded-tr-none order-2' : 'bg-white text-slate-700 rounded-tl-none border-none order-2']" class="px-4 py-3 rounded-3xl shadow-sm">
                         <div v-if="chat.foto_chat" class="mb-2 rounded-lg overflow-hidden">
                             <img :src="chat.foto_chat.startsWith('http') ? chat.foto_chat : '/' + chat.foto_chat.replace(/^\/?(storage\/)?/, 'storage/')" class="max-h-64 w-full object-cover">
                         </div>
-                        <p class="text-sm font-medium">@{{ chat.pesan }}</p>
+                        <p class="text-sm font-medium">{{ chat.pesan }}</p>
                         <div class="flex justify-end items-center gap-1.5 mt-2 text-[9px] font-bold opacity-80">
-                            <span>@{{ formatTime(chat.waktu_chat) }}</span>
-                            <template v-if="chat.id_pengirim == @js(Auth::id())">
+                            <span>{{ formatTime(chat.waktu_chat) }}</span>
+                            <template v-if="chat.id_pengirim == <?php echo \Illuminate\Support\Js::from(Auth::id())->toHtml() ?>">
                                 <i v-if="chat.status === 'dibaca'" class="fa-solid fa-check-double text-blue-200"></i>
                                 <i v-else class="fa-solid fa-check text-green-200"></i>
                             </template>
@@ -61,7 +60,7 @@
 
         <div class="p-3 md:bg-white border-t border-slate-100 shrink-0">
             <div v-if="imagePreview" class="mb-4 flex items-center justify-between p-3 bg-green-50 rounded-2xl">
-                <span class="text-xs font-bold text-green-800">@{{ selectedFile?.name }}</span>
+                <span class="text-xs font-bold text-green-800">{{ selectedFile?.name }}</span>
                 <button @click="cancelImage" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-full">
@@ -81,7 +80,7 @@
     const { createApp, ref, onMounted, nextTick } = Vue;
     createApp({
         setup() {
-            const chats = ref(@js($chats));
+            const chats = ref(<?php echo \Illuminate\Support\Js::from($chats)->toHtml() ?>);
             const newMessage = ref('');
             const selectedFile = ref(null);
             const imagePreview = ref(false);
@@ -95,7 +94,7 @@
             const sendChat = () => {
                 if (!newMessage.value && !selectedFile.value) return;
                 const formData = new FormData();
-                formData.append('id_penerima', @js($admin->id));
+                formData.append('id_penerima', <?php echo \Illuminate\Support\Js::from($admin->id)->toHtml() ?>);
                 formData.append('pesan', newMessage.value || '');
                 if (selectedFile.value) formData.append('foto_chat', selectedFile.value);
                 newMessage.value = '';
@@ -140,12 +139,12 @@
                 const checkEcho = setInterval(() => {
                     if (window.Echo) {
                         clearInterval(checkEcho);
-                        window.Echo.private(`chat.${@js(Auth::id())}`).listen('.MessageSent', (e) => {
+                        window.Echo.private(`chat.${<?php echo \Illuminate\Support\Js::from(Auth::id())->toHtml() ?>}`).listen('.MessageSent', (e) => {
                             if (e.is_delete) {
                                 chats.value = chats.value.filter(c => c.id !== e.chat.id);
                             } else if (e.is_read_update) {
                                 chats.value.forEach(c => {
-                                    if (c.id_pengirim == @js(Auth::id()) && c.id_penerima == e.chat.id_pengirim) {
+                                    if (c.id_pengirim == <?php echo \Illuminate\Support\Js::from(Auth::id())->toHtml() ?> && c.id_penerima == e.chat.id_pengirim) {
                                         c.status = 'dibaca';
                                     }
                                 });
@@ -175,4 +174,6 @@
         }
     }).mount('#chat-app');
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.agen', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\project\Agris\resources\views/agen/chat/index.blade.php ENDPATH**/ ?>

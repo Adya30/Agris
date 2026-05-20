@@ -241,15 +241,23 @@
     }
 
     function triggerModal(id) {
-        const modal = document.getElementById(id);
-        if (typeof openModal === 'function') { openModal(id); }
-        else { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        if (typeof openModal === 'function') {
+            openModal(id);
+        } else {
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
     }
 
     function closeModalManual(id) {
-        const modal = document.getElementById(id);
-        if (typeof closeModal === 'function') { closeModal(id); }
-        else { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        if (typeof closeModal === 'function') {
+            closeModal(id);
+        } else {
+            const modal = document.getElementById(id);
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -260,13 +268,16 @@
         ];
 
         setups.forEach(setup => {
-            document.getElementById(setup.btn)?.addEventListener('click', () => document.getElementById(setup.form).submit());
+            document.getElementById(setup.btn)?.addEventListener('click', () => {
+                const form = document.getElementById(setup.form);
+                if(form) form.submit();
+            });
             document.getElementById(setup.cancel)?.addEventListener('click', () => closeModalManual(setup.modal));
         });
 
         if (window.Echo) {
             window.Echo.channel('kemitraan-status')
-                .listen('KemitraanUpdated', (e) => {
+                .listen('.KemitraanUpdated', (e) => {
                     if (e.id == "<?php echo e($kemitraan->id); ?>") {
                         window.location.reload();
                     }

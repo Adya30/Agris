@@ -24,7 +24,7 @@
                                 'border-gray-300' => !$errors->has('fotoProduk'),
                             ]); ?>">
                                 <?php if($produk->fotoProduk): ?>
-                                    <img id="previewImg" src="<?php echo e($produk->fotoProduk); ?>" class="w-full h-full object-cover">
+                                    <img id="previewImg" src="<?php echo e(asset('storage/' . $produk->fotoProduk)); ?>" class="w-full h-full object-cover">
                                     <div id="placeholderIcon" class="hidden text-center text-gray-300 group-hover:text-gray-400">
                                         <i class="fa-solid fa-camera text-3xl mb-1"></i>
                                         <p class="text-[10px] font-medium">Ganti Foto</p>

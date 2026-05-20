@@ -45,14 +45,28 @@
             <div>
                 <h3 class="text-lg font-semibold mb-4">Kontak</h3>
                 <ul class="space-y-3 text-gray-400 text-sm">
-                    <li class="flex items-center gap-2">
-                        <i class="fa-solid fa-location-dot text-[#58CC02]"></i> Jember, Indonesia
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-location-dot text-[#58CC02] mt-1 gap-2"></i>
+                        <span class="capitalize">
+                            <?php echo e(!empty($admin->detailAlamat) ? strtolower($admin->detailAlamat) . ',' : ''); ?>
+
+                            <?php echo e(!empty($admin->desa->namaDesa) ? strtolower($admin->desa->namaDesa) . ',' : ''); ?>
+
+                            <?php echo e(!empty($admin->desa->kecamatan->namaKecamatan) ? strtolower($admin->desa->kecamatan->namaKecamatan) . ',' : ''); ?>
+
+                            <?php echo e(!empty($admin->desa->kecamatan->kabupaten->namaKabupaten) ? strtolower($admin->desa->kecamatan->kabupaten->namaKabupaten) : ''); ?>
+
+                        </span>
                     </li>
                     <li class="flex items-center gap-2">
-                        <i class="fa-solid fa-phone text-[#58CC02]"></i> +62 812 3456 7890
+                        <i class="fa-solid fa-phone text-[#58CC02]"></i>
+                        <?php echo e($admin->noTelp ?? '-'); ?>
+
                     </li>
                     <li class="flex items-center gap-2">
-                        <i class="fa-solid fa-envelope text-[#58CC02]"></i> agrisagroindustri@gmail.com
+                        <i class="fa-solid fa-envelope text-[#58CC02]"></i>
+                        <?php echo e($admin->email ?? '-'); ?>
+
                     </li>
                 </ul>
 
@@ -64,13 +78,33 @@
 
             <div>
                 <h3 class="text-lg font-semibold mb-4">Lokasi</h3>
-                <iframe
-                    title="Lokasi AGRIS"
-                    class="w-full h-48 rounded-xl border-0"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63192.058441133886!2d113.6171077216797!3d-8.151902600000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd695e2281a28c5%3A0x2c7dd8c671e2c553!2sPT.%20Surya%20Kencana%20Agrifarm%20Sejahtera!5e0!3m2!1sid!2sid!4v1777362908806!5m2!1sid!2sid"
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+                <?php
+                    $kabupaten = strtoupper($admin->desa->kecamatan->kabupaten->namaKabupaten ?? '');
+                    $namaTempat = (str_contains($kabupaten, 'JEMBER')) ? "PT. Surya Kencana Agrifarm Sejahtera, " : "";
+
+                    $alamatLengkap = $namaTempat .
+                                    ($admin->detailAlamat ?? '') . ' ' .
+                                    ($admin->desa->namaDesa ?? '') . ' ' .
+                                    ($admin->desa->kecamatan->namaKecamatan ?? '') . ' ' .
+                                    ($admin->desa->kecamatan->kabupaten->namaKabupaten ?? '') . ' ' .
+                                    ($admin->desa->kecamatan->kabupaten->provinsi->namaProvinsi ?? '');
+
+                    $queryMaps = urlencode(trim($alamatLengkap));
+                ?>
+
+                <?php if(!empty(trim($admin->detailAlamat))): ?>
+                    <iframe
+                        title="Lokasi AGRIS"
+                        class="w-full h-48 rounded-xl border-0"
+                        src="https://maps.google.com/maps?q=<?php echo e($queryMaps); ?>&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                <?php else: ?>
+                    <div class="w-full h-48 rounded-xl bg-gray-800 flex items-center justify-center text-gray-500 text-xs p-4 text-center">
+                        Lokasi belum diatur oleh admin.
+                    </div>
+                <?php endif; ?>
             </div>
 
         </div>

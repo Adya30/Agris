@@ -1,8 +1,8 @@
 <?php $__env->startSection('title', 'Chat Admin - AGRIS'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-7xl mx-auto pt-2 pb-10 md:h-[calc(100vh-120px)] min-h-500px">
-    <div class=" bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row overflow-hidden h-full" id="chat-app" v-cloak>
+<div class="max-w-7xl mx-auto pt-2 pb-4 h-[calc(100vh-70px)] min-h-500px">
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row overflow-hidden h-full" id="chat-app" v-cloak>
         <div :class="activeTarget ? 'hidden md:flex' : 'flex'" class="w-full md:w-80 flex-col bg-white border-r border-gray-100 shrink-0 h-full">
             <div class="px-6 py-4 flex flex-col border-b border-slate-100 shrink-0 bg-white gap-4">
                 <div class="flex items-center justify-between">
@@ -30,7 +30,7 @@
                      :class="activeTarget == u.id ? 'bg-green-55 border-r-4 border-green-600' : 'hover:bg-slate-50 border-r-4 border-transparent'"
                      class="p-4 border-b border-slate-50 cursor-pointer transition-all flex items-center gap-4">
                     <div class="relative shrink-0">
-                        <img :src="u.fotoProfil" class="w-12 h-12 rounded-full object-cover shadow-sm border-2 border-white">
+                        <img :src="u.fotoProfil" class="w-10 h-10 rounded-full object-cover shadow-sm border-2 border-white">
                         <div v-if="unreadUsers.includes(u.id)" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white rounded-full"></div>
                     </div>
                     <div class="min-w-0 flex-1">
@@ -47,12 +47,12 @@
 
         <div :class="activeTarget ? 'flex' : 'hidden md:flex'" class="flex-1 flex-col min-w-0 bg-[#f8fafc] h-full relative overflow-hidden">
             <template v-if="activeTarget">
-                <div class="h-20 px-6 flex items-center justify-between border-b border-slate-200 shrink-0 bg-white/80 backdrop-blur-md z-20 shadow-sm">
+                <div class="h-18 px-6 flex items-center justify-between border-b border-slate-200 shrink-0 bg-white/80 backdrop-blur-md z-20 shadow-sm">
                     <div class="flex items-center gap-4">
                         <button @click="activeTarget = null" class="md:hidden w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>
-                        <img :src="activeTargetPhoto" class="w-11 h-11 rounded-full object-cover shadow-sm border border-slate-200">
+                        <img :src="activeTargetPhoto" class="w-10 h-10 rounded-full object-cover shadow-sm border border-slate-200">
                         <div class="min-w-0">
                             <h2 class="font-bold text-slate-800 text-sm uppercase truncate">{{ activeTargetName }}</h2>
                         </div>
@@ -99,12 +99,12 @@
                         <button @click="cancelImage" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                     <div class="flex items-center gap-3 bg-slate-100 p-2 rounded-4xl">
-                        <label class="w-12 h-12 flex items-center justify-center text-slate-400 cursor-pointer hover:text-green-600">
+                        <label class="w-10 h-10 flex items-center justify-center text-slate-400 cursor-pointer hover:text-green-600">
                             <i class="fa-solid fa-image"></i>
                             <input type="file" @change="handleFileUpload" class="hidden" id="file-input-field">
                         </label>
                         <input type="text" v-model="newMessage" @keyup.enter="sendChat" placeholder="Tulis pesan..." class="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm">
-                        <button @click="sendChat" class="bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center shrink-0 active:scale-95 transition-transform"><i class="fa-solid fa-paper-plane"></i></button>
+                        <button @click="sendChat" class="bg-green-600 text-white w-10 h-10 rounded-full flex items-center justify-center shrink-0 active:scale-95 transition-transform"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
             </template>
@@ -257,4 +257,4 @@
 </script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\project\Agris\resources\views\admin\chat\index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\project\Agris\resources\views/admin/chat/index.blade.php ENDPATH**/ ?>

@@ -45,13 +45,21 @@
         <?php endif; ?>
     </div>
 
-    <?php echo $__env->make('components.navbar-agen', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php if(Route::currentRouteName() === 'agen.chat.index' || request()->is('*chat*')): ?>
+        <div class="relative">
+            <?php echo $__env->make('components.navbar-agen', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+        </div>
+    <?php else: ?>
+        <?php echo $__env->make('components.navbar-agen', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php endif; ?>
 
-    <main class="p-6 min-h-screen">
+    <main class="min-h-screen">
         <?php echo $__env->yieldContent('content'); ?>
     </main>
 
-    <?php echo $__env->make('components.konsul-bubble', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php if(Route::currentRouteName() !== 'agen.chat.index' && !request()->is('*chat*')): ?>
+        <?php echo $__env->make('components.konsul-bubble', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php endif; ?>
     <?php echo $__env->make('components.footer-agen', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
 <script>

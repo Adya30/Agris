@@ -1,7 +1,7 @@
 <?php $__env->startSection('title', $item->namaProduk . ' - Detail Produk'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-7xl mx-auto pb-12 px-4 md:px-0">
+<div class="max-w-7xl mx-auto pt-5 pb-12 px-6 md:px-0">
     <div class="flex items-center gap-3 pb-5">
         <a href="<?php echo e(route('agen.produk.index')); ?>" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition shadow-sm">
             <i class="fa-solid fa-arrow-left"></i>

@@ -13,7 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
         select.innerHTML = `<option value="">Pilih ${label}</option>`;
         data.forEach(item => {
             const option = new Option(item.name, item.id);
-            if (item.id == currentValue) option.selected = true;
+            if (currentValue !== null && String(item.id) === String(currentValue)) {
+                option.selected = true;
+            }
             select.add(option);
         });
     };

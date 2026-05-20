@@ -48,7 +48,7 @@
 <div class="<?php echo e(!Route::is('admin.profile') ? 'md:ml-64' : ''); ?> transition-all duration-300">
     <?php echo $__env->make('components.topbar-admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
-    <main class="pt-20 p-8 min-h-screen">
+    <main class="pt-17 px-5 min-h-screen">
         <?php echo $__env->yieldContent('content'); ?>
     </main>
 </div>

@@ -1,4 +1,8 @@
-<nav class="fixed top-0 w-full z-55 shadow-md border-b border-white/10 transition-all duration-300">
+@php
+    $isChatRoute = Route::currentRouteName() === 'agen.chat.index' || request()->is('*chat*');
+@endphp
+
+<nav class="{{ $isChatRoute ? 'relative' : 'fixed top-0' }} w-full z-55 shadow-md border-b border-white/10 transition-all duration-300">
     <div class="bg-[#0f8629] py-3 px-4 md:px-6">
         <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
             <a href="{{ route('agen.produk.index') }}" class="flex items-center gap-2 shrink-0">
@@ -56,7 +60,11 @@
     <div class="bg-[#19a201] hidden md:block border-t border-white/5 shadow-inner">
         <div class="max-w-7xl mx-auto px-6 text-white/95 text-sm font-bold tracking-wide uppercase">
             <div class="flex justify-center items-center gap-10 h-11">
-                @php $navs = [['agen.blog.*', 'Blog', route('agen.blog.index')], ['agen.produk.*', 'Produk', route('agen.produk.index')], [null, 'Transaksi', '#'], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]]; @endphp
+                @php $navs =
+                [['agen.blog.*', 'Blog', route('agen.blog.index')],
+                ['agen.produk.*', 'Produk', route('agen.produk.index')],
+                [null, 'Transaksi', '#'], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]];
+                @endphp
                 @foreach($navs as $nav)
                     <a href="{{ $nav[2] }}" class="hover:text-white transition-all py-1 border-b-2 {{ $nav[0] && Route::is($nav[0]) ? 'border-white' : 'border-transparent' }} hover:border-white">
                         {{ $nav[1] }}
@@ -104,7 +112,9 @@
     </div>
 </nav>
 
-<div class="h-26 md:h-29"></div>
+@if(!$isChatRoute)
+    <div class="h-26 md:h-29"></div>
+@endif
 
 <x-modal id="logoutModal" title="Konfirmasi Logout" message="Apakah Anda yakin ingin keluar?" confirmText="Iya" cancelText="Batal" confirmId="confirmLogoutBtn" cancelId="closeLogoutBtn" />
 

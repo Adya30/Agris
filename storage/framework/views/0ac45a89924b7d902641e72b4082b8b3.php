@@ -1,7 +1,7 @@
 <?php $__env->startSection('title', 'Daftar Produk - AGRIS'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-7xl mx-auto pb-10 px-4">
+<div class="max-w-7xl mx-auto pt-5 pb-12 px-6">
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Daftar Produk</h1>

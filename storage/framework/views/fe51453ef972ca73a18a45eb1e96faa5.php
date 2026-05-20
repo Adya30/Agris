@@ -22,7 +22,7 @@
 <?php unset($__componentOriginala591787d01fe92c5706972626cdf7231); ?>
 <?php endif; ?>
 
-<section class="relative pt-32 pb-20 px-6 overflow-hidden">
+<section class="relative pt-28 pb-20 px-6 overflow-hidden">
     <div class="absolute inset-0 z-0">
         <img src="<?php echo e(asset('images/hero.jpg')); ?>" class="w-full h-full object-cover" alt="Background">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
@@ -48,7 +48,7 @@
             <a href="<?php echo e(route('guest.blog.show', $blog->id)); ?>" class="group bg-white rounded-4xl overflow-hidden shadow-sm border border-gray-100 flex flex-col">
                 <div class="relative h-64 overflow-hidden">
                     <?php if($blog->fotoBlog): ?>
-                        <img src="<?php echo e($blog->fotoBlog); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <img src="<?php echo e(asset('storage/' . $blog->fotoBlog)); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                     <?php else: ?>
                         <div class="w-full h-full bg-green-50 flex items-center justify-center text-green-200">
                             <i class="fa-solid fa-image text-5xl"></i>
@@ -75,7 +75,9 @@
 
                     <div class="mt-auto pt-6 flex items-center justify-between border-t border-gray-50">
                         <div class="flex items-center gap-3">
-                            <img src="<?php echo e($blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin').'&background=f0fdf4&color=166534'); ?>" class="h-10 w-10 rounded-full object-cover border border-gray-100">
+                            <div class="h-10 w-10 overflow-hidden rounded-full border border-gray-100 bg-gray-50 shadow-sm shrink-0">
+                                <img src="<?php echo e($blog->user && $blog->user->fotoProfil ? asset($blog->user->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode(($blog->user->username ?? $blog->user->email) ?? 'Admin').'&background=f0fdf4&color=166534'); ?>" class="h-full w-full object-cover">
+                            </div>
                             <span class="text-sm font-bold text-slate-700"><?php echo e($blog->user->username ?? 'Admin'); ?></span>
                         </div>
                         <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-slate-400 group-hover:bg-[#58CC02] group-hover:text-white transition-all">

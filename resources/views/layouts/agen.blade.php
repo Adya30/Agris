@@ -45,13 +45,21 @@
         @endif
     </div>
 
-    @include('components.navbar-agen')
+    @if(Route::currentRouteName() === 'agen.chat.index' || request()->is('*chat*'))
+        <div class="relative">
+            @include('components.navbar-agen')
+        </div>
+    @else
+        @include('components.navbar-agen')
+    @endif
 
-    <main class="p-6 min-h-screen">
+    <main class="min-h-screen">
         @yield('content')
     </main>
 
-    @include('components.konsul-bubble')
+    @if(Route::currentRouteName() !== 'agen.chat.index' && !request()->is('*chat*'))
+        @include('components.konsul-bubble')
+    @endif
     @include('components.footer-agen')
 
 <script>

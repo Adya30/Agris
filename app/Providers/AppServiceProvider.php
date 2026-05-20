@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 use App\Models\Kemitraan;
+use App\Models\User;
 use App\Observers\KemitraanObserver;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,5 +24,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Kemitraan::observe(KemitraanObserver::class);
+
+        View::composer('*', function ($view) {
+            $admin = User::where('isAdmin', true)->first();
+            $view->with('admin', $admin);
+        });
     }
 }

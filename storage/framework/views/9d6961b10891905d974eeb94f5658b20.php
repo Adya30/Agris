@@ -1,9 +1,9 @@
 <?php $__env->startSection('title', 'Detail Blog - AGRIS'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-4xl mx-auto pb-12 px-4">
+<div class="max-w-5xl mx-auto pt-5 pb-12 px-1">
     <div class="mb-6 flex items-center gap-4">
-        <a href="<?php echo e(route('agen.blog.index')); ?>" class="w-10 h-10 rounded-xl border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all hover:border-[#58CC02]">
+        <a href="<?php echo e(route('agen.blog.index')); ?>" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 bg-white shadow-sm transition-all">
             <i class="fa-solid fa-arrow-left text-sm"></i>
         </a>
         <h2 class="text-xl font-bold text-gray-800">Detail Blog</h2>
@@ -12,14 +12,14 @@
     <div class="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden">
         <?php if($blog->fotoBlog): ?>
             <div class="w-full h-64 md:h-100 overflow-hidden">
-                <img src="<?php echo e($blog->fotoBlog); ?>" class="w-full h-full object-cover">
+                <img src="<?php echo e(asset('storage/' . $blog->fotoBlog)); ?>" class="w-full h-full object-cover">
             </div>
         <?php endif; ?>
 
         <div class="p-6 md:p-10 lg:p-12">
             <div class="flex items-center gap-3 mb-8">
                 <div class="w-10 h-10 rounded-full border border-gray-100 overflow-hidden shadow-sm">
-                    <img src="<?php echo e($blog->user->fotoProfil ?? 'https://ui-avatars.com/api/?name='.urlencode($blog->user->username ?? 'Admin')); ?>" class="h-full w-full object-cover">
+                    <img src="<?php echo e($blog->user && $blog->user->fotoProfil ? asset($blog->user->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode(($blog->user->username ?? $blog->user->email) ?? 'Admin')); ?>" class="h-full w-full object-cover rounded-full">
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Tanggal Upload</p>

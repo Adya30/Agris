@@ -1,7 +1,7 @@
 <?php $__env->startSection('title', 'Upload MOU Kemitraan - AGRIS'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-4xl mx-auto pb-12 px-4">
+<div class="max-w-4xl mx-auto pt-5 pb-12 px-6">
     <?php if($kemitraan): ?>
     <?php
         $steps = [
@@ -203,6 +203,15 @@
         document.getElementById('btnCancelUpload').addEventListener('click', () => {
             closeModal('uploadModal');
         });
+
+        if (window.Echo) {
+            window.Echo.channel('kemitraan-status')
+                .listen('.KemitraanUpdated', (e) => {
+                    if (e.id == "<?php echo e($kemitraan->id ?? ''); ?>") {
+                        window.location.reload();
+                    }
+                });
+        }
     });
 </script>
 <?php $__env->stopSection(); ?>

@@ -21,7 +21,7 @@
             <div class="lg:w-2/5 bg-gray-50 p-4 md:p-8 flex flex-col items-center justify-start border-b lg:border-b-0 lg:border-r border-gray-100">
                 <div class="w-full rounded-2xl overflow-hidden bg-white">
                     <?php if($item->fotoProduk): ?>
-                        <img src="<?php echo e($item->fotoProduk); ?>" class="w-full h-auto max-h-125 object-contain mx-auto">
+                        <img src="<?php echo e(asset('storage/' . $item->fotoProduk)); ?>" class="w-full h-auto max-h-125 object-contain mx-auto">
                     <?php else: ?>
                         <div class="flex flex-col items-center justify-center aspect-square text-gray-300">
                             <i class="fa-solid fa-image text-6xl mb-2"></i>

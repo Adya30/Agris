@@ -1,4 +1,8 @@
-<nav class="fixed top-0 w-full z-55 shadow-md border-b border-white/10 transition-all duration-300">
+<?php
+    $isChatRoute = Route::currentRouteName() === 'agen.chat.index' || request()->is('*chat*');
+?>
+
+<nav class="<?php echo e($isChatRoute ? 'relative' : 'fixed top-0'); ?> w-full z-55 shadow-md border-b border-white/10 transition-all duration-300">
     <div class="bg-[#0f8629] py-3 px-4 md:px-6">
         <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
             <a href="<?php echo e(route('agen.produk.index')); ?>" class="flex items-center gap-2 shrink-0">
@@ -56,7 +60,11 @@
     <div class="bg-[#19a201] hidden md:block border-t border-white/5 shadow-inner">
         <div class="max-w-7xl mx-auto px-6 text-white/95 text-sm font-bold tracking-wide uppercase">
             <div class="flex justify-center items-center gap-10 h-11">
-                <?php $navs = [['agen.blog.*', 'Blog', route('agen.blog.index')], ['agen.produk.*', 'Produk', route('agen.produk.index')], [null, 'Transaksi', '#'], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]]; ?>
+                <?php $navs =
+                [['agen.blog.*', 'Blog', route('agen.blog.index')],
+                ['agen.produk.*', 'Produk', route('agen.produk.index')],
+                [null, 'Transaksi', '#'], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]];
+                ?>
                 <?php $__currentLoopData = $navs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $nav): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <a href="<?php echo e($nav[2]); ?>" class="hover:text-white transition-all py-1 border-b-2 <?php echo e($nav[0] && Route::is($nav[0]) ? 'border-white' : 'border-transparent'); ?> hover:border-white">
                         <?php echo e($nav[1]); ?>
@@ -105,7 +113,9 @@
     </div>
 </nav>
 
-<div class="h-26 md:h-29"></div>
+<?php if(!$isChatRoute): ?>
+    <div class="h-26 md:h-29"></div>
+<?php endif; ?>
 
 <?php if (isset($component)) { $__componentOriginal9f64f32e90b9102968f2bc548315018c = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal9f64f32e90b9102968f2bc548315018c = $attributes; } ?>
