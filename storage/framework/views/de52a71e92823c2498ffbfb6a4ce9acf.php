@@ -94,12 +94,12 @@
     </div>
 </section>
 
-<section id="about" class="relative py-24 bg-white px-6">
+<section id="about" class="relative py-24 bg-gray-100 px-6">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-20">
         <div class="w-full md:w-1/2 relative">
             <div class="relative z-10">
                 <img src="<?php echo e(asset('images/about.jpg')); ?>" class="rounded-3xl shadow-2xl w-full object-cover h-87.5 md:h-125">
-                <div class="absolute -bottom-6 -right-6 bg-white p-6 rounded-3xl shadow-xl border border-gray-100 hidden lg:block">
+                <div class="absolute -bottom-6 -right-6 bg-gray-100 p-6 rounded-3xl shadow-xl border-2 border-gray-200 hidden lg:block">
                     <p class="text-slate-900 font-extrabold text-4xl">10+</p>
                     <p class="text-gray-400 text-xs font-black uppercase tracking-widest">Terpercaya</p>
                 </div>
@@ -107,14 +107,14 @@
         </div>
 
         <div class="w-full md:w-1/2">
-            <span class="text-green-600 font-black tracking-widest uppercase text-xs mb-4 block">Tentang AGRIS</span>
+            <span class="text-green-600 font-bold tracking-widest uppercase text-xs mb-4 block">Tentang AGRIS</span>
             <h2 class="text-3xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">Dedikasi Kami untuk Kemajuan Petani Indonesia</h2>
             <p class="text-gray-600 leading-relaxed text-base md:text-lg mb-8">
                 AGRIS lahir dari semangat untuk memberikan solusi hulu pertanian. Kami memahami bahwa benih berkualitas adalah fondasi utama keberhasilan panen.
             </p>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div class="flex items-start gap-3">
+                <div class="flex items-start gap-3 border-2 border-gray-200 p-4 rounded-2xl bg-gray-50">
                     <div class="mt-1 shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
                         <i class="fa-solid fa-check text-[8px] text-white"></i>
                     </div>
@@ -123,7 +123,7 @@
                         <p class="text-xs text-gray-500">Daya tumbuh di atas 95%.</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-3">
+                <div class="flex items-start gap-3 border-2 border-gray-200 p-4 rounded-2xl bg-gray-50">
                     <div class="mt-1 shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
                         <i class="fa-solid fa-check text-[8px] text-white"></i>
                     </div>
@@ -137,8 +137,7 @@
     </div>
 </section>
 
-
-<section id="services" class="relative py-24 bg-gray-50 px-6">
+<section id="services" class="relative py-24 bg-gray-200 px-6">
     <div class="max-w-7xl mx-auto w-full">
         <div class="text-center max-w-2xl mx-auto mb-16">
             <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Layanan Utama Kami</h2>
@@ -147,7 +146,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <?php $__currentLoopData = $services; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div class="group bg-white p-8 md:p-10 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
+            <div class="group bg-white p-8 md:p-10 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-gray-200">
                 <div class="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-8 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
                     <i class="fa-solid <?php echo e($service['icon']); ?>"></i>
                 </div>
@@ -159,11 +158,10 @@
     </div>
 </section>
 
-
-<section id="faq" class="relative py-24 bg-white px-6">
+<section id="faq" class="relative py-24 bg-gray-100 px-6">
     <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-20 w-full">
         <div class="w-full lg:w-1/3">
-            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Pertanyaan Populer</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">FAQ</h2>
             <p class="text-gray-500 mb-8 text-sm md:text-base">Kami merangkum hal yang sering ditanyakan oleh mitra kami.</p>
             <div class="p-8 bg-slate-900 rounded-3xl text-white">
                 <p class="font-bold mb-2 text-green-400">Butuh bantuan lain?</p>
@@ -177,7 +175,7 @@
         <div class="w-full lg:w-2/3 space-y-4">
             <?php $__currentLoopData = $faqs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $faq): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="faq-item group">
-                <button class="faq-btn w-full flex items-center justify-between p-6 bg-gray-50 rounded-2xl border border-transparent hover:border-green-500 hover:border-opacity-30 transition-all duration-300 text-left">
+                <button class="faq-btn w-full flex items-center justify-between p-6 bg-gray-50 rounded-2xl border border-gray-200 hover:border-green-500 hover:border-opacity-30 transition-all duration-300 text-left">
                     <span class="font-bold text-slate-900 text-sm md:text-base"><?php echo e($faq['q']); ?></span>
                     <div class="shrink-0 w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-900 group-hover:bg-green-600 group-hover:text-white transition-all">
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300"></i>

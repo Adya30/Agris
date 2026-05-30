@@ -26,10 +26,10 @@
             </div>
 
             <div class="hidden md:flex items-center gap-3">
-                <a href="<?php echo e(route('register')); ?>" class="px-6 py-2 rounded-xl text-white font-bold border-2 border-white/20">
+                <a href="<?php echo e(route('register')); ?>" class="px-6 py-2 rounded-xl text-white font-bold border-2 hover:bg-white/50 border-white/20">
                     Daftar
                 </a>
-                <a href="<?php echo e(route('login')); ?>" class="px-6 py-2.5 rounded-xl bg-[#0eb833] hover:bg-[#0f8629] text-white font-bold shadow-lg shadow-green-900/20">
+                <a href="<?php echo e(route('login')); ?>" class="px-6 py-2.5 rounded-xl bg-[#0eb833] hover:bg-[#0ed038] text-white font-bold shadow-lg shadow-green-900/20">
                     Login
                 </a>
             </div>

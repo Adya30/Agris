@@ -1,7 +1,7 @@
 <?php $__env->startSection('title', $item->namaProduk . ' - Detail Produk'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-7xl mx-auto pt-5 pb-12 px-6 md:px-0">
+<div class="max-w-7xl mx-auto pt-5 pb-12 px-6">
     <div class="flex items-center gap-3 pb-5">
         <a href="<?php echo e(route('agen.produk.index')); ?>" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition shadow-sm">
             <i class="fa-solid fa-arrow-left"></i>
@@ -14,9 +14,7 @@
             <div class="p-6 md:p-10 bg-gray-50 flex items-center justify-center">
                 <div class="relative w-full rounded-2xl overflow-hidden shadow-lg bg-white">
                     <?php if($item->fotoProduk): ?>
-                        <img src="<?php echo e($item->fotoProduk); ?>"
-                            class="w-full h-auto max-h-150 object-contain mx-auto display-block"
-                            alt="<?php echo e($item->namaProduk); ?>">
+                        <img src="<?php echo e(asset('storage/' . $item->fotoProduk)); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="<?php echo e($item->namaProduk); ?>">
                     <?php else: ?>
                         <div class="flex flex-col items-center justify-center aspect-square text-gray-300">
                             <i class="fa-solid fa-image text-8xl mb-4"></i>
@@ -63,16 +61,10 @@
                         </p>
                     </div>
 
-                    <?php if($item->stok > 0): ?>
-                        <button class="flex-1 bg-[#58CC02] hover:bg-[#46a302] text-white py-4 rounded-2xl transition-all shadow-lg shadow-[#58CC02]/20 font-black flex items-center justify-center gap-3">
-                            <i class="fa-solid fa-cart-plus"></i>
-                            Tambah Pesanan
-                        </button>
-                    <?php else: ?>
-                        <button disabled class="flex-1 bg-gray-100 text-gray-400 py-4 rounded-2xl font-black cursor-not-allowed">
-                            Stok Habis
-                        </button>
-                    <?php endif; ?>
+                    <button class="flex-1 bg-[#58CC02] hover:bg-[#46a302] text-white py-4 rounded-2xl transition-all shadow-lg shadow-[#58CC02]/20 font-black flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-cart-plus"></i>
+                        Tambah Pesanan
+                    </button>
                 </div>
             </div>
         </div>

@@ -24,9 +24,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Kemitraan::observe(KemitraanObserver::class);
-
         View::composer('*', function ($view) {
-            $admin = User::where('isAdmin', true)->first();
+            static $admin = null;
+
+            if (is_null($admin)) {
+                $admin = User::where('isAdmin', true)->first();
+            }
+
             $view->with('admin', $admin);
         });
     }

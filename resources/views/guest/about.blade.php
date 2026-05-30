@@ -24,7 +24,7 @@
     </div>
 </section>
 
-<section class="py-20 bg-white px-6">
+<section class="py-20 bg-gray-200 px-6">
     <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
         <div>
             <img src="{{ asset('images/about.jpg') }}" class="rounded-3xl shadow-xl w-full h-112 object-cover">

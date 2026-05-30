@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 mb-8">
+    <div class="bg-white p-4 md:p-5 rounded-sm shadow-sm border border-gray-100 mb-8">
         <form action="{{ route('admin.produk.index') }}" method="GET" class="flex flex-col md:flex-row items-end gap-4">
             <div class="w-full md:flex-1">
                 <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Jenis</label>
@@ -59,13 +59,13 @@
         </form>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
         @forelse($produks as $item)
         <a href="{{ route('admin.produk.show', $item->id) }}" class="group">
-            <div class="bg-white rounded-3xl border border-gray-100 p-3 md:p-5 shadow-sm hover:shadow-md transition flex flex-col h-full relative">
-                <div class="relative aspect-3/4 rounded-2xl overflow-hidden bg-gray-50 mb-4 flex items-center justify-center">
+            <div class="bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col h-full relative">
+                <div class="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                     @if($item->fotoProduk)
-                        <img src="{{ asset('storage/' . $item->fotoProduk) }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition duration-500" alt="{{ $item->namaProduk }}">
+                        <img src="{{ asset('storage/' . $item->fotoProduk) }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="{{ $item->namaProduk }}">
                     @else
                         <div class="flex items-center justify-center h-full text-gray-200">
                             <i class="fa-solid fa-image text-4xl"></i>
@@ -73,47 +73,59 @@
                     @endif
 
                     @if($item->stok <= 0)
-                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
                             <span class="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Stok Habis</span>
                         </div>
                     @endif
                 </div>
 
-                <div class="flex flex-wrap gap-1.5 mb-2">
-                    <span class="text-[10px] font-bold uppercase text-[#58CC02] bg-[#58CC02]/10 px-2 py-0.5 rounded-md">
-                        {{ $item->kategori->jenisKategori }}
-                    </span>
-                    <span class="text-[10px] font-bold uppercase text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md">
-                        {{ $item->kategori->karung }} Kg
-                    </span>
-                    <span class="text-[10px] font-bold uppercase text-orange-400 bg-orange-50 px-2 py-0.5 rounded-md">
-                        {{ $item->kategori->mutu }}
-                    </span>
-                </div>
+                <div class="p-2.5 flex flex-col grow">
+                    <div class="flex flex-wrap gap-1 mb-2">
+                        <span class="text-[9px] font-bold uppercase text-[#58CC02] bg-[#58CC02]/10 px-1.5 py-0.5 rounded">
+                            {{ $item->kategori->jenisKategori }}
+                        </span>
+                        <span class="text-[9px] font-bold uppercase text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded">
+                            {{ $item->kategori->karung }} Kg
+                        </span>
+                        <span class="text-[9px] font-bold uppercase text-orange-400 bg-orange-50 px-1.5 py-0.5 rounded">
+                            {{ $item->kategori->mutu }}
+                        </span>
+                    </div>
 
-                <h3 class="font-bold text-gray-800 text-sm mb-3 line-clamp-2 leading-snug group-hover:text-[#58CC02] transition-colors">{{ $item->namaProduk }}</h3>
+                    <h3 class="text-gray-800 text-15 font-normal line-clamp-2 leading-snug mb-1 min-h-9.5">
+                        {{ $item->namaProduk }}
+                    </h3>
 
-                <div class="mt-auto">
-                    <p class="text-[#58CC02] font-bold text-xl mb-3">
+                    <p class="text-gray-900 font-bold text-base mb-0.5">
                         Rp {{ number_format($item->harga, 0, ',', '.') }}
                     </p>
-                    <div class="flex items-center justify-between pt-3 border-t border-gray-50">
-                        <span class="text-[10px] font-bold {{ $item->stok > 5 ? 'text-gray-500' : 'text-orange-500' }} uppercase tracking-tight">
-                            Stok : {{ $item->stok }}
-                        </span>
+
+                    <div class="mt-auto">
+
+                     <div class="flex items-center justify-between pt-2 border-t border-gray-100 flex-wrap gap-1">
+                            <div class="flex items-center gap-1 text-[11px] text-gray-500 truncate max-w-[70%]">
+                                <div class="bg-violet-600 text-white rounded w-3.5 h-3.5 flex items-center justify-center text-[8px] shrink-0">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                <span class="truncate font-medium text-gray-500">Tersedia</span>
+                            </div>
+                            <span class="text-[10px] font-bold {{ $item->stok > 5 ? 'text-gray-500' : 'text-orange-500' }} uppercase tracking-tight shrink-0">
+                                Stok: {{ $item->stok }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </a>
         @empty
-            <div class="col-span-full py-20 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-                <i class="fa-solid fa-box-open text-5xl text-gray-200 mb-4"></i>
-                <p class="text-gray-400 font-bold uppercase text-sm tracking-widest">Data tidak ditemukan.</p>
-            </div>
+        <div class="col-span-full py-20 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+            <i class="fa-solid fa-box-open text-5xl text-gray-200 mb-4"></i>
+            <p class="text-gray-400 font-bold uppercase text-sm tracking-widest">Data tidak ditemukan.</p>
+        </div>
         @endforelse
     </div>
 
-    <div class="mt-10">
+    <div class="mt-8">
         {{ $produks->links() }}
     </div>
 </div>

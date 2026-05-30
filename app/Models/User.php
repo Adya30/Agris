@@ -86,4 +86,9 @@ class User extends Authenticatable
 
         return collect($parts)->filter()->implode(', ');
     }
+
+    public function keranjangs()
+    {
+        return $this->hasMany(Keranjang::class, 'userId');
+    }
 }

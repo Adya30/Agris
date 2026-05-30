@@ -38,7 +38,6 @@
                             Chat
                         </a>
                     </li>
-                    <li><a href="#" class="hover:text-white transition">Konsultasi</a></li>
                 </ul>
             </div>
 
@@ -46,7 +45,7 @@
                 <h3 class="text-lg font-semibold mb-4">Kontak</h3>
                 <ul class="space-y-3 text-gray-400 text-sm">
                     <li class="flex items-start gap-2">
-                        <i class="fa-solid fa-location-dot text-[#58CC02] mt-1 gap-2"></i>
+                        <i class="fa-solid fa-location-dot text-[#04a243] mt-1 gap-2"></i>
                         <span class="capitalize">
                             <?php echo e(!empty($admin->detailAlamat) ? strtolower($admin->detailAlamat) . ',' : ''); ?>
 
@@ -59,12 +58,12 @@
                         </span>
                     </li>
                     <li class="flex items-center gap-2">
-                        <i class="fa-solid fa-phone text-[#58CC02]"></i>
+                        <i class="fa-solid fa-phone text-[#04a243]"></i>
                         <?php echo e($admin->noTelp ?? '-'); ?>
 
                     </li>
                     <li class="flex items-center gap-2">
-                        <i class="fa-solid fa-envelope text-[#58CC02]"></i>
+                        <i class="fa-solid fa-envelope text-[#04a243]"></i>
                         <?php echo e($admin->email ?? '-'); ?>
 
                     </li>

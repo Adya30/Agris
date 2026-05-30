@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\c_profile;
 use App\Http\Controllers\c_wilayah;
 use App\Http\Controllers\c_produk;
+use App\Http\Controllers\c_keranjang;
 use App\Http\Controllers\c_blog;
 use App\Http\Controllers\c_kemitraan;
 use App\Http\Controllers\c_chat;
@@ -58,6 +59,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/produk', [c_produk::class, 'indexAgen'])->name('agen.produk.index');
         Route::get('/produk/{id}', [c_produk::class, 'showAgen'])->name('agen.produk.show');
+
+        Route::get('/keranjang', [c_keranjang::class, 'index'])->name('agen.keranjang.index');
+        Route::post('/produk/add-to-cart', [c_keranjang::class, 'tambah'])->name('agen.produk.add-to-cart');
+        Route::post('/keranjang/kurang/{id}', [c_keranjang::class, 'kurang'])->name('agen.keranjang.kurang');
+        Route::delete('/keranjang/{id}', [c_keranjang::class, 'destroy'])->name('agen.keranjang.destroy');
 
         Route::get('/blog', [c_blog::class, 'indexAgen'])->name('agen.blog.index');
         Route::get('/blog/{id}', [c_blog::class, 'showAgen'])->name('agen.blog.show');

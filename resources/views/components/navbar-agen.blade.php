@@ -12,7 +12,7 @@
 
             <div class="flex-1 max-w-xl hidden md:block px-4">
                 <form action="{{ route('agen.produk.index') }}" method="GET" class="relative flex items-center bg-green-600/40 rounded-full p-1 border border-white/10 group">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none placeholder-gray-400 transition-all">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Produks...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none placeholder-gray-400 transition-all">
                     <button type="submit" class="px-4 text-white hover:scale-110 transition-transform">
                         <i class="fa-solid fa-magnifying-glass text-base"></i>
                     </button>
@@ -20,6 +20,11 @@
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
+                <a href="{{ route('agen.keranjang.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all relative">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <div id="cart-notification-dot" class="hidden absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-[#0f8629] rounded-full"></div>
+                </a>
+
                 <a href="{{ route('agen.chat.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all relative">
                     <i class="fa-solid fa-comments text-lg"></i>
                     <div id="chat-notification-dot" class="hidden absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-[#0f8629] rounded-full"></div>
@@ -78,7 +83,7 @@
         <div class="px-6 py-6 space-y-4">
             <div class="flex items-center gap-4 p-4 bg-gray-100 rounded-2xl border border-gray-100">
                 <div class="h-14 w-14 overflow-hidden rounded-full border-2 border-[#0f8629]">
-                    <img src="{{ auth()->user()->fotoProfil ? asset(auth()->user()->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->namaLengkap ?? auth()->user()->username).'&background=random' }}" class="h-full w-full object-cover">
+                    <img src="{{ auth()->user()->fotoProfil ? asset(auth()->user()->fotoProfil) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->username) }}" class="h-full w-full object-cover">
                 </div>
                 <div>
                     <h4 class="font-bold text-gray-900 text-lg">{{ auth()->user()->username }}</h4>
@@ -99,7 +104,11 @@
                 <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('kemitraan.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold">
                     <i class="fa-solid fa-handshake mr-3 w-5 text-lg"></i> Kemitraan
                 </a>
-                <a href="{{ route('agen.chat.index') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 relative">
+                <a href="{{ route('agen.produk.add-to-cart') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 relative">
+                    <i class="fa-solid fa-cart-shopping mr-3 w-5 text-lg"></i> Keranjang
+                    <div id="cart-notification-dot-mobile" class="hidden ml-auto w-2.5 h-2.5 bg-red-500 rounded-full"></div>
+                </a>
+                <a href="{{ route('agen.chat.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.chat.index') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold relative">
                     <i class="fa-solid fa-comments mr-3 w-5 text-lg"></i> Chat
                     <div id="chat-notification-dot-mobile" class="hidden ml-auto w-2.5 h-2.5 bg-red-500 rounded-full"></div>
                 </a>
@@ -129,7 +138,9 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdownMenu: document.getElementById('dropdownMenu'),
         dropdownArrow: document.getElementById('dropdownArrow'),
         chatDot: document.getElementById('chat-notification-dot'),
-        chatDotMobile: document.getElementById('chat-notification-dot-mobile')
+        chatDotMobile: document.getElementById('chat-notification-dot-mobile'),
+        cartDot: document.getElementById('cart-notification-dot'),
+        cartDotMobile: document.getElementById('cart-notification-dot-mobile')
     };
 
     const animateToggle = (target, show) => {

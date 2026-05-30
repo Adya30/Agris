@@ -157,9 +157,13 @@
                             }
                         });
                         window.Echo.channel('chat.global').listen('.MessageSent', (e) => {
-                            if (!chats.value.some(c => c.id === e.chat.id)) {
-                                chats.value.push(e.chat);
-                                scrollToBottom();
+                            if (e.is_delete) {
+                                chats.value = chats.value.filter(c => c.id !== e.chat.id);
+                            } else {
+                                if (!chats.value.some(c => c.id === e.chat.id)) {
+                                    chats.value.push(e.chat);
+                                    scrollToBottom();
+                                }
                             }
                         });
                     }
