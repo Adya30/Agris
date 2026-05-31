@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/keranjang', [c_keranjang::class, 'index'])->name('agen.keranjang.index');
         Route::post('/produk/add-to-cart', [c_keranjang::class, 'tambah'])->name('agen.produk.add-to-cart');
+        Route::post('/keranjang/tambah/{id}', [c_keranjang::class, 'tambahJumlah'])->name('agen.keranjang.tambah');
         Route::post('/keranjang/kurang/{id}', [c_keranjang::class, 'kurang'])->name('agen.keranjang.kurang');
         Route::delete('/keranjang/{id}', [c_keranjang::class, 'destroy'])->name('agen.keranjang.destroy');
 

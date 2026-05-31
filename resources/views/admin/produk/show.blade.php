@@ -34,13 +34,13 @@
 
             <div class="lg:w-3/5 p-8 md:p-10">
                 <div class="flex flex-wrap gap-2 mb-4">
-                    <span class="text-[10px] font-bold uppercase text-[#58CC02] bg-[#58CC02]/10 px-3 py-1 rounded-lg">
+                    <span class="text-[10px] font-bold uppercase text-gray-800 bg-gray-800/10 px-3 py-1 rounded-lg">
                         {{ $item->kategori->jenisKategori }}
                     </span>
-                    <span class="text-[10px] font-bold uppercase text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
+                    <span class="text-[10px] font-bold uppercase text-gray-800 bg-gray-800/10 px-3 py-1 rounded-lg">
                         {{ $item->kategori->karung }} Kg
                     </span>
-                    <span class="text-[10px] font-bold uppercase text-orange-400 bg-orange-50 px-3 py-1 rounded-lg">
+                    <span class="text-[10px] font-bold uppercase text-gray-800 bg-gray-800/10 px-3 py-1 rounded-lg">
                         {{ $item->kategori->mutu }}
                     </span>
                 </div>

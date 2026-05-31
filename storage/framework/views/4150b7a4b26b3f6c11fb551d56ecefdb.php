@@ -12,9 +12,9 @@
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="grid grid-cols-1 md:grid-cols-2">
             <div class="p-6 md:p-10 bg-gray-50 flex items-center justify-center">
-                <div class="relative w-full rounded-2xl overflow-hidden shadow-lg bg-white">
+                <div class="relative w-auto rounded-2xl overflow-hidden shadow-lg bg-white">
                     <?php if($item->fotoProduk): ?>
-                        <img src="<?php echo e(asset('storage/' . $item->fotoProduk)); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="<?php echo e($item->namaProduk); ?>">
+                        <img src="<?php echo e(asset('storage/' . $item->fotoProduk)); ?>" class="w-full h-full max-h-125 object-cover group-hover:scale-105 transition duration-500" alt="<?php echo e($item->namaProduk); ?>">
                     <?php else: ?>
                         <div class="flex flex-col items-center justify-center aspect-square text-gray-300">
                             <i class="fa-solid fa-image text-8xl mb-4"></i>

@@ -1,5 +1,8 @@
 @php
     $isChatRoute = Route::currentRouteName() === 'agen.chat.index' || request()->is('*chat*');
+    $cartCount = auth()->check()
+        ? \App\Models\Keranjang::where('userId', auth()->id())->distinct('produkId')->count('produkId')
+        : 0;
 @endphp
 
 <nav class="{{ $isChatRoute ? 'relative' : 'fixed top-0' }} w-full z-55 shadow-md border-b border-white/10 transition-all duration-300">
@@ -12,7 +15,7 @@
 
             <div class="flex-1 max-w-xl hidden md:block px-4">
                 <form action="{{ route('agen.produk.index') }}" method="GET" class="relative flex items-center bg-green-600/40 rounded-full p-1 border border-white/10 group">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Produks...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none placeholder-gray-400 transition-all">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Produk...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none placeholder-gray-400 transition-all">
                     <button type="submit" class="px-4 text-white hover:scale-110 transition-transform">
                         <i class="fa-solid fa-magnifying-glass text-base"></i>
                     </button>
@@ -22,7 +25,10 @@
             <div class="flex items-center gap-3 shrink-0">
                 <a href="{{ route('agen.keranjang.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all relative">
                     <i class="fa-solid fa-cart-shopping text-lg"></i>
-                    <div id="cart-notification-dot" class="hidden absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-[#0f8629] rounded-full"></div>
+                    <div id="cart-notification-dot"
+                        class="absolute -top-1 -right-1 min-w-4.5 h-4.5 bg-red-500 border-2 border-[#0f8629] rounded-full text-white text-[9px] font-black flex items-center justify-center px-0.5 transition-all {{ $cartCount > 0 ? '' : 'hidden' }}">
+                        {{ $cartCount > 9 ? '9+' : $cartCount }}
+                    </div>
                 </a>
 
                 <a href="{{ route('agen.chat.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all relative">
@@ -104,9 +110,12 @@
                 <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('kemitraan.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold">
                     <i class="fa-solid fa-handshake mr-3 w-5 text-lg"></i> Kemitraan
                 </a>
-                <a href="{{ route('agen.produk.add-to-cart') }}" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 relative">
+                <a href="{{ route('agen.keranjang.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.keranjang.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold relative">
                     <i class="fa-solid fa-cart-shopping mr-3 w-5 text-lg"></i> Keranjang
-                    <div id="cart-notification-dot-mobile" class="hidden ml-auto w-2.5 h-2.5 bg-red-500 rounded-full"></div>
+                    <div id="cart-notification-dot-mobile"
+                        class="ml-auto min-w-5 h-5 bg-red-500 rounded-full text-white text-[9px] font-black flex items-center justify-center px-1 {{ $cartCount > 0 ? '' : 'hidden' }}">
+                        {{ $cartCount > 9 ? '9+' : $cartCount }}
+                    </div>
                 </a>
                 <a href="{{ route('agen.chat.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.chat.index') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold relative">
                     <i class="fa-solid fa-comments mr-3 w-5 text-lg"></i> Chat
@@ -191,4 +200,20 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('confirmLogoutBtn')?.addEventListener('click', () => document.getElementById('logoutFormReal')?.submit());
     document.getElementById('closeLogoutBtn')?.addEventListener('click', () => closeModal('logoutModal'));
 });
+
+function updateCartBadge(count) {
+    const dot = document.getElementById('cart-notification-dot');
+    const dotMobile = document.getElementById('cart-notification-dot-mobile');
+    const label = count > 9 ? '9+' : count;
+    [dot, dotMobile].forEach(el => {
+        if (!el) return;
+        if (count > 0) {
+            el.classList.remove('hidden');
+            el.textContent = label;
+        } else {
+            el.classList.add('hidden');
+            el.textContent = '';
+        }
+    });
+}
 </script>

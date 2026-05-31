@@ -3,73 +3,125 @@
 namespace App\Http\Controllers;
 
 use App\Models\Keranjang;
+use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class c_keranjang extends Controller
 {
+    private function cartCount(): int
+    {
+        return Keranjang::where('userId', Auth::id())->distinct('produkId')->count('produkId');
+    }
+
     public function index()
     {
-        $items = Keranjang::with('produk')
-            ->where('userId', Auth::id())
-            ->get();
+        $keranjangs = Keranjang::with(['produk.kategori'])->where('userId', Auth::id())->get();
+        $total = 0;
 
-        return view('agen.keranjang.index', compact('items'));
+        return view('agen.keranjang.index', compact('keranjangs', 'total'));
     }
 
     public function tambah(Request $request)
     {
+        if (Auth::user()->isActive != 1) {
+            return response()->json(['message' => 'Anda harus bermitra terlebih dahulu untuk melakukan transaksi.'], 403);
+        }
+
         $request->validate([
             'produkId' => 'required|exists:produks,id',
-            'jumlah' => 'required|integer|min:1',
+            'jumlah'   => 'required|integer|min:1',
         ]);
 
-        $userId = Auth::id();
-        $produkId = $request->produkId;
+        $produk = Produk::findOrFail($request->produkId);
 
-        $keranjang = Keranjang::where('userId', $userId)
-            ->where('produkId', $produkId)
+        if ($produk->stok <= 0) {
+            return response()->json(['message' => 'Stok produk habis.'], 422);
+        }
+
+        $keranjang = Keranjang::where('userId', Auth::id())
+            ->where('produkId', $request->produkId)
             ->first();
 
         if ($keranjang) {
-            $keranjang->jumlah += $request->jumlah;
-            $keranjang->save();
+            $newJumlah = $keranjang->jumlah + $request->jumlah;
+
+            if ($newJumlah > $produk->stok) {
+                return response()->json(['message' => 'Jumlah melebihi stok yang tersedia.'], 422);
+            }
+
+            $keranjang->update(['jumlah' => $newJumlah]);
         } else {
+            if ($request->jumlah > $produk->stok) {
+                return response()->json(['message' => 'Jumlah melebihi stok yang tersedia.'], 422);
+            }
+
             Keranjang::create([
-                'userId' => $userId,
-                'produkId' => $produkId,
-                'jumlah' => $request->jumlah,
+                'userId'   => Auth::id(),
+                'produkId' => $request->produkId,
+                'jumlah'   => $request->jumlah,
             ]);
         }
 
         return response()->json([
-            'message' => 'Produk berhasil ditambahkan ke keranjang.'
+            'message'   => 'Produk berhasil ditambahkan ke keranjang.',
+            'cartCount' => $this->cartCount(),
         ]);
     }
 
-    public function kurang($id)
+    public function tambahJumlah(Request $request, $id)
     {
-        $item = Keranjang::where('id', $id)
+        $keranjang = Keranjang::where('id', $id)
             ->where('userId', Auth::id())
             ->firstOrFail();
 
-        if ($item->jumlah > 1) {
-            $item->decrement('jumlah');
-        } else {
-            $item->delete();
+        $produk = $keranjang->produk;
+
+        if ($keranjang->jumlah >= $produk->stok) {
+            return response()->json([
+                'message'  => 'Jumlah sudah mencapai batas stok.',
+                'jumlah'   => $keranjang->jumlah,
+                'subtotal' => $keranjang->jumlah * $produk->harga,
+            ], 422);
         }
 
-        return redirect()->back()->with('success', 'Jumlah produk dikurangi.');
+        $keranjang->increment('jumlah');
+
+        return response()->json([
+            'message'   => 'Jumlah berhasil ditambah.',
+            'jumlah'    => $keranjang->jumlah,
+            'subtotal'  => $keranjang->jumlah * $produk->harga,
+            'cartCount' => $this->cartCount(),
+        ]);
+    }
+
+    public function kurang(Request $request, $id)
+    {
+        $keranjang = Keranjang::where('id', $id)->where('userId', Auth::id())->firstOrFail();
+
+        $produk = $keranjang->produk;
+
+        if ($keranjang->jumlah > 1) {
+            $keranjang->decrement('jumlah');
+        }
+
+        return response()->json([
+            'message'   => 'Jumlah berhasil dikurangi.',
+            'jumlah'    => $keranjang->jumlah,
+            'subtotal'  => $keranjang->jumlah * $produk->harga,
+            'cartCount' => $this->cartCount(),
+        ]);
     }
 
     public function destroy($id)
     {
-        $item = Keranjang::where('id', $id)
-            ->where('userId', Auth::id())
-            ->firstOrFail();
+        $keranjang = Keranjang::where('id', $id)->where('userId', Auth::id())->firstOrFail();
 
-        $item->delete();
+        $keranjang->delete();
 
-        return redirect()->back()->with('success', 'Produk berhasil dihapus dari keranjang.');
+        return response()->json([
+            'message'   => 'Produk berhasil dihapus dari keranjang.',
+            'cartCount' => $this->cartCount(),
+        ]);
     }
 }

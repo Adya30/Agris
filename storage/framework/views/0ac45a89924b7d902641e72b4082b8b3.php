@@ -70,14 +70,14 @@
 
             <div class="p-2.5 flex flex-col grow">
                 <div class="flex flex-wrap gap-1 mb-2">
-                    <span class="text-[9px] font-bold uppercase text-[#58CC02] bg-[#58CC02]/10 px-1.5 py-0.5 rounded">
+                    <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded">
                         <?php echo e($item->kategori->jenisKategori); ?>
 
                     </span>
-                    <span class="text-[9px] font-bold uppercase text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded">
+                    <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded">
                         <?php echo e($item->kategori->karung); ?> Kg
                     </span>
-                    <span class="text-[9px] font-bold uppercase text-orange-400 bg-orange-50 px-1.5 py-0.5 rounded">
+                    <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded">
                         <?php echo e($item->kategori->mutu); ?>
 
                     </span>
