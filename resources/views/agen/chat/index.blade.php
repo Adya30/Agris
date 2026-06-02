@@ -2,8 +2,8 @@
 @section('title', 'Chat - AGRIS')
 
 @section('content')
-<div class="bg-slate-100 md: flex flex-col justify-center items-center" id="chat-app" v-cloak>
-    <div class="w-full h-screen px-2 md: flex flex-col bg-white relative overflow-hidden">
+<div class="bg-slate-100 md:flex flex-col justify-center items-center" id="chat-app" v-cloak>
+    <div class="w-full h-screen px-2 md:flex flex-col bg-white relative overflow-hidden">
         <div class="h-16 md:h-17 px-4 md:px-6 flex items-center justify-between border-b border-slate-200 bg-white shrink-0 z-20">
             <div class="flex items-center gap-3 md:gap-4">
                 <img src="{{ $admin && $admin->fotoProfil ? '/' . preg_replace('/^\/?(storage\/)?/', 'storage/', $admin->fotoProfil) : 'https://ui-avatars.com/api/?name=Admin&background=15803d&color=fff' }}" class="w-10 h-10 md:w-10 md:h-10 rounded-full object-cover shadow-sm border border-slate-200">
@@ -22,6 +22,7 @@
                     <span class="bg-slate-200 text-slate-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase">@{{ date }}</span>
                 </div>
                 <div v-for="chat in group" :key="chat.id" :class="[chat.id_penerima == 'GLOBAL' ? 'flex justify-center' : (chat.id_pengirim == @js(Auth::id()) ? 'flex justify-end' : 'flex justify-start'), 'mb-4']">
+
                     <div v-if="chat.id_penerima == 'GLOBAL'" class="w-full max-w-2xl bg-linear-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-4 shadow-sm">
                         <div class="flex items-center gap-2 mb-2">
                             <span class="bg-amber-500 text-white p-1.5 rounded-lg text-[10px]"><i class="fa-solid fa-bullhorn"></i></span>
@@ -149,6 +150,25 @@
             onMounted(() => {
                 scrollToBottom();
                 window.addEventListener('click', () => activeMenu.value = null);
+
+                const checkEcho = setInterval(() => {
+                    if (window.Echo) {
+                        clearInterval(checkEcho);
+                        window.Echo.private(`chat.${@js(Auth::id())}`).listen('.MessageSent', (e) => {
+                            if (!chats.value.some(c => c.id === e.chat.id)) {
+                                chats.value.push(e.chat);
+                                scrollToBottom();
+                                axios.get(`/chat/${e.chat.id_pengirim}`);
+                            }
+                        });
+                        window.Echo.channel('chat.global').listen('.MessageSent', (e) => {
+                            if (!chats.value.some(c => c.id === e.chat.id)) {
+                                chats.value.push(e.chat);
+                                scrollToBottom();
+                            }
+                        });
+                    }
+                }, 500);
             });
 
             return { chats, groupedChats, newMessage, selectedFile, imagePreview, activeMenu, sendChat, handleFileUpload, cancelImage, deleteChat, formatTime, toggleMenu };

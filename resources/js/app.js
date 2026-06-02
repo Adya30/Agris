@@ -16,5 +16,32 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.Echo) {
+        window.Echo.channel('chat.global')
+            .listen('.MessageSent', (e) => {
+                const chatDot = document.getElementById('chat-notification-dot');
+
+                const isNotOnChatPage = !window.location.href.includes('chat');
+
+                if (chatDot && isNotOnChatPage) {
+                    chatDot.classList.remove('hidden');
+
+                    const dots = chatDot.querySelectorAll('span');
+
+                    dots.forEach(dot => {
+                        dot.classList.remove('bg-red-400', 'bg-red-500', 'bg-red-600');
+
+                        if (dot.classList.contains('animate-ping')) {
+                            dot.classList.add('bg-amber-400');
+                        } else {
+                            dot.classList.add('bg-amber-500');
+                        }
+                    });
+                }
+            });
+    }
+});
+
 import './wilayah';
 import './upload-handler';

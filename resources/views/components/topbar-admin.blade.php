@@ -18,8 +18,12 @@
         </div>
 
         <div class="flex items-center gap-2 md:gap-4">
-            <a href="{{ route('admin.chat.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/70 text-white hover:bg-green-600/60 transition-all">
+            <a href="{{ route('admin.chat.index') }}" class="relative flex items-center justify-center w-10 h-10 rounded-full bg-green-600/70 text-white hover:bg-green-600/60 transition-all">
                 <i class="fa-solid fa-comments text-lg"></i>
+                <span id="chatBadge" class="{{ $unread_messages_count > 0 ? '' : 'hidden' }} absolute -top-1 -right-1 flex h-4 w-4">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-4 w-4 bg-red-600 border-2 border-white"></span>
+                </span>
             </a>
 
             <div class="relative hidden md:block">
@@ -124,6 +128,16 @@
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const closeSidebarBtn = document.getElementById('closeSidebarBtn');
         const logoutTrigger = document.getElementById('logoutBtnTrigger');
+        const chatBadge = document.getElementById('chatBadge');
+
+        if (window.Echo) {
+            window.Echo.private(`chat.${@js(auth()->id())}`)
+                .listen('.MessageSent', (e) => {
+                    if (chatBadge && !window.location.href.includes('admin/chat')) {
+                        chatBadge.classList.remove('hidden');
+                    }
+                });
+        }
 
         if (dropBtn && dropMenu) {
             dropBtn.addEventListener('click', (e) => {

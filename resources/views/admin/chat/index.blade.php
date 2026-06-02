@@ -8,7 +8,6 @@
             <div class="px-6 py-4 flex flex-col border-b border-slate-100 shrink-0 bg-white gap-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-
                         <div class="flex flex-col">
                             <h1 class="text-lg font-black text-green-700 leading-none">AGRIS</h1>
                             <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Panel Chat Admin</span>
@@ -18,7 +17,6 @@
                         BROADCAST
                     </button>
                 </div>
-
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                     <input type="text" v-model="searchQuery" placeholder="Cari agen..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border-none rounded-xl text-xs focus:ring-2 focus:ring-green-500 transition-all">
@@ -28,7 +26,7 @@
             <div class="flex-1 overflow-y-auto custom-scrollbar">
                 <div v-for="u in filteredUsers" :key="u.id"
                      @click="loadChat(u.id, u.namaLengkap, u.fotoProfil)"
-                     :class="activeTarget == u.id ? 'bg-green-55 border-r-4 border-green-600' : 'hover:bg-slate-50 border-r-4 border-transparent'"
+                     :class="activeTarget == u.id ? 'bg-green-50 border-r-4 border-green-600' : 'hover:bg-slate-50 border-r-4 border-transparent'"
                      class="p-4 border-b border-slate-50 cursor-pointer transition-all flex items-center gap-4">
                     <div class="relative shrink-0">
                         <img :src="u.fotoProfil" class="w-10 h-10 rounded-full object-cover shadow-sm border-2 border-white">
@@ -63,31 +61,35 @@
                     </button>
                 </div>
 
-                <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 custom-scrollbar bg-[#f8fafc]" id="chat-container">
-                    <div v-for="chat in chats" :key="chat.id" :class="chat.id_pengirim == @js(Auth::id()) ? 'flex justify-end' : 'flex justify-start'">
-                        <div class="max-w-[85%] md:max-w-[70%] group flex items-start gap-1">
-                            <div v-if="chat.id_pengirim == @js(Auth::id())" class="flex items-center self-center gap-1 order-1">
-                                <div v-if="activeMenu === chat.id">
-                                    <button @click.prevent="deleteChat(chat.id)" class="bg-white px-3 py-1.5 rounded-lg shadow-md border border-slate-100 text-[10px] font-black text-red-600 hover:bg-red-50 whitespace-nowrap">
-                                        HAPUS
+                <div class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar bg-[#f8fafc]" id="chat-container">
+                    <div v-for="(group, date) in groupedChats" :key="date">
+                        <div class="flex justify-center my-6">
+                            <span class="bg-slate-200 text-slate-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase">@{{ date }}</span>
+                        </div>
+
+                        <div v-for="chat in group" :key="chat.id" :class="chat.id_pengirim == @js(Auth::id()) ? 'flex justify-end' : 'flex justify-start'" class="mb-4">
+                            <div class="max-w-[85%] md:max-w-[70%] group flex items-start gap-1">
+                                <div v-if="chat.id_pengirim == @js(Auth::id())" class="flex items-center self-center gap-1 order-1">
+                                    <div v-if="activeMenu === chat.id">
+                                        <button @click.prevent="deleteChat(chat.id)" class="bg-white px-3 py-1.5 rounded-lg shadow-md border border-slate-100 text-[10px] font-black text-red-600 hover:bg-red-50 whitespace-nowrap">HAPUS</button>
+                                    </div>
+                                    <button @click.stop="toggleMenu(chat.id)" class="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-green-600 transition-all">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </button>
                                 </div>
-                                <button @click.stop="toggleMenu(chat.id)" class="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-green-600 transition-all">
-                                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                                </button>
-                            </div>
 
-                            <div :class="chat.id_penerima == 'GLOBAL' ? 'bg-amber-400 text-amber-950 order-2 rounded-2xl' : (chat.id_pengirim == @js(Auth::id()) ? 'bg-green-600 text-white rounded-tr-none order-2' : 'bg-white text-slate-700 border-none rounded-tl-none order-2')" class="px-4 py-3 rounded-3xl shadow-sm">
-                                <div v-if="chat.foto_chat" class="mb-2 rounded-xl overflow-hidden">
-                                    <img :src="chat.foto_chat.startsWith('http') ? chat.foto_chat : '/' + chat.foto_chat.replace(/^\/?(storage\/)?/, 'storage/')" class="w-full max-h-96 object-cover">
-                                </div>
-                                <p class="text-sm font-medium">@{{ chat.pesan }}</p>
-                                <div class="flex justify-end items-center gap-1.5 mt-1 text-[9px] font-bold opacity-80">
-                                    <span>@{{ formatTime(chat.waktu_chat) }}</span>
-                                    <template v-if="chat.id_pengirim == @js(Auth::id()) && chat.id_penerima !== 'GLOBAL'">
-                                        <i v-if="chat.status === 'dibaca'" class="fa-solid fa-check-double text-blue-200"></i>
-                                        <i v-else class="fa-solid fa-check text-green-200"></i>
-                                    </template>
+                                <div :class="chat.id_penerima == 'GLOBAL' ? 'bg-amber-400 text-amber-950 order-2 rounded-2xl' : (chat.id_pengirim == @js(Auth::id()) ? 'bg-green-600 text-white rounded-tr-none order-2' : 'bg-white text-slate-700 border-none rounded-tl-none order-2')" class="px-4 py-3 rounded-3xl shadow-sm">
+                                    <div v-if="chat.foto_chat" class="mb-2 rounded-xl overflow-hidden">
+                                        <img :src="chat.foto_chat.startsWith('http') ? chat.foto_chat : '/' + chat.foto_chat.replace(/^\/?(storage\/)?/, 'storage/')" class="w-full max-h-96 object-cover">
+                                    </div>
+                                    <p class="text-sm font-medium">@{{ chat.pesan }}</p>
+                                    <div class="flex justify-end items-center gap-1.5 mt-1 text-[9px] font-bold opacity-80">
+                                        <span>@{{ formatTime(chat.waktu_chat) }}</span>
+                                        <template v-if="chat.id_pengirim == @js(Auth::id()) && chat.id_penerima !== 'GLOBAL'">
+                                            <i v-if="chat.status === 'dibaca'" class="fa-solid fa-check-double text-blue-200"></i>
+                                            <i v-else class="fa-solid fa-check text-green-200"></i>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -148,10 +150,18 @@
             const searchQuery = ref('');
             const unreadUsers = ref([]);
 
+            const groupedChats = computed(() => {
+                const groups = {};
+                chats.value.forEach(chat => {
+                    const date = new Date(chat.waktu_chat).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                    if (!groups[date]) groups[date] = [];
+                    groups[date].push(chat);
+                });
+                return groups;
+            });
+
             const filteredUsers = computed(() => {
-                return users.value.filter(u =>
-                    u.namaLengkap.toLowerCase().includes(searchQuery.value.toLowerCase())
-                );
+                return users.value.filter(u => u.namaLengkap.toLowerCase().includes(searchQuery.value.toLowerCase()));
             });
 
             const scrollToBottom = () => nextTick(() => {
@@ -170,7 +180,7 @@
                 });
             };
 
-            const openGlobalChat = () => loadChat('GLOBAL', 'Pusat Informasi', 'https://ui-avatars.com/api/?name=G&background=fef3c7&color=92400e');
+            const openGlobalChat = () => loadChat('GLOBAL', 'Pusat Informasi (Broadcast)', 'https://ui-avatars.com/api/?name=B&background=fbbf24&color=fff');
 
             const sendChat = () => {
                 if (!newMessage.value && !selectedFile.value) return;
@@ -224,9 +234,7 @@
                                 chats.value = chats.value.filter(c => c.id !== e.chat.id);
                             } else if (e.is_read_update) {
                                 chats.value.forEach(c => {
-                                    if (c.id_pengirim == @js(Auth::id()) && c.id_penerima == e.chat.id_pengirim) {
-                                        c.status = 'dibaca';
-                                    }
+                                    if (c.id_pengirim == @js(Auth::id()) && c.id_penerima == e.chat.id_pengirim) c.status = 'dibaca';
                                 });
                             } else {
                                 if (activeTarget.value == e.chat.id_pengirim) {
@@ -236,9 +244,7 @@
                                         axios.get(`/chat/${e.chat.id_pengirim}`);
                                     }
                                 } else {
-                                    if (!unreadUsers.value.includes(e.chat.id_pengirim)) {
-                                        unreadUsers.value.push(e.chat.id_pengirim);
-                                    }
+                                    if (!unreadUsers.value.includes(e.chat.id_pengirim)) unreadUsers.value.push(e.chat.id_pengirim);
                                 }
                             }
                         });
@@ -252,7 +258,7 @@
                 }, 500);
             });
 
-            return { users, filteredUsers, unreadUsers, searchQuery, chats, activeTarget, activeTargetName, activeTargetPhoto, newMessage, imagePreview, selectedFile, activeMenu, loadChat, openGlobalChat, sendChat, handleFileUpload, cancelImage, deleteChat, formatTime, toggleMenu };
+            return { users, filteredUsers, unreadUsers, searchQuery, chats, groupedChats, activeTarget, activeTargetName, activeTargetPhoto, newMessage, imagePreview, selectedFile, activeMenu, loadChat, openGlobalChat, sendChat, handleFileUpload, cancelImage, deleteChat, formatTime, toggleMenu };
         }
     }).mount('#chat-app');
 </script>

@@ -32,9 +32,12 @@
                     </div>
                 </a>
 
-                <a href="<?php echo e(route('agen.chat.index')); ?>" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all relative">
+                <a href="<?php echo e(route('agen.chat.index')); ?>" class="relative flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all">
                     <i class="fa-solid fa-comments text-lg"></i>
-                    <div id="chat-notification-dot" class="hidden absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-[#0f8629] rounded-full"></div>
+                    <span id="chat-notification-dot" class="<?php echo e($unread_messages_count > 0 ? '' : 'hidden'); ?> absolute -top-1 -right-1 flex h-4 w-4">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-4 w-4 bg-red-600 border-2 border-white"></span>
+                    </span>
                 </a>
 
                 <div class="relative hidden md:block">
@@ -122,7 +125,7 @@
                 </a>
                 <a href="<?php echo e(route('agen.chat.index')); ?>" class="flex items-center py-3 px-4 rounded-xl <?php echo e(Route::is('agen.chat.index') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50'); ?> font-bold relative">
                     <i class="fa-solid fa-comments mr-3 w-5 text-lg"></i> Chat
-                    <div id="chat-notification-dot-mobile" class="hidden ml-auto w-2.5 h-2.5 bg-red-500 rounded-full"></div>
+                    <div id="chat-notification-dot-mobile" class="<?php echo e($unread_messages_count > 0 ? '' : 'hidden'); ?> ml-auto w-2.5 h-2.5 bg-red-500 rounded-full"></div>
                 </a>
                 <div class="my-2 border-t border-gray-100"></div>
                 <button type="button" class="logoutMobileBtn w-full flex items-center py-4 px-4 rounded-xl hover:bg-red-50 font-bold text-red-500 transition-all text-left">
