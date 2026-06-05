@@ -15,14 +15,22 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $provinsi = Provinsi::factory()->create(['namaProvinsi' => 'Jawa Barat']);
-        $kabupaten = Kabupaten::factory()->create(['provinsiId' => $provinsi->id, 'namaKabupaten' => 'Bandung']);
-        $kecamatan = Kecamatan::factory()->create(['kabupatenId' => $kabupaten->id, 'namaKecamatan' => 'Cicendo']);
-        $desa = Desa::factory()->create(['kecamatanId' => $kecamatan->id, 'namaDesa' => 'Arjuna']);
+        $this->call([
+            AdminSeeder::class,
+            KategoriSeeder::class,
+        ]);
 
-        User::factory()->count(5)->create(['desaId' => $desa->id]);
-
-        $kategori = KategoriProduk::factory()->create(['jenisKategori' => 'Makanan', 'mutu' => 'A']);
-        Produk::factory()->count(10)->create(['kategoriId' => $kategori->id]);
+        $kategori = KategoriProduk::first();
+        if ($kategori) {
+            Produk::updateOrCreate(
+                ['namaProduk' => 'Beras Pandan Wangi Premium'],
+                [
+                    'kategoriId' => $kategori->id,
+                    'stok' => 1000,
+                    'harga' => 15000.00,
+                    'deskripsi' => 'Beras Pandan Wangi kualitas terbaik langsung dari petani.',
+                ]
+            );
+        }
     }
 }

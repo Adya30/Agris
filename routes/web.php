@@ -9,6 +9,7 @@ use App\Http\Controllers\c_keranjang;
 use App\Http\Controllers\c_blog;
 use App\Http\Controllers\c_kemitraan;
 use App\Http\Controllers\c_chat;
+use App\Http\Controllers\c_pesanan;
 
 Route::get('/', function () {
     return view('guest.landing');
@@ -28,6 +29,8 @@ Route::get('/blog/{id}', [c_blog::class, 'showGuest'])->name('guest.blog.show');
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/validate-register', [AuthController::class, 'validateRegister'])->name('validate.register');
+
     Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('otp.form');
     Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('otp.verify');
     Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('otp.resend');
@@ -75,6 +78,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/kemitraan/upload-mou/{id}', [c_kemitraan::class, 'uploadMou'])->name('kemitraan.uploadMou');
 
         Route::get('/chat', [c_chat::class, 'index'])->name('agen.chat.index');
+
+        // Checkout & Orders (Pesanan) Routes
+        Route::get('/checkout', [c_pesanan::class, 'checkoutForm'])->name('agen.checkout.form');
+        Route::post('/checkout', [c_pesanan::class, 'checkoutStore'])->name('agen.checkout.store');
+        Route::post('/checkout/cek-ongkir', [c_pesanan::class, 'cekOngkir'])->name('agen.checkout.cek-ongkir');
+        Route::get('/pesanan', [c_pesanan::class, 'index'])->name('agen.pesanan.index');
+        Route::get('/pesanan/{id}', [c_pesanan::class, 'show'])->name('agen.pesanan.show');
     });
 
     Route::prefix('admin')->middleware('isAdmin')->name('admin.')->group(function () {

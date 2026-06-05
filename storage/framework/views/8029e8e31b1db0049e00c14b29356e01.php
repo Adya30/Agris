@@ -1,5 +1,8 @@
 <?php
     $isChatRoute = Route::currentRouteName() === 'agen.chat.index' || request()->is('*chat*');
+    $cartCount = auth()->check()
+        ? \App\Models\Keranjang::where('userId', auth()->id())->distinct('produkId')->count('produkId')
+        : 0;
 ?>
 
 <nav class="<?php echo e($isChatRoute ? 'relative' : 'fixed top-0'); ?> w-full z-55 shadow-md border-b border-white/10 transition-all duration-300">
@@ -12,7 +15,7 @@
 
             <div class="flex-1 max-w-xl hidden md:block px-4">
                 <form action="<?php echo e(route('agen.produk.index')); ?>" method="GET" class="relative flex items-center bg-green-600/40 rounded-full p-1 border border-white/10 group">
-                    <input type="text" name="search" value="<?php echo e(request('search')); ?>" placeholder="Cari Produks...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none placeholder-gray-400 transition-all">
+                    <input type="text" name="search" value="<?php echo e(request('search')); ?>" placeholder="Cari Produk...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none placeholder-gray-400 transition-all">
                     <button type="submit" class="px-4 text-white hover:scale-110 transition-transform">
                         <i class="fa-solid fa-magnifying-glass text-base"></i>
                     </button>
@@ -22,18 +25,26 @@
             <div class="flex items-center gap-3 shrink-0">
                 <a href="<?php echo e(route('agen.keranjang.index')); ?>" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all relative">
                     <i class="fa-solid fa-cart-shopping text-lg"></i>
-                    <div id="cart-notification-dot" class="hidden absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-[#0f8629] rounded-full"></div>
+                    <div id="cart-notification-dot"
+                        class="absolute -top-1 -right-1 min-w-4.5 h-4.5 bg-red-500 border-2 border-[#0f8629] rounded-full text-white text-[9px] font-black flex items-center justify-center px-0.5 transition-all <?php echo e($cartCount > 0 ? '' : 'hidden'); ?>">
+                        <?php echo e($cartCount > 9 ? '9+' : $cartCount); ?>
+
+                    </div>
                 </a>
 
-                <a href="<?php echo e(route('agen.chat.index')); ?>" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all relative">
+                <a href="<?php echo e(route('agen.chat.index')); ?>" class="relative flex items-center justify-center w-10 h-10 rounded-full bg-green-600/50 text-white hover:bg-white/20 transition-all">
                     <i class="fa-solid fa-comments text-lg"></i>
-                    <div id="chat-notification-dot" class="hidden absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-[#0f8629] rounded-full"></div>
+                    <span id="chat-notification-dot" class="<?php echo e($unread_messages_count > 0 ? '' : 'hidden'); ?> absolute -top-1 -right-1 flex h-4 w-4">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-4 w-4 bg-red-600 border-2 border-white"></span>
+                    </span>
                 </a>
 
                 <div class="relative hidden md:block">
                     <button id="dropdownBtn" type="button" class="group flex items-center gap-3 rounded-full bg-green-600/50 p-1 pr-4 transition-all hover:bg-white/20 focus:outline-none">
                         <div class="h-9 w-9 overflow-hidden rounded-full border-2 border-white pointer-events-none">
-                            <img src="<?php echo e(auth()->user()->fotoProfil ? asset(auth()->user()->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->namaLengkap ?? auth()->user()->username).'&background=random'); ?>" class="h-full w-full object-cover">
+                            <img src="<?php echo e(auth()->user()->fotoProfil ? asset(auth()->user()->fotoProfil) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->namaLengkap)); ?>"
+                                class="h-full w-full object-cover">
                         </div>
                         <div class="flex items-center gap-2 pointer-events-none text-white text-left">
                             <div class="flex flex-col leading-tight">
@@ -68,7 +79,7 @@
                 <?php $navs =
                 [['agen.blog.*', 'Blog', route('agen.blog.index')],
                 ['agen.produk.*', 'Produk', route('agen.produk.index')],
-                [null, 'Transaksi', '#'], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]];
+                ['agen.pesanan.*', 'Transaksi', route('agen.pesanan.index')], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]];
                 ?>
                 <?php $__currentLoopData = $navs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $nav): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <a href="<?php echo e($nav[2]); ?>" class="hover:text-white transition-all py-1 border-b-2 <?php echo e($nav[0] && Route::is($nav[0]) ? 'border-white' : 'border-transparent'); ?> hover:border-white">
@@ -99,19 +110,23 @@
                 <a href="<?php echo e(route('agen.produk.index')); ?>" class="flex items-center py-3 px-4 rounded-xl <?php echo e(Route::is('agen.produk.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50'); ?> font-bold">
                     <i class="fa-solid fa-box mr-3 w-5 text-lg"></i> Produk
                 </a>
-                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700">
+                <a href="<?php echo e(route('agen.pesanan.index')); ?>" class="flex items-center py-3 px-4 rounded-xl <?php echo e(Route::is('agen.pesanan.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50'); ?> font-bold">
                     <i class="fa-solid fa-receipt mr-3 w-5 text-lg"></i> Transaksi
                 </a>
                 <a href="<?php echo e(route('kemitraan.index')); ?>" class="flex items-center py-3 px-4 rounded-xl <?php echo e(Route::is('kemitraan.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50'); ?> font-bold">
                     <i class="fa-solid fa-handshake mr-3 w-5 text-lg"></i> Kemitraan
                 </a>
-                <a href="<?php echo e(route('agen.produk.add-to-cart')); ?>" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700 relative">
+                <a href="<?php echo e(route('agen.keranjang.index')); ?>" class="flex items-center py-3 px-4 rounded-xl <?php echo e(Route::is('agen.keranjang.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50'); ?> font-bold relative">
                     <i class="fa-solid fa-cart-shopping mr-3 w-5 text-lg"></i> Keranjang
-                    <div id="cart-notification-dot-mobile" class="hidden ml-auto w-2.5 h-2.5 bg-red-500 rounded-full"></div>
+                    <div id="cart-notification-dot-mobile"
+                        class="ml-auto min-w-5 h-5 bg-red-500 rounded-full text-white text-[9px] font-black flex items-center justify-center px-1 <?php echo e($cartCount > 0 ? '' : 'hidden'); ?>">
+                        <?php echo e($cartCount > 9 ? '9+' : $cartCount); ?>
+
+                    </div>
                 </a>
                 <a href="<?php echo e(route('agen.chat.index')); ?>" class="flex items-center py-3 px-4 rounded-xl <?php echo e(Route::is('agen.chat.index') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50'); ?> font-bold relative">
                     <i class="fa-solid fa-comments mr-3 w-5 text-lg"></i> Chat
-                    <div id="chat-notification-dot-mobile" class="hidden ml-auto w-2.5 h-2.5 bg-red-500 rounded-full"></div>
+                    <div id="chat-notification-dot-mobile" class="<?php echo e($unread_messages_count > 0 ? '' : 'hidden'); ?> ml-auto w-2.5 h-2.5 bg-red-500 rounded-full"></div>
                 </a>
                 <div class="my-2 border-t border-gray-100"></div>
                 <button type="button" class="logoutMobileBtn w-full flex items-center py-4 px-4 rounded-xl hover:bg-red-50 font-bold text-red-500 transition-all text-left">
@@ -211,5 +226,21 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('confirmLogoutBtn')?.addEventListener('click', () => document.getElementById('logoutFormReal')?.submit());
     document.getElementById('closeLogoutBtn')?.addEventListener('click', () => closeModal('logoutModal'));
 });
+
+function updateCartBadge(count) {
+    const dot = document.getElementById('cart-notification-dot');
+    const dotMobile = document.getElementById('cart-notification-dot-mobile');
+    const label = count > 9 ? '9+' : count;
+    [dot, dotMobile].forEach(el => {
+        if (!el) return;
+        if (count > 0) {
+            el.classList.remove('hidden');
+            el.textContent = label;
+        } else {
+            el.classList.add('hidden');
+            el.textContent = '';
+        }
+    });
+}
 </script>
 <?php /**PATH D:\project\Agris\resources\views\components\navbar-agen.blade.php ENDPATH**/ ?>

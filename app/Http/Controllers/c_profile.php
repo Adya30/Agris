@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -87,25 +88,79 @@ class c_profile extends Controller
     private function syncWilayah(string $desaId)
     {
         try {
-            $resDesa = Http::get("{$this->baseUrl}/village/{$desaId}.json")->json();
-            if (!$resDesa) return;
+            $parts = explode('.', $desaId);
+            if (count($parts) !== 4) return; // Must be a valid village ID like 35.09.20.1004
 
-            $kecId = $resDesa['district_id'];
-            $resKec = Http::get("{$this->baseUrl}/district/{$kecId}.json")->json();
+            $provId = $parts[0]; // 35
+            $kabId = $parts[0] . '.' . $parts[1]; // 35.09
+            $kecId = $parts[0] . '.' . $parts[1] . '.' . $parts[2]; // 35.09.20
 
-            $kabId = $resKec['regency_id'];
-            $resKab = Http::get("{$this->baseUrl}/regency/{$kabId}.json")->json();
+            // 1. Get Provinsi Name
+            $resProv = Http::get("https://wilayah.id/api/provinces.json")->json()['data'] ?? [];
+            $provName = collect($resProv)->firstWhere('code', $provId)['name'] ?? '';
 
-            $provId = $resKab['province_id'];
-            $resProv = Http::get("{$this->baseUrl}/province/{$provId}.json")->json();
+            // 2. Get Kabupaten Name
+            $resKab = Http::get("https://wilayah.id/api/regencies/{$provId}.json")->json()['data'] ?? [];
+            $kabName = collect($resKab)->firstWhere('code', $kabId)['name'] ?? '';
 
-            Provinsi::firstOrCreate(['id' => $provId], ['namaProvinsi' => $resProv['name']]);
-            Kabupaten::firstOrCreate(['id' => $kabId], ['provinsiId' => $provId, 'namaKabupaten' => $resKab['name']]);
-            Kecamatan::firstOrCreate(['id' => $kecId], ['kabupatenId' => $kabId, 'namaKecamatan' => $resKec['name']]);
-            Desa::firstOrCreate(['id' => $desaId], ['kecamatanId' => $kecId, 'namaDesa' => $resDesa['name']]);
+            // 3. Get Kecamatan Name
+            $resKec = Http::get("https://wilayah.id/api/districts/{$kabId}.json")->json()['data'] ?? [];
+            $kecName = collect($resKec)->firstWhere('code', $kecId)['name'] ?? '';
+
+            // 4. Get Desa Name
+            $resDesa = Http::get("https://wilayah.id/api/villages/{$kecId}.json")->json()['data'] ?? [];
+            $desaName = collect($resDesa)->firstWhere('code', $desaId)['name'] ?? '';
+
+            if ($provName && $kabName && $kecName && $desaName) {
+                Provinsi::updateOrCreate(['id' => $provId], ['namaProvinsi' => $provName]);
+                Kabupaten::updateOrCreate(['id' => $kabId], ['provinsiId' => $provId, 'namaKabupaten' => $kabName]);
+                Kecamatan::updateOrCreate(['id' => $kecId], ['kabupatenId' => $kabId, 'namaKecamatan' => $kecName]);
+                Desa::updateOrCreate(['id' => $desaId], ['kecamatanId' => $kecId, 'namaDesa' => $desaName]);
+
+                // Sync Biteship Area ID
+                $this->syncBiteshipArea($desaId, $kecName);
+            }
 
         } catch (\Exception $e) {
             Log::error("Sync Wilayah Gagal: " . $e->getMessage());
+        }
+    }
+
+    private function syncBiteshipArea(string $desaId, string $kecamatanName)
+    {
+        try {
+            $apiKey = config('services.biteship.key');
+            $baseUrl = config('services.biteship.url', 'https://api-sandbox.biteship.com/v1');
+
+            // Check if already in database
+            $exists = DB::table('biteship_areas')->where('desaId', $desaId)->exists();
+            if ($exists) return;
+
+            $response = Http::withToken($apiKey)
+                ->timeout(5)
+                ->get("$baseUrl/maps/areas", [
+                    'countries' => 'ID',
+                    'input' => $kecamatanName,
+                    'type' => 'single'
+                ]);
+
+            if ($response->successful()) {
+                $areas = $response->json()['areas'] ?? [];
+                if (!empty($areas)) {
+                    $area = $areas[0];
+                    DB::table('biteship_areas')->updateOrInsert(
+                        ['desaId' => $desaId],
+                        [
+                            'biteship_area_id' => $area['id'],
+                            'biteship_name' => $area['name'],
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]
+                    );
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error("Sync Biteship Area Gagal: " . $e->getMessage());
         }
     }
 }

@@ -39,6 +39,24 @@ class Pesanan extends Model
         return $this->hasMany(DetailPesanan::class, 'pesananId');
     }
 
+    public function detailPesanan()
+    {
+        return $this->hasMany(DetailPesanan::class, 'pesananId');
+    }
+
+    public function getStatusAttribute()
+    {
+        return $this->status_pesanan;
+    }
+
+    public function getTotalHargaAttribute()
+    {
+        if ($this->pembayaran) {
+            return $this->pembayaran->totalPembayaran;
+        }
+        return $this->detailPesanan->sum('subtotal');
+    }
+
     public function pembayaran()
     {
         return $this->hasOne(Pembayaran::class, 'pesananId');

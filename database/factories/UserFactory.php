@@ -13,7 +13,6 @@ class UserFactory extends Factory
     {
         return [
             'id' => Str::ulid(), // Penting karena primary key ULID
-            'username' => $this->faker->unique()->userName(),
             'password' => Hash::make('password'), // Default password: password
             'namaLengkap' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),

@@ -18,7 +18,9 @@ class KecamatanFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'id' => fake()->unique()->numerify('##.##.##'),
+            'kabupatenId' => \App\Models\Kabupaten::factory(),
+            'namaKecamatan' => fake()->word(),
         ];
     }
 }

@@ -18,7 +18,9 @@ class DesaFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'id' => fake()->unique()->numerify('##.##.##.####'),
+            'kecamatanId' => \App\Models\Kecamatan::factory(),
+            'namaDesa' => fake()->word(),
         ];
     }
 }

@@ -28,6 +28,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'biteship' => [
+        'key' => env('BITESHIP_API_KEY'),
+        'url' => env('BITESHIP_URL', 'https://api-sandbox.biteship.com/v1'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

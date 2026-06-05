@@ -362,6 +362,9 @@ document.getElementById('btnSubmitCheckout').addEventListener('click', () => {
         const cb = row.querySelector('.item-checkbox');
         if (cb && cb.checked) selectedIds.push(id);
     });
+    if (selectedIds.length > 0) {
+        window.location.href = `/agen/checkout?items=${selectedIds.join(',')}`;
+    }
 });
 
 document.getElementById('btnCloseCheckout').addEventListener('click', () => closeModal('modalKonfirmasiCheckout'));

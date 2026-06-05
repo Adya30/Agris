@@ -18,7 +18,8 @@ class ProvinsiFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'id' => fake()->unique()->numerify('##'),
+            'namaProvinsi' => fake()->word(),
         ];
     }
 }

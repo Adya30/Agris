@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <div class="bg-white p-4 md:p-5 rounded-sm shadow-sm border border-gray-100 mb-8">
+    <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-gray-100 mb-8">
         <form action="<?php echo e(route('admin.produk.index')); ?>" method="GET" class="flex flex-col md:flex-row items-end gap-4">
             <div class="w-full md:flex-1">
                 <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Jenis</label>
@@ -79,14 +79,14 @@
 
                 <div class="p-2.5 flex flex-col grow">
                     <div class="flex flex-wrap gap-1 mb-2">
-                        <span class="text-[9px] font-bold uppercase text-[#58CC02] bg-[#58CC02]/10 px-1.5 py-0.5 rounded">
+                        <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded">
                             <?php echo e($item->kategori->jenisKategori); ?>
 
                         </span>
-                        <span class="text-[9px] font-bold uppercase text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded">
+                        <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded">
                             <?php echo e($item->kategori->karung); ?> Kg
                         </span>
-                        <span class="text-[9px] font-bold uppercase text-orange-400 bg-orange-50 px-1.5 py-0.5 rounded">
+                        <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded">
                             <?php echo e($item->kategori->mutu); ?>
 
                         </span>

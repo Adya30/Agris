@@ -1,115 +1,96 @@
-<?php $__env->startSection('title', 'Keranjang Belanja - AGRIS'); ?>
+<?php $__env->startSection('title', 'Riwayat Transaksi - AGRIS'); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="max-w-5xl mx-auto pb-10 px-4">
+<div class="max-w-5xl mx-auto pt-5 pb-12 px-6">
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-800">Keranjang Belanja</h1>
-        <p class="text-gray-500 text-sm">Kelola produk pilihan Anda sebelum melakukan pemesanan</p>
+        <h1 class="text-2xl font-bold text-gray-800">Daftar Transaksi</h1>
+        <p class="text-gray-500 text-sm">Pantau status pesanan dan riwayat belanja Anda</p>
     </div>
 
-    <?php if(session('success')): ?>
-        <div class="bg-green-100 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-6 text-sm font-bold">
-            <?php echo e(session('success')); ?>
-
+    <?php if($pesanans->isEmpty()): ?>
+        <div class="py-24 text-center bg-white rounded-3xl border border-gray-150 shadow-sm">
+            <i class="fa-solid fa-receipt text-5xl text-gray-200 mb-4"></i>
+            <p class="text-gray-400 font-bold uppercase text-sm tracking-widest mb-4">Belum ada transaksi.</p>
+            <a href="<?php echo e(route('agen.produk.index')); ?>" class="inline-block bg-[#58CC02] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-[#46A302] transition">
+                Mulai Belanja
+            </a>
         </div>
-    <?php endif; ?>
-
-    <?php if(session('error')): ?>
-        <div class="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm font-bold">
-            <?php echo e(session('error')); ?>
-
-        </div>
-    <?php endif; ?>
-
-    <?php if(count($cart) > 0): ?>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 space-y-4">
-                <?php $total = 0; ?>
-                <?php $__currentLoopData = $cart; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $details): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <?php $total += $details['harga'] * $details['quantity']; ?>
-                    <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row items-center gap-4">
-                        <div class="w-20 h-20 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center p-2 shrink-0">
-                            <?php if($details['foto']): ?>
-                                <img src="<?php echo e(asset('storage/' . $details['foto'])); ?>" class="w-full h-full object-contain">
+    <?php else: ?>
+        <div class="space-y-4">
+            <?php $__currentLoopData = $pesanans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pesanan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+                    <!-- Head of Card -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-gray-100 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-bold text-gray-400 font-mono">ID: <?php echo e($pesanan->id); ?></span>
+                            <span class="text-xs font-medium text-gray-400">•</span>
+                            <span class="text-xs text-gray-500 font-bold"><?php echo e($pesanan->created_at->translatedFormat('d F Y H:i')); ?></span>
+                        </div>
+                        <div>
+                            <?php if($pesanan->status === 'pending'): ?>
+                                <span class="bg-amber-50 text-amber-600 border border-amber-100 px-3 py-1 rounded-full text-xs font-bold uppercase">Menunggu Pembayaran</span>
+                            <?php elseif($pesanan->status === 'diproses'): ?>
+                                <span class="bg-blue-50 text-blue-600 border border-blue-100 px-3 py-1 rounded-full text-xs font-bold uppercase">Diproses</span>
+                            <?php elseif($pesanan->status === 'selesai'): ?>
+                                <span class="bg-green-50 text-green-600 border border-green-100 px-3 py-1 rounded-full text-xs font-bold uppercase">Selesai</span>
                             <?php else: ?>
-                                <i class="fa-solid fa-image text-2xl text-gray-300"></i>
+                                <span class="bg-red-50 text-red-600 border border-red-100 px-3 py-1 rounded-full text-xs font-bold uppercase">Dibatalkan</span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Body of Card (Products Summary) -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="grow min-w-0">
+                            <?php $firstDetail = $pesanan->detailPesanans->first(); ?>
+                            <?php if($firstDetail && $firstDetail->produk): ?>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden border border-gray-100 flex items-center justify-center p-1.5 shrink-0">
+                                        <?php if($firstDetail->produk->fotoProduk): ?>
+                                            <img src="<?php echo e(asset('storage/' . $firstDetail->produk->fotoProduk)); ?>" class="w-full h-full object-cover rounded-lg">
+                                        <?php else: ?>
+                                            <i class="fa-solid fa-image text-lg text-gray-300"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <h4 class="font-bold text-gray-800 text-sm truncate"><?php echo e($firstDetail->produk->namaProduk); ?></h4>
+                                        <p class="text-xs text-gray-500 font-medium mt-0.5">
+                                            <?php echo e($firstDetail->jumlahPesanan); ?> barang x Rp <?php echo e(number_format($firstDetail->harga_satuan, 0, ',', '.')); ?>
+
+                                        </p>
+                                        <?php if($pesanan->detailPesanans->count() > 1): ?>
+                                            <p class="text-xs text-[#58CC02] font-bold mt-1">
+                                                +<?php echo e($pesanan->detailPesanans->count() - 1); ?> produk lainnya
+                                            </p>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <p class="text-gray-400 text-sm font-medium">Produk telah dihapus</p>
                             <?php endif; ?>
                         </div>
 
-                        <div class="grow text-center sm:text-left w-full sm:w-auto">
-                            <div class="flex flex-wrap justify-center sm:justify-start gap-1 mb-1">
-                                <span class="text-[8px] font-bold uppercase bg-[#58CC02]/10 text-[#58CC02] px-1.5 py-0.5 rounded">
-                                    <?php echo e($details['jenis']); ?>
+                        <!-- Divider on Mobile -->
+                        <div class="border-t border-gray-100 md:hidden my-2"></div>
 
-                                </span>
-                                <span class="text-[8px] font-bold uppercase bg-blue-50 text-blue-500 px-1.5 py-0.5 rounded">
-                                    <?php echo e($details['karung']); ?> Kg
-                                </span>
-                                <span class="text-[8px] font-bold uppercase bg-orange-50 text-orange-500 px-1.5 py-0.5 rounded">
-                                    <?php echo e($details['mutu']); ?>
-
-                                </span>
-                            </div>
-                            <h3 class="font-bold text-gray-800 text-sm line-clamp-1"><?php echo e($details['nama']); ?></h3>
-                            <p class="text-[#58CC02] font-bold text-sm mt-1">
-                                Rp <?php echo e(number_format($details['harga'], 0, ',', '.')); ?>
-
-                            </p>
-                        </div>
-
-                        <div class="flex items-center gap-4 justify-between w-full sm:w-auto shrink-0">
-                            <form action="<?php echo e(route('agen.keranjang.update', $id)); ?>" method="POST" class="flex items-center bg-gray-50 border border-gray-100 rounded-xl px-2 py-1">
-                                <?php echo csrf_field(); ?>
-                                <?php echo method_field('PATCH'); ?>
-                                <input type="number" name="quantity" value="<?php echo e($details['quantity']); ?>" min="1" max="<?php echo e($details['stok_maksimal']); ?>" onchange="this.form.submit()" class="w-14 text-center bg-transparent text-sm font-bold outline-none text-gray-800 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-                            </form>
-
-                            <div class="text-right hidden sm:block min-w-[100px]">
-                                <span class="text-[10px] font-bold text-gray-400 block uppercase">Subtotal</span>
-                                <span class="font-bold text-gray-800 text-sm">
-                                    Rp <?php echo e(number_format($details['harga'] * $details['quantity'], 0, ',', '.')); ?>
+                        <!-- Price Summary & Action -->
+                        <div class="flex items-center justify-between md:justify-end md:gap-8 shrink-0">
+                            <div class="text-left md:text-right">
+                                <span class="text-[10px] font-bold text-gray-400 block uppercase">Total Belanja</span>
+                                <span class="font-bold text-gray-900 text-base">
+                                    Rp <?php echo e(number_format($pesanan->total_harga, 0, ',', '.')); ?>
 
                                 </span>
                             </div>
-
-                            <form action="<?php echo e(route('agen.keranjang.destroy', $id)); ?>" method="POST">
-                                <?php echo csrf_field(); ?>
-                                <?php echo method_field('DELETE'); ?>
-                                <button type="submit" class="w-9 h-9 text-red-500 bg-red-50 hover:bg-red-100 transition rounded-xl flex items-center justify-center text-sm">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
+                            <div>
+                                <a href="<?php echo e(route('agen.pesanan.show', $pesanan->id)); ?>" class="inline-block border border-gray-200 hover:border-[#58CC02] hover:text-[#58CC02] text-gray-700 bg-white px-5 py-2 rounded-xl text-xs font-bold transition">
+                                    Detail Transaksi
+                                </a>
+                            </div>
                         </div>
                     </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </div>
-
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm h-fit">
-                <h2 class="font-bold text-gray-800 text-base mb-4 pb-3 border-b border-gray-50">Ringkasan Pesanan</h2>
-
-                <div class="flex justify-between items-center mb-6">
-                    <span class="text-gray-500 text-sm">Total Harga</span>
-                    <span class="text-xl font-bold text-[#58CC02]">
-                        Rp <?php echo e(number_format($total, 0, ',', '.')); ?>
-
-                    </span>
                 </div>
-
-                <form action="<?php echo e(route('agen.pesanan.checkout')); ?>" method="POST">
-                    <?php echo csrf_field(); ?>
-                    <button type="submit" class="w-full bg-[#58CC02] hover:bg-[#46A302] text-white py-3 rounded-xl transition font-bold text-sm flex items-center justify-center gap-2 shadow-sm">
-                        <i class="fa-solid fa-bag-shopping"></i> Checkout Sekarang
-                    </button>
-                </form>
-            </div>
-        </div>
-    <?php else: ?>
-        <div class="py-20 text-center bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <i class="fa-solid fa-cart-shopping text-5xl text-gray-200 mb-4"></i>
-            <p class="text-gray-400 font-bold mb-4">Keranjang belanja Anda kosong.</p>
-            <a href="<?php echo e(route('agen.produk.index')); ?>" class="inline-flex bg-gray-800 hover:bg-black text-white px-6 py-2.5 rounded-xl text-xs font-bold transition">
-                Lihat Produk
-            </a>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
     <?php endif; ?>
 </div>

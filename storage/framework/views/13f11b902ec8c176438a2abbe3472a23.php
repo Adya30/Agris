@@ -5,7 +5,6 @@
 <div class="flex min-h-screen w-full">
 
     <div class="hidden md:flex w-1/2 bg-[#0f8629] flex-col justify-between p-12">
-
         <div>
             <img src="<?php echo e(asset('images/icon.png')); ?>" class="w-20">
         </div>
@@ -17,7 +16,6 @@
         <div class="text-white text-center text-lg font-medium leading-relaxed mb-6">
             Masuk dan Temukan <br> Keseimbangan Alam Dalam Setiap Tanam
         </div>
-
     </div>
 
     <div class="w-full md:w-1/2 flex items-center justify-center relative py-10 overflow-y-auto bg-gray-100 text-sm">
@@ -31,7 +29,11 @@
             <h2 class="text-2xl font-bold text-gray-700 mb-6 text-center">
                 Daftar Akun AGRIS
             </h2>
-            <div id="progressBarContainer" class="hidden fixed top-0 left-0 w-full h-1 bg-gray-200 z-50"> <div id="progressBar" class="h-full bg-[#0f8629] w-0 transition-all duration-500 ease-linear"> </div> </div>
+
+            <div id="progressBarContainer" class="hidden fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
+                <div id="progressBar" class="h-full bg-[#0f8629] w-0 transition-all duration-500 ease-linear"></div>
+            </div>
+
             <form method="POST" action="<?php echo e(route('register')); ?>">
                 <?php echo csrf_field(); ?>
 
@@ -79,10 +81,9 @@ unset($__errorArgs, $__bag); ?>
 
                 <div class="mb-3 relative">
                     <input type="password" name="password" id="password" placeholder="Password" class="w-full bg-transparent border-b border-gray-400 focus:border-[#0f8629] focus:outline-none py-2 pr-10">
-                    <span onclick="togglePassword('password','eye1')" class="absolute right-2 top-2 cursor-pointer text-gray-500 hover:text-[#0f8629]">
-                        <i id="eye1" class="fa-solid fa-eye"></i>
+                    <span class="toggle-password absolute right-2 top-2 cursor-pointer text-gray-500 hover:text-[#0f8629]" data-target="#password">
+                        <i class="fa-solid fa-eye"></i>
                     </span>
-
                     <?php $__errorArgs = ['password'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -97,8 +98,8 @@ unset($__errorArgs, $__bag); ?>
 
                 <div class="mb-3 relative">
                     <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Konfirmasi Password" class="w-full bg-transparent border-b border-gray-400 focus:border-[#0f8629] focus:outline-none py-2 pr-10">
-                    <span onclick="togglePassword('password_confirmation','eye2')" class="absolute right-2 top-2 cursor-pointer text-gray-500 hover:text-[#0f8629]">
-                        <i id="eye2" class="fa-solid fa-eye"></i>
+                    <span class="toggle-password absolute right-2 top-2 cursor-pointer text-gray-500 hover:text-[#0f8629]" data-target="#password_confirmation">
+                        <i class="fa-solid fa-eye"></i>
                     </span>
                 </div>
 
@@ -128,29 +129,8 @@ unset($__errorArgs, $__bag); ?>
 
         </div>
     </div>
-
 </div>
 
 <?php $__env->stopSection(); ?>
-
-
-<?php $__env->startPush('scripts'); ?>
-<script>
-    function togglePassword(fieldId, eyeId) {
-        const field = document.getElementById(fieldId);
-        const eye = document.getElementById(eyeId);
-
-        if (field.type === "password") {
-            field.type = "text";
-            eye.classList.remove("fa-eye");
-            eye.classList.add("fa-eye-slash");
-        } else {
-            field.type = "password";
-            eye.classList.remove("fa-eye-slash");
-            eye.classList.add("fa-eye");
-        }
-    }
-</script>
-<?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\project\Agris\resources\views\auth\register.blade.php ENDPATH**/ ?>

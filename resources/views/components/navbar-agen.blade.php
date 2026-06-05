@@ -42,7 +42,8 @@
                 <div class="relative hidden md:block">
                     <button id="dropdownBtn" type="button" class="group flex items-center gap-3 rounded-full bg-green-600/50 p-1 pr-4 transition-all hover:bg-white/20 focus:outline-none">
                         <div class="h-9 w-9 overflow-hidden rounded-full border-2 border-white pointer-events-none">
-                            <img src="{{ auth()->user()->fotoProfil ? asset(auth()->user()->fotoProfil) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->namaLengkap ?? auth()->user()->username).'&background=random' }}" class="h-full w-full object-cover">
+                            <img src="{{ auth()->user()->fotoProfil ? asset(auth()->user()->fotoProfil) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->namaLengkap) }}"
+                                class="h-full w-full object-cover">
                         </div>
                         <div class="flex items-center gap-2 pointer-events-none text-white text-left">
                             <div class="flex flex-col leading-tight">
@@ -77,7 +78,7 @@
                 @php $navs =
                 [['agen.blog.*', 'Blog', route('agen.blog.index')],
                 ['agen.produk.*', 'Produk', route('agen.produk.index')],
-                [null, 'Transaksi', '#'], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]];
+                ['agen.pesanan.*', 'Transaksi', route('agen.pesanan.index')], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]];
                 @endphp
                 @foreach($navs as $nav)
                     <a href="{{ $nav[2] }}" class="hover:text-white transition-all py-1 border-b-2 {{ $nav[0] && Route::is($nav[0]) ? 'border-white' : 'border-transparent' }} hover:border-white">
@@ -107,7 +108,7 @@
                 <a href="{{ route('agen.produk.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.produk.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold">
                     <i class="fa-solid fa-box mr-3 w-5 text-lg"></i> Produk
                 </a>
-                <a href="#" class="flex items-center py-3 px-4 rounded-xl hover:bg-gray-50 font-bold text-gray-700">
+                <a href="{{ route('agen.pesanan.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.pesanan.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold">
                     <i class="fa-solid fa-receipt mr-3 w-5 text-lg"></i> Transaksi
                 </a>
                 <a href="{{ route('kemitraan.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('kemitraan.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold">

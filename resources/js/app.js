@@ -45,3 +45,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 import './wilayah';
 import './upload-handler';
+import './eye';
+import './form-refresh';

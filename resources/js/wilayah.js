@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const baseUrl = "https://www.emsifa.com/api-wilayah-indonesia/api";
+    const baseUrl = "/wilayah";
 
     const safeBind = (id, event, callback) => {
         const el = document.getElementById(id);
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         try {
-            const res = await fetch(`${baseUrl}/regencies/${this.value}.json`);
+            const res = await fetch(`${baseUrl}/kabupaten/${this.value}`);
             updateSelect('kabupaten', await res.json(), 'Kabupaten');
             updateSelect('kecamatan', [], 'Kecamatan');
             updateSelect('desa', [], 'Desa');
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
     safeBind('kabupaten', 'change', async function() {
         if(!this.value) return;
         try {
-            const res = await fetch(`${baseUrl}/districts/${this.value}.json`);
+            const res = await fetch(`${baseUrl}/kecamatan/${this.value}`);
             updateSelect('kecamatan', await res.json(), 'Kecamatan');
             updateSelect('desa', [], 'Desa');
         } catch (e) { console.error(e); }
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
     safeBind('kecamatan', 'change', async function() {
         if(!this.value) return;
         try {
-            const res = await fetch(`${baseUrl}/villages/${this.value}.json`);
+            const res = await fetch(`${baseUrl}/desa/${this.value}`);
             updateSelect('desa', await res.json(), 'Desa');
         } catch (e) { console.error(e); }
     });
@@ -60,22 +60,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             const oldProvId = provSelect.getAttribute('data-old');
-            const resProv = await fetch(`${baseUrl}/provinces.json`);
+            const resProv = await fetch(`${baseUrl}/provinsi`);
             updateSelect('provinsi', await resProv.json(), 'Provinsi', oldProvId);
 
             if (oldProvId) {
                 const oldKabId = kabSelect.getAttribute('data-old');
-                const resKab = await fetch(`${baseUrl}/regencies/${oldProvId}.json`);
+                const resKab = await fetch(`${baseUrl}/kabupaten/${oldProvId}`);
                 updateSelect('kabupaten', await resKab.json(), 'Kabupaten', oldKabId);
 
                 if (oldKabId) {
                     const oldKecId = kecSelect.getAttribute('data-old');
-                    const resKec = await fetch(`${baseUrl}/districts/${oldKabId}.json`);
+                    const resKec = await fetch(`${baseUrl}/kecamatan/${oldKabId}`);
                     updateSelect('kecamatan', await resKec.json(), 'Kecamatan', oldKecId);
 
                     if (oldKecId) {
                         const oldDesaId = desaSelect.getAttribute('data-old');
-                        const resDesa = await fetch(`${baseUrl}/villages/${oldKecId}.json`);
+                        const resDesa = await fetch(`${baseUrl}/desa/${oldKecId}`);
                         updateSelect('desa', await resDesa.json(), 'Desa', oldDesaId);
                     }
                 }

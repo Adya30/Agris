@@ -60,7 +60,6 @@
                         <i class="fa-solid fa-image text-4xl"></i>
                     </div>
                 <?php endif; ?>
-
                 <?php if($item->stok <= 0): ?>
                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
                         <span class="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Stok Habis</span>
@@ -70,28 +69,14 @@
 
             <div class="p-2.5 flex flex-col grow">
                 <div class="flex flex-wrap gap-1 mb-2">
-                    <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded">
-                        <?php echo e($item->kategori->jenisKategori); ?>
-
-                    </span>
-                    <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded">
-                        <?php echo e($item->kategori->karung); ?> Kg
-                    </span>
-                    <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded">
-                        <?php echo e($item->kategori->mutu); ?>
-
-                    </span>
+                    <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded"><?php echo e($item->kategori->jenisKategori); ?></span>
+                    <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded"><?php echo e($item->kategori->karung); ?> Kg</span>
+                    <span class="text-[9px] font-bold uppercase text-gray-800 bg-gray-800/10 px-1.5 py-0.5 rounded"><?php echo e($item->kategori->mutu); ?></span>
                 </div>
 
                 <a href="<?php echo e(route('agen.produk.show', $item->id)); ?>" class="grow">
-                    <h3 class="text-gray-800 text-15 font-normal line-clamp-2 leading-snug mb-1 min-h-9.5">
-                        <?php echo e($item->namaProduk); ?>
-
-                    </h3>
-                    <p class="text-gray-900 font-bold text-base mb-0.5">
-                        Rp <?php echo e(number_format($item->harga, 0, ',', '.')); ?>
-
-                    </p>
+                    <h3 class="text-gray-800 text-15 font-normal line-clamp-2 leading-snug mb-1 min-h-9.5"><?php echo e($item->namaProduk); ?></h3>
+                    <p class="text-gray-900 font-bold text-base mb-0.5">Rp <?php echo e(number_format($item->harga, 0, ',', '.')); ?></p>
                 </a>
 
                 <div class="mt-auto">
@@ -102,22 +87,14 @@
                             </div>
                             <span class="truncate font-medium text-gray-500">Tersedia</span>
                         </div>
-                        <span class="text-[10px] font-bold <?php echo e($item->stok > 5 ? 'text-gray-500' : 'text-orange-500'); ?> uppercase tracking-tight shrink-0">
-                            Stok: <?php echo e($item->stok); ?>
-
-                        </span>
+                        <span class="text-[10px] font-bold <?php echo e($item->stok > 5 ? 'text-gray-500' : 'text-orange-500'); ?> uppercase tracking-tight shrink-0">Stok: <?php echo e($item->stok); ?></span>
                     </div>
 
                     <form class="add-to-cart-form">
                         <?php echo csrf_field(); ?>
                         <input type="hidden" name="produkId" value="<?php echo e($item->id); ?>">
                         <input type="hidden" name="jumlah" value="1">
-
-                        <button type="button"
-                            onclick="addToCart(this)"
-                            <?php echo e($item->stok <= 0 ? 'disabled' : ''); ?>
-
-                            class="w-full <?php echo e($item->stok <= 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#58CC02] hover:bg-[#46A302]'); ?> text-white py-2 rounded-xl transition font-bold text-xs flex items-center justify-center gap-2 shadow-sm">
+                        <button type="button" onclick="addToCart(this)" <?php echo e($item->stok <= 0 ? 'disabled' : ''); ?> class="w-full <?php echo e($item->stok <= 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#58CC02] hover:bg-[#46A302]'); ?> text-white py-2 rounded-xl transition font-bold text-xs flex items-center justify-center gap-2 shadow-sm">
                             <i class="fa-solid fa-cart-plus"></i> <?php echo e($item->stok <= 0 ? 'Habis' : 'Tambah Pesanan'); ?>
 
                         </button>
@@ -139,8 +116,71 @@
     </div>
 </div>
 
+<?php if (isset($component)) { $__componentOriginal9f64f32e90b9102968f2bc548315018c = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9f64f32e90b9102968f2bc548315018c = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modal','data' => ['id' => 'modalAksesMitra','title' => 'Anda Belum Bermitra?','message' => 'Anda harus menjadi mitra aktif untuk menambahkan produk ke keranjang.','confirmText' => 'Baik','cancelText' => 'Batal','confirmId' => 'btnConfirmMitra','cancelId' => 'btnCancelMitra']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['id' => 'modalAksesMitra','title' => 'Anda Belum Bermitra?','message' => 'Anda harus menjadi mitra aktif untuk menambahkan produk ke keranjang.','confirmText' => 'Baik','cancelText' => 'Batal','confirmId' => 'btnConfirmMitra','cancelId' => 'btnCancelMitra']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9f64f32e90b9102968f2bc548315018c)): ?>
+<?php $attributes = $__attributesOriginal9f64f32e90b9102968f2bc548315018c; ?>
+<?php unset($__attributesOriginal9f64f32e90b9102968f2bc548315018c); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9f64f32e90b9102968f2bc548315018c)): ?>
+<?php $component = $__componentOriginal9f64f32e90b9102968f2bc548315018c; ?>
+<?php unset($__componentOriginal9f64f32e90b9102968f2bc548315018c); ?>
+<?php endif; ?>
+
 <script>
+function showNotification(title, message, type) {
+    const container = document.querySelector('.fixed.bottom-5.right-5');
+    if (!container) return;
+
+    const alertDiv = document.createElement('div');
+    const isSuccess = type === 'success';
+
+    alertDiv.className = `alert-info flex items-center w-full max-w-xs p-4 rounded-2xl shadow-xl border ${isSuccess ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`;
+    alertDiv.innerHTML = `
+        <div class="inline-flex items-center justify-center shrink-0 w-10 h-10 rounded-full ${isSuccess ? 'bg-green-600' : 'bg-red-600'} text-white">
+            <i class="fa-solid ${isSuccess ? 'fa-check' : 'fa-xmark'} text-sm"></i>
+        </div>
+        <div class="ms-3">
+            <div class="text-sm font-bold ${isSuccess ? 'text-green-800' : 'text-red-800'}">${title}</div>
+            <div class="text-xs ${isSuccess ? 'text-green-700' : 'text-red-700'} mt-0.5">${message}</div>
+        </div>
+    `;
+
+    container.appendChild(alertDiv);
+    alertDiv.style.opacity = '0';
+    alertDiv.style.transform = 'translateX(20px)';
+    alertDiv.style.transition = "all 0.5s ease";
+
+    setTimeout(() => {
+        alertDiv.style.opacity = '1';
+        alertDiv.style.transform = 'translateX(0)';
+    }, 100);
+
+    setTimeout(() => {
+        alertDiv.style.opacity = '0';
+        alertDiv.style.transform = 'translateX(20px)';
+        setTimeout(() => { alertDiv.remove(); }, 500);
+    }, 4000);
+}
+
 function addToCart(btn) {
+    const isMitra = <?php echo e(auth()->user()->isActive == 1 ? 'true' : 'false'); ?>;
+
+    if (!isMitra) {
+        openModal('modalAksesMitra');
+        return;
+    }
+
     let form = btn.closest('.add-to-cart-form');
     let formData = new FormData(form);
 
@@ -152,39 +192,25 @@ function addToCart(btn) {
             'X-Requested-With': 'XMLHttpRequest'
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        const container = document.querySelector('.fixed.bottom-5.right-5');
-        const notif = document.createElement('div');
-        notif.className = "alert-info flex items-center w-full max-w-xs p-4 rounded-2xl shadow-xl border border-green-200 bg-green-50";
-        notif.innerHTML = `
-            <div class="inline-flex items-center justify-center shrink-0 w-10 h-10 rounded-full bg-green-600 text-white">
-                <i class="fa-solid fa-check text-sm"></i>
-            </div>
-            <div class="ms-3">
-                <div class="text-sm font-bold text-green-800">Berhasil</div>
-                <div class="text-xs text-green-700 mt-0.5">${data.message}</div>
-            </div>
-        `;
-        container.appendChild(notif);
-
-        notif.style.opacity = '0';
-        notif.style.transform = 'translateX(20px)';
-        notif.style.transition = "all 0.5s ease";
-
-        setTimeout(() => {
-            notif.style.opacity = '1';
-            notif.style.transform = 'translateX(0)';
-        }, 100);
-
-        setTimeout(() => {
-            notif.style.opacity = '0';
-            notif.style.transform = 'translateX(20px)';
-            setTimeout(() => notif.remove(), 500);
-        }, 4000);
+    .then(response => {
+        if (response.status === 403) {
+            openModal('modalAksesMitra');
+            throw new Error('Unauthorized');
+        }
+        return response.json();
     })
-    .catch(error => console.error('Error:', error));
+    .then(data => {
+        if (data.cartCount !== undefined) updateCartBadge(data.cartCount);
+        showNotification('Informasi', data.message, 'success');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Gagal', 'Terjadi kesalahan sistem', 'error');
+    });
 }
+
+document.getElementById('btnConfirmMitra').addEventListener('click', () => closeModal('modalAksesMitra'));
+document.getElementById('btnCancelMitra').addEventListener('click', () => closeModal('modalAksesMitra'));
 </script>
 <?php $__env->stopSection(); ?>
 

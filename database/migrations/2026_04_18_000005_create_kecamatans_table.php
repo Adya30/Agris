@@ -12,7 +12,6 @@ return new class extends Migration
             $table->string('id', 20)->primary();
             $table->string('kabupatenId', 20)->index();
             $table->string('namaKecamatan', 255);
-            $table->string('biteship_area_id')->nullable()->index();
             $table->timestamps();
             $table->foreign('kabupatenId')->references('id')->on('kabupatens')->cascadeOnDelete();
         });

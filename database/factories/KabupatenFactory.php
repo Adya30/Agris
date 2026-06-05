@@ -18,7 +18,9 @@ class KabupatenFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'id' => fake()->unique()->numerify('##.##'),
+            'provinsiId' => \App\Models\Provinsi::factory(),
+            'namaKabupaten' => fake()->word(),
         ];
     }
 }

@@ -29,7 +29,6 @@
         <input type="hidden" name="token" value="<?php echo e($token); ?>">
         <input type="hidden" name="email" value="<?php echo e($email); ?>">
 
-        <!-- Password Baru -->
         <div class="mb-5 relative">
             <input type="password" name="password" id="password" placeholder="Password Baru"
                 class="w-full border-b focus:border-[#58CC02] focus:outline-none py-2 pr-10 <?php echo e($errors->has('password') ? 'border-red-500' : 'border-gray-400'); ?>">
@@ -50,7 +49,6 @@ endif;
 unset($__errorArgs, $__bag); ?>
         </div>
 
-        <!-- Konfirmasi Password -->
         <div class="mb-6 relative">
             <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Konfirmasi Password"
                 class="w-full border-b focus:border-[#58CC02] focus:outline-none py-2 pr-10 <?php echo e($errors->has('password') ? 'border-red-500' : 'border-gray-400'); ?>">
