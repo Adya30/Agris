@@ -20,6 +20,7 @@ class Pembayaran extends Model
         'totalPembayaran',
         'waktuDibayar',
         'jumlahRefund',
+        'payment_info',
     ];
 
     protected $casts = [

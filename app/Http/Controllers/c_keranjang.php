@@ -113,6 +113,37 @@ class c_keranjang extends Controller
         ]);
     }
 
+    public function updateJumlah(Request $request, $id)
+    {
+        $request->validate([
+            'jumlah' => 'required|integer|min:1',
+        ]);
+
+        $keranjang = Keranjang::where('id', $id)
+            ->where('userId', Auth::id())
+            ->firstOrFail();
+
+        $produk = $keranjang->produk;
+
+        $jumlah = $request->jumlah;
+        if ($jumlah > $produk->stok) {
+            return response()->json([
+                'message' => 'Jumlah melebihi stok yang tersedia (' . $produk->stok . ').',
+                'jumlah' => $keranjang->jumlah,
+                'subtotal' => $keranjang->jumlah * $produk->harga,
+            ], 422);
+        }
+
+        $keranjang->update(['jumlah' => $jumlah]);
+
+        return response()->json([
+            'message' => 'Jumlah berhasil diperbarui.',
+            'jumlah' => $keranjang->jumlah,
+            'subtotal' => $keranjang->jumlah * $produk->harga,
+            'cartCount' => $this->cartCount(),
+        ]);
+    }
+
     public function destroy($id)
     {
         $keranjang = Keranjang::where('id', $id)->where('userId', Auth::id())->firstOrFail();

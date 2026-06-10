@@ -70,7 +70,6 @@ class c_chat extends Controller
             'foto_chat' => 'nullable|image|max:5120'
         ]);
 
-        // Cek jika pesan hanya berisi spasi/kosong dan tidak ada foto
         $pesan = trim($request->pesan);
         if (empty($pesan) && !$request->hasFile('foto_chat')) {
             return response()->json(['error' => 'Pesan tidak boleh kosong'], 422);

@@ -79,7 +79,8 @@
                 <?php $navs =
                 [['agen.blog.*', 'Blog', route('agen.blog.index')],
                 ['agen.produk.*', 'Produk', route('agen.produk.index')],
-                ['agen.pesanan.*', 'Transaksi', route('agen.pesanan.index')], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]];
+                ['agen.pesanan.*', 'Transaksi', route('agen.pesanan.index')],
+                ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]];
                 ?>
                 <?php $__currentLoopData = $navs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $nav): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <a href="<?php echo e($nav[2]); ?>" class="hover:text-white transition-all py-1 border-b-2 <?php echo e($nav[0] && Route::is($nav[0]) ? 'border-white' : 'border-transparent'); ?> hover:border-white">

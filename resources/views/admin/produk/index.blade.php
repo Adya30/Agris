@@ -10,7 +10,7 @@
             <p class="text-gray-500 text-sm">Kelola stok berdasarkan inputan kategori admin</p>
         </div>
         <div class="flex gap-2 sm:gap-3">
-            <a href="{{ route('admin.produk.trash') }}" class="flex-1 md:flex-none justify-center bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-xl transition font-bold text-sm flex items-center">
+            <a href="{{ route('admin.produk.trash') }}" class="flex-1 md:flex-none justify-center bg-white shadow hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-xl transition font-bold text-sm flex items-center">
                 Stok Habis
             </a>
             <a href="{{ route('admin.produk.create') }}" class="flex-1 md:flex-none justify-center bg-[#58CC02] hover:bg-[#46a302] text-white px-5 py-2.5 rounded-xl transition shadow-md font-bold text-sm flex items-center">

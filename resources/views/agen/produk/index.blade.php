@@ -53,7 +53,7 @@
 
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
         @forelse($produks as $item)
-        <div class="group bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col h-full relative">
+        <div id="product-card-{{ $item->id }}" class="group bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col h-full relative">
             <a href="{{ route('agen.produk.show', $item->id) }}" class="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                 @if($item->fotoProduk)
                     <img src="{{ asset('storage/' . $item->fotoProduk) }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="{{ $item->namaProduk }}">
@@ -62,11 +62,9 @@
                         <i class="fa-solid fa-image text-4xl"></i>
                     </div>
                 @endif
-                @if($item->stok <= 0)
-                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
-                        <span class="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Stok Habis</span>
-                    </div>
-                @endif
+                <div id="out-of-stock-badge-{{ $item->id }}" class="absolute inset-0 bg-black/40 flex items-center justify-center z-10 {{ $item->stok <= 0 ? '' : 'hidden' }}">
+                    <span class="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Stok Habis</span>
+                </div>
             </a>
 
             <div class="p-2.5 flex flex-col grow">
@@ -89,15 +87,15 @@
                             </div>
                             <span class="truncate font-medium text-gray-500">Tersedia</span>
                         </div>
-                        <span class="text-[10px] font-bold {{ $item->stok > 5 ? 'text-gray-500' : 'text-orange-500' }} uppercase tracking-tight shrink-0">Stok: {{ $item->stok }}</span>
+                        <span id="product-stock-{{ $item->id }}" class="text-[10px] font-bold {{ $item->stok > 5 ? 'text-gray-500' : 'text-orange-500' }} uppercase tracking-tight shrink-0">Stok: {{ $item->stok }}</span>
                     </div>
 
                     <form class="add-to-cart-form">
                         @csrf
                         <input type="hidden" name="produkId" value="{{ $item->id }}">
                         <input type="hidden" name="jumlah" value="1">
-                        <button type="button" onclick="addToCart(this)" {{ $item->stok <= 0 ? 'disabled' : '' }} class="w-full {{ $item->stok <= 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#58CC02] hover:bg-[#46A302]' }} text-white py-2 rounded-xl transition font-bold text-xs flex items-center justify-center gap-2 shadow-sm">
-                            <i class="fa-solid fa-cart-plus"></i> {{ $item->stok <= 0 ? 'Habis' : 'Tambah Pesanan' }}
+                        <button id="product-btn-{{ $item->id }}" type="button" onclick="addToCart(this)" {{ $item->stok <= 0 ? 'disabled' : '' }} class="w-full {{ $item->stok <= 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#58CC02] hover:bg-[#46A302]' }} text-white py-2 rounded-xl transition font-bold text-xs flex items-center justify-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-cart-plus"></i> <span class="btn-text">{{ $item->stok <= 0 ? 'Habis' : 'Tambah Pesanan' }}</span>
                         </button>
                     </form>
                 </div>
@@ -192,5 +190,45 @@ function addToCart(btn) {
 
 document.getElementById('btnConfirmMitra').addEventListener('click', () => closeModal('modalAksesMitra'));
 document.getElementById('btnCancelMitra').addEventListener('click', () => closeModal('modalAksesMitra'));
+
+if (window.Echo) {
+    window.Echo.channel('produk-channel')
+        .listen('.ProdukUpdated', (e) => {
+            const prod = e.produk;
+            
+            const stockEl = document.getElementById(`product-stock-${prod.id}`);
+            if (stockEl) {
+                stockEl.textContent = `Stok: ${prod.stok}`;
+                if (prod.stok > 5) {
+                    stockEl.className = "text-[10px] font-bold text-gray-500 uppercase tracking-tight shrink-0";
+                } else {
+                    stockEl.className = "text-[10px] font-bold text-orange-500 uppercase tracking-tight shrink-0";
+                }
+            }
+            
+            const badgeEl = document.getElementById(`out-of-stock-badge-${prod.id}`);
+            if (badgeEl) {
+                if (prod.stok <= 0) {
+                    badgeEl.classList.remove('hidden');
+                } else {
+                    badgeEl.classList.add('hidden');
+                }
+            }
+            
+            const btnEl = document.getElementById(`product-btn-${prod.id}`);
+            if (btnEl) {
+                const textEl = btnEl.querySelector('.btn-text');
+                if (prod.stok <= 0) {
+                    btnEl.disabled = true;
+                    btnEl.className = "w-full bg-gray-300 cursor-not-allowed text-white py-2 rounded-xl transition font-bold text-xs flex items-center justify-center gap-2 shadow-sm";
+                    if (textEl) textEl.textContent = 'Habis';
+                } else {
+                    btnEl.disabled = false;
+                    btnEl.className = "w-full bg-[#58CC02] hover:bg-[#46A302] text-white py-2 rounded-xl transition font-bold text-xs flex items-center justify-center gap-2 shadow-sm";
+                    if (textEl) textEl.textContent = 'Tambah Pesanan';
+                }
+            }
+        });
+}
 </script>
 @endsection

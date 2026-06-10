@@ -63,7 +63,7 @@
                         <td class="px-5 py-4">
                             <div class="flex items-center justify-center gap-2">
                                 <button onclick="triggerKurang('<?php echo e($item->id); ?>')" class="w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition text-xs shrink-0"><i class="fa-solid fa-minus"></i></button>
-                                <span class="jumlah-val font-bold text-gray-800 text-sm w-6 text-center"><?php echo e($item->jumlah); ?></span>
+                                <input type="number" min="1" value="<?php echo e($item->jumlah); ?>" class="jumlah-val w-16 text-center border border-gray-200 focus:border-[#58CC02] focus:ring-2 focus:ring-[#58CC02]/20 text-sm font-bold rounded-xl py-1.5 px-2 mx-1 focus:outline-none" onchange="triggerUpdateInput(this, '<?php echo e($item->id); ?>')">
                                 <button onclick="tambahJumlah('<?php echo e($item->id); ?>')" class="w-8 h-8 rounded-full bg-[#58CC02] hover:bg-[#46A302] text-white flex items-center justify-center transition text-xs shrink-0"><i class="fa-solid fa-plus"></i></button>
                             </div>
                         </td>
@@ -100,10 +100,10 @@
                 </div>
                 <div class="flex flex-col items-end gap-2">
                     <button onclick="triggerHapus('<?php echo e($item->id); ?>')" class="text-gray-400 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
-                    <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-1">
-                        <button onclick="triggerKurang('<?php echo e($item->id); ?>')" class="w-6 h-6 bg-white rounded shadow-sm text-xs">-</button>
-                        <span class="jumlah-val font-bold text-sm w-5 text-center"><?php echo e($item->jumlah); ?></span>
-                        <button onclick="tambahJumlah('<?php echo e($item->id); ?>')" class="w-6 h-6 bg-[#58CC02] text-white rounded shadow-sm text-xs">+</button>
+                    <div class="flex items-center gap-1 bg-gray-50 rounded-xl p-1">
+                        <button onclick="triggerKurang('<?php echo e($item->id); ?>')" class="w-7 h-7 bg-white rounded-lg shadow-sm text-xs font-bold">-</button>
+                        <input type="number" min="1" value="<?php echo e($item->jumlah); ?>" class="jumlah-val w-12 text-center border-none bg-transparent focus:ring-0 text-xs font-bold p-0.5" onchange="triggerUpdateInput(this, '<?php echo e($item->id); ?>')">
+                        <button onclick="tambahJumlah('<?php echo e($item->id); ?>')" class="w-7 h-7 bg-[#58CC02] text-white rounded-lg shadow-sm text-xs font-bold">+</button>
                     </div>
                 </div>
             </div>
@@ -220,7 +220,8 @@ function hitungTotal() {
         if (cb && cb.checked) {
             const harga = parseInt(row.dataset.harga) || 0;
             const karung = parseInt(row.dataset.karung) || 0;
-            const jumlah = parseInt(row.querySelector('.jumlah-val').textContent) || 0;
+            const inputEl = row.querySelector('.jumlah-val');
+            const jumlah = inputEl ? (parseInt(inputEl.value) || parseInt(inputEl.textContent) || 0) : 0;
             total += (harga * jumlah);
             beratTotal += (karung * jumlah);
         }
@@ -244,7 +245,13 @@ function hitungTotal() {
 function updateRow(id, jumlah, subtotal, cartCount) {
     const subtotalAngka = parseInt(String(subtotal).replace(/\D/g, '')) || 0;
     document.querySelectorAll(`.keranjang-item[data-id="${id}"]`).forEach(row => {
-        row.querySelectorAll('.jumlah-val').forEach(el => el.textContent = jumlah);
+        row.querySelectorAll('.jumlah-val').forEach(el => {
+            if (el.tagName === 'INPUT') {
+                el.value = jumlah;
+            } else {
+                el.textContent = jumlah;
+            }
+        });
         row.querySelectorAll('.subtotal-val').forEach(el => el.textContent = 'Rp ' + subtotalAngka.toLocaleString('id-ID'));
     });
     if (cartCount !== undefined) updateCartBadge(cartCount);
@@ -307,13 +314,51 @@ function kurangJumlah(id) {
 
 function triggerKurang(id) {
     const row = document.querySelector(`.keranjang-item[data-id="${id}"]`);
-    const jumlah = parseInt(row.querySelector('.jumlah-val').textContent);
+    const inputEl = row.querySelector('.jumlah-val');
+    const jumlah = inputEl ? (parseInt(inputEl.value) || parseInt(inputEl.textContent) || 0) : 0;
     if (jumlah <= 1) {
         idYangDihapus = id;
         openModal('modalHapusKeranjang');
     } else {
         kurangJumlah(id);
     }
+}
+
+function triggerUpdateInput(input, id) {
+    let val = parseInt(input.value) || 0;
+    if (val <= 0) {
+        idYangDihapus = id;
+        openModal('modalHapusKeranjang');
+        input.value = 1;
+        return;
+    }
+
+    fetch(`/agen/keranjang/update/${id}`, {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken, 
+            'X-Requested-With': 'XMLHttpRequest' 
+        },
+        body: JSON.stringify({ jumlah: val })
+    })
+    .then(async r => {
+        const data = await r.json();
+        if (r.ok) {
+            if (data.jumlah !== undefined) {
+                updateRow(id, data.jumlah, data.subtotal, data.cartCount);
+            }
+        } else {
+            alert(data.message || 'Gagal memperbarui jumlah.');
+            if (data.jumlah !== undefined) {
+                updateRow(id, data.jumlah, data.subtotal, data.cartCount);
+            }
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Terjadi kesalahan jaringan.');
+    });
 }
 
 function triggerCheckout() {
@@ -328,7 +373,8 @@ function triggerCheckout() {
         if (cb && cb.checked) {
             selectedIds.push(id);
             const karung = parseInt(row.dataset.karung) || 0;
-            const jumlah = parseInt(row.querySelector('.jumlah-val').textContent) || 0;
+            const inputEl = row.querySelector('.jumlah-val');
+            const jumlah = inputEl ? (parseInt(inputEl.value) || parseInt(inputEl.textContent) || 0) : 0;
             beratTotal += (karung * jumlah);
         }
     });

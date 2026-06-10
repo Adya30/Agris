@@ -20,6 +20,21 @@ class Produk extends Model
         'stok'  => 'integer',
     ];
 
+    protected static function booted()
+    {
+        static::saved(function ($produk) {
+            broadcast(new \App\Events\ProdukUpdated($produk));
+        });
+
+        static::deleted(function ($produk) {
+            broadcast(new \App\Events\ProdukUpdated($produk));
+        });
+
+        static::restored(function ($produk) {
+            broadcast(new \App\Events\ProdukUpdated($produk));
+        });
+    }
+
     public function kategori()
     {
         return $this->belongsTo(KategoriProduk::class, 'kategoriId');

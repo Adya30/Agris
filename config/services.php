@@ -30,7 +30,7 @@ return [
 
     'biteship' => [
         'key' => env('BITESHIP_API_KEY'),
-        'url' => env('BITESHIP_URL', 'https://api-sandbox.biteship.com/v1'),
+        'url' => env('BITESHIP_URL', 'https://api.biteship.com/v1'),
     ],
 
     'slack' => [
@@ -44,6 +44,12 @@ return [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
+    'midtrans' => [
+        'server_key' => env('MIDTRANS_SERVER_KEY'),
+        'client_key' => env('MIDTRANS_CLIENT_KEY'),
+        'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
     ],
 
 ];

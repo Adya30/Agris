@@ -23,6 +23,10 @@
                     Kontak
                     <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#10b981] transition-all duration-300 group-hover:w-full"></span>
                 </a>
+                <a href="<?php echo e(route('guest.track')); ?>" class="relative group py-2 transition-colors duration-300">
+                    Lacak
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-[#10b981] transition-all duration-300 group-hover:w-full"></span>
+                </a>
             </div>
 
             <div class="hidden md:flex items-center gap-3">
@@ -48,6 +52,7 @@
             <a href="#about" class="block hover:text-white transition border-b border-white/5 pb-3">Tentang</a>
             <a href="#produk" class="block hover:text-white transition border-b border-white/5 pb-3">Blog</a>
             <a href="#kontak" class="block hover:text-white transition border-b border-white/5 pb-3">Kontak</a>
+            <a href="<?php echo e(route('guest.track')); ?>" class="block hover:text-white transition border-b border-white/5 pb-3">Lacak Pesanan</a>
             <div class="pt-6 grid grid-cols-2 gap-4">
                 <a href="<?php echo e(route('login')); ?>" class="flex items-center justify-center py-3 rounded-xl border border-white/20 text-white font-bold hover:bg-white/5">
                     Login

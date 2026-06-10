@@ -1,5 +1,3 @@
-<div class="fixed bottom-3 right-5 z-50">
-    <a href="#" class="block w-30 shadow-2xl overflow-hidden hover:scale-110 active:scale-95 transition-all duration-300 ease-in-out">
-        <img src="{{ asset('images/bubble.png') }}" alt="Profile" class="w-full h-full object-cover">
-    </a>
-</div>
+<script>
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="Y2vILvNPd7OK5zbNrjNrA";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+</script>

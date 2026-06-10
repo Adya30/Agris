@@ -18,6 +18,7 @@
                     <li><a href="{{ route('about') }}" class="hover:text-[#58CC02] transition">Tentang</a></li>
                     <li><a href="{{ route('guest.blog.index') }}" class="hover:text-[#58CC02] transition">Blog</a></li>
                     <li><a href="{{ route('contact') }}" class="hover:text-[#58CC02] transition">Kontak</a></li>
+                    <li><a href="{{ route('guest.track') }}" class="hover:text-[#58CC02] transition">Lacak Pesanan</a></li>
                 </ul>
             </div>
 

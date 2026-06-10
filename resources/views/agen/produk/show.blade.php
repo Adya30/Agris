@@ -61,13 +61,12 @@
                     <div class="flex items-center justify-between gap-6 mb-4">
                         <div>
                             <p class="text-[10px] font-bold text-gray-400 uppercase">Stok Tersedia</p>
-                            <p class="text-lg font-black {{ $item->stok > 0 ? 'text-gray-800' : 'text-red-500' }}">
-                                {{ $item->stok }} <span class="text-xs font-bold text-gray-400">Karung</span>
+                            <p id="detail-stock-count" class="text-lg font-black {{ $item->stok > 0 ? 'text-gray-800' : 'text-red-500' }}">
+                                <span class="stock-val">{{ $item->stok }}</span> <span class="text-xs font-bold text-gray-400">Karung</span>
                             </p>
                         </div>
 
-                        @if($item->stok > 0)
-                        <div class="flex items-center gap-2 bg-gray-50 rounded-2xl border border-gray-100 px-3 py-2">
+                        <div id="qty-control-container" class="flex items-center gap-2 bg-gray-50 rounded-2xl border border-gray-100 px-3 py-2 {{ $item->stok > 0 ? '' : 'hidden' }}">
                             <button type="button" id="btn-minus" class="w-8 h-8 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 transition font-bold text-base flex items-center justify-center shadow-sm">
                                 <i class="fa-solid fa-minus text-xs"></i>
                             </button>
@@ -76,7 +75,6 @@
                                 <i class="fa-solid fa-plus text-xs"></i>
                             </button>
                         </div>
-                        @endif
                     </div>
 
                     <form id="detail-cart-form">
@@ -127,7 +125,7 @@ function showNotification(title, message, type) {
 
 const qtyInput = document.getElementById('qty-input');
 const jumlahInput = document.getElementById('jumlah-input');
-const maxStok = {{ $item->stok }};
+let maxStok = {{ $item->stok }};
 
 function syncJumlah() { if (jumlahInput) jumlahInput.value = qtyInput.value; }
 
@@ -177,5 +175,61 @@ document.getElementById('btn-add-cart')?.addEventListener('click', function () {
 
 document.getElementById('btnConfirmMitra')?.addEventListener('click', () => closeModal('modalAksesMitra'));
 document.getElementById('btnCancelMitra')?.addEventListener('click', () => closeModal('modalAksesMitra'));
+
+if (window.Echo) {
+    window.Echo.channel('produk-channel')
+        .listen('.ProdukUpdated', (e) => {
+            const prod = e.produk;
+            if (prod.id == "{{ $item->id }}") {
+                maxStok = parseInt(prod.stok);
+                
+                // Update stock count display
+                const stockEl = document.getElementById('detail-stock-count');
+                if (stockEl) {
+                    const valEl = stockEl.querySelector('.stock-val');
+                    if (valEl) valEl.textContent = maxStok;
+                    
+                    if (maxStok > 0) {
+                        stockEl.className = "text-lg font-black text-gray-800";
+                    } else {
+                        stockEl.className = "text-lg font-black text-red-500";
+                    }
+                }
+                
+                // Update qty input max
+                if (qtyInput) {
+                    qtyInput.max = maxStok;
+                    if (parseInt(qtyInput.value) > maxStok) {
+                        qtyInput.value = maxStok || 1;
+                        syncJumlah();
+                    }
+                }
+                
+                // Toggle qty control container visibility
+                const controlContainer = document.getElementById('qty-control-container');
+                if (controlContainer) {
+                    if (maxStok > 0) {
+                        controlContainer.classList.remove('hidden');
+                    } else {
+                        controlContainer.classList.add('hidden');
+                    }
+                }
+                
+                // Update Add to Cart button state
+                const btnAddCart = document.getElementById('btn-add-cart');
+                if (btnAddCart) {
+                    if (maxStok <= 0) {
+                        btnAddCart.disabled = true;
+                        btnAddCart.className = "w-full bg-gray-300 cursor-not-allowed text-white py-4 rounded-2xl transition-all font-black flex items-center justify-center gap-3";
+                        btnAddCart.innerHTML = '<i class="fa-solid fa-cart-plus"></i> Stok Habis';
+                    } else {
+                        btnAddCart.disabled = false;
+                        btnAddCart.className = "w-full bg-[#58CC02] hover:bg-[#46a302] shadow-lg shadow-[#58CC02]/20 text-white py-4 rounded-2xl transition-all font-black flex items-center justify-center gap-3";
+                        btnAddCart.innerHTML = '<i class="fa-solid fa-cart-plus"></i> Tambah Pesanan';
+                    }
+                }
+            }
+        });
+}
 </script>
 @endsection

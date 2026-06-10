@@ -103,6 +103,17 @@
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.Echo) {
+            window.Echo.channel('kemitraan-status')
+                .listen('.KemitraanUpdated', (e) => {
+                    window.location.reload();
+                });
+        }
+    });
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\project\Agris\resources\views/admin/kemitraan/index.blade.php ENDPATH**/ ?>

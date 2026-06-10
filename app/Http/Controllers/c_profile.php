@@ -22,6 +22,12 @@ class c_profile extends Controller
     public function show()
     {
         $user = Auth::user();
+
+        if ($user->desaId && !$user->biteship_location_id) {
+            $this->syncBiteshipLocation($user);
+            $user->refresh();
+        }
+
         $view = $user->isAdmin ? 'admin.profile' : 'agen.profile';
         return view($view, compact('user'));
     }
@@ -82,6 +88,8 @@ class c_profile extends Controller
 
         $user->save();
 
+        $this->syncBiteshipLocation($user);
+
         return redirect()->back()->with('success', 'Data berhasil diubah');
     }
 
@@ -89,25 +97,21 @@ class c_profile extends Controller
     {
         try {
             $parts = explode('.', $desaId);
-            if (count($parts) !== 4) return; // Must be a valid village ID like 35.09.20.1004
+            if (count($parts) !== 4) return;
 
-            $provId = $parts[0]; // 35
-            $kabId = $parts[0] . '.' . $parts[1]; // 35.09
-            $kecId = $parts[0] . '.' . $parts[1] . '.' . $parts[2]; // 35.09.20
+            $provId = $parts[0];
+            $kabId = $parts[0] . '.' . $parts[1];
+            $kecId = $parts[0] . '.' . $parts[1] . '.' . $parts[2];
 
-            // 1. Get Provinsi Name
             $resProv = Http::get("https://wilayah.id/api/provinces.json")->json()['data'] ?? [];
             $provName = collect($resProv)->firstWhere('code', $provId)['name'] ?? '';
 
-            // 2. Get Kabupaten Name
             $resKab = Http::get("https://wilayah.id/api/regencies/{$provId}.json")->json()['data'] ?? [];
             $kabName = collect($resKab)->firstWhere('code', $kabId)['name'] ?? '';
 
-            // 3. Get Kecamatan Name
             $resKec = Http::get("https://wilayah.id/api/districts/{$kabId}.json")->json()['data'] ?? [];
             $kecName = collect($resKec)->firstWhere('code', $kecId)['name'] ?? '';
 
-            // 4. Get Desa Name
             $resDesa = Http::get("https://wilayah.id/api/villages/{$kecId}.json")->json()['data'] ?? [];
             $desaName = collect($resDesa)->firstWhere('code', $desaId)['name'] ?? '';
 
@@ -117,7 +121,6 @@ class c_profile extends Controller
                 Kecamatan::updateOrCreate(['id' => $kecId], ['kabupatenId' => $kabId, 'namaKecamatan' => $kecName]);
                 Desa::updateOrCreate(['id' => $desaId], ['kecamatanId' => $kecId, 'namaDesa' => $desaName]);
 
-                // Sync Biteship Area ID
                 $this->syncBiteshipArea($desaId, $kecName);
             }
 
@@ -130,9 +133,8 @@ class c_profile extends Controller
     {
         try {
             $apiKey = config('services.biteship.key');
-            $baseUrl = config('services.biteship.url', 'https://api-sandbox.biteship.com/v1');
+            $baseUrl = $this->getBiteshipBaseUrl();
 
-            // Check if already in database
             $exists = DB::table('biteship_areas')->where('desaId', $desaId)->exists();
             if ($exists) return;
 
@@ -162,5 +164,116 @@ class c_profile extends Controller
         } catch (\Exception $e) {
             Log::error("Sync Biteship Area Gagal: " . $e->getMessage());
         }
+    }
+
+    public function syncBiteshipLocation(User $user)
+    {
+        if (!$user->desaId || !$user->detailAlamat) {
+            return;
+        }
+
+        $apiKey = config('services.biteship.key');
+        $baseUrl = $this->getBiteshipBaseUrl();
+
+        if (empty($apiKey)) {
+            Log::warning("Biteship API Key is empty. Skipping location sync.");
+            return;
+        }
+
+        $kecName = $user->kecamatan?->namaKecamatan ?? 'Patrang';
+        $postalCode = '68111';
+
+        try {
+            $response = Http::withToken($apiKey)
+                ->timeout(5)
+                ->get("$baseUrl/maps/areas", [
+                    'countries' => 'ID',
+                    'input' => $kecName,
+                    'type' => 'single'
+                ]);
+
+            if ($response->successful()) {
+                $areas = $response->json()['areas'] ?? [];
+                if (!empty($areas)) {
+                    $postalCode = $areas[0]['postal_code'] ?? '68111';
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning("Failed to fetch postal code from Biteship: " . $e->getMessage());
+        }
+
+        $lat = -8.1724;
+        $lng = 113.7005;
+
+        try {
+            $fullAddress = $user->alamatLengkap;
+            $geocodeQuery = urlencode($fullAddress);
+            $geoResponse = Http::withHeaders([
+                'User-Agent' => 'AgrisApp/1.0 (agrisagroindustri@gmail.com)'
+            ])->timeout(5)->get("https://nominatim.openstreetmap.org/search?q={$geocodeQuery}&format=json&limit=1");
+
+            if ($geoResponse->successful()) {
+                $geoData = $geoResponse->json();
+                if (!empty($geoData)) {
+                    $lat = floatval($geoData[0]['lat']);
+                    $lng = floatval($geoData[0]['lon']);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning("Geocoding failed, using fallback coordinates: " . $e->getMessage());
+        }
+
+        $type = $user->isAdmin ? 'origin' : 'destination';
+        $name = $user->isAdmin ? 'Alamat Penjemputan Admin' : 'Alamat Pengiriman Agen';
+
+        $payload = [
+            'name' => $name,
+            'contact_name' => $user->namaLengkap ?? ($user->isAdmin ? 'Admin Utama' : 'User AGRIS'),
+            'contact_phone' => $user->noTelp,
+            'address' => $user->alamatLengkap,
+            'postal_code' => strval($postalCode),
+            'latitude' => (double) $lat,
+            'longitude' => (double) $lng,
+            'type' => $type
+        ];
+
+        try {
+            if ($user->biteship_location_id) {
+
+                $response = Http::withToken($apiKey)
+                    ->timeout(10)
+                    ->patch("$baseUrl/locations/{$user->biteship_location_id}", $payload);
+
+                if ($response->successful()) {
+                    Log::info("Biteship Location Updated successfully: " . $user->biteship_location_id);
+                    return;
+                } else {
+                    $status = $response->status();
+                    Log::warning("Biteship Location Update failed with status {$status}. Retrying as new location. Response: " . $response->body());
+                }
+            }
+
+            $response = Http::withToken($apiKey)
+                ->timeout(10)
+                ->post("$baseUrl/locations", $payload);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $locationId = $data['id'] ?? null;
+                if ($locationId) {
+                    $user->update(['biteship_location_id' => $locationId]);
+                    Log::info("Biteship Location Created successfully: " . $locationId);
+                }
+            } else {
+                Log::error("Biteship Location Creation failed: " . $response->body());
+            }
+        } catch (\Exception $e) {
+            Log::error("Biteship Location Sync Exception: " . $e->getMessage());
+        }
+    }
+
+    private function getBiteshipBaseUrl()
+    {
+        return config('services.biteship.url') ?: 'https://api.biteship.com/v1';
     }
 }

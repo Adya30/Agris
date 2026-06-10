@@ -150,10 +150,26 @@
             const searchQuery = ref('');
             const unreadUsers = ref([]);
 
+            const parseDate = (t) => {
+                if (!t) return new Date();
+                if (t instanceof Date) return t;
+                if (typeof t === 'object' && t.date) {
+                    t = t.date;
+                }
+                if (typeof t !== 'string') return new Date();
+                let s = t.trim().replace(' ', 'T');
+                let d = new Date(s);
+                if (isNaN(d.getTime())) {
+                    d = new Date(t.replace(/-/g, '/'));
+                }
+                return isNaN(d.getTime()) ? new Date() : d;
+            };
+
             const groupedChats = computed(() => {
                 const groups = {};
                 chats.value.forEach(chat => {
-                    const date = new Date(chat.waktu_chat).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                    const d = parseDate(chat.waktu_chat);
+                    const date = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
                     if (!groups[date]) groups[date] = [];
                     groups[date].push(chat);
                 });
@@ -218,7 +234,7 @@
 
             const formatTime = (t) => {
                 if (!t) return 'Baru saja';
-                const d = new Date(t);
+                const d = parseDate(t);
                 return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
             };
 

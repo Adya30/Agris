@@ -51,7 +51,7 @@
 
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
         <?php $__empty_1 = true; $__currentLoopData = $produks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-        <div class="group bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col h-full relative">
+        <div id="product-card-<?php echo e($item->id); ?>" class="group bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col h-full relative">
             <a href="<?php echo e(route('agen.produk.show', $item->id)); ?>" class="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                 <?php if($item->fotoProduk): ?>
                     <img src="<?php echo e(asset('storage/' . $item->fotoProduk)); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="<?php echo e($item->namaProduk); ?>">
@@ -60,11 +60,9 @@
                         <i class="fa-solid fa-image text-4xl"></i>
                     </div>
                 <?php endif; ?>
-                <?php if($item->stok <= 0): ?>
-                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
-                        <span class="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Stok Habis</span>
-                    </div>
-                <?php endif; ?>
+                <div id="out-of-stock-badge-<?php echo e($item->id); ?>" class="absolute inset-0 bg-black/40 flex items-center justify-center z-10 <?php echo e($item->stok <= 0 ? '' : 'hidden'); ?>">
+                    <span class="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Stok Habis</span>
+                </div>
             </a>
 
             <div class="p-2.5 flex flex-col grow">
@@ -87,16 +85,15 @@
                             </div>
                             <span class="truncate font-medium text-gray-500">Tersedia</span>
                         </div>
-                        <span class="text-[10px] font-bold <?php echo e($item->stok > 5 ? 'text-gray-500' : 'text-orange-500'); ?> uppercase tracking-tight shrink-0">Stok: <?php echo e($item->stok); ?></span>
+                        <span id="product-stock-<?php echo e($item->id); ?>" class="text-[10px] font-bold <?php echo e($item->stok > 5 ? 'text-gray-500' : 'text-orange-500'); ?> uppercase tracking-tight shrink-0">Stok: <?php echo e($item->stok); ?></span>
                     </div>
 
                     <form class="add-to-cart-form">
                         <?php echo csrf_field(); ?>
                         <input type="hidden" name="produkId" value="<?php echo e($item->id); ?>">
                         <input type="hidden" name="jumlah" value="1">
-                        <button type="button" onclick="addToCart(this)" <?php echo e($item->stok <= 0 ? 'disabled' : ''); ?> class="w-full <?php echo e($item->stok <= 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#58CC02] hover:bg-[#46A302]'); ?> text-white py-2 rounded-xl transition font-bold text-xs flex items-center justify-center gap-2 shadow-sm">
-                            <i class="fa-solid fa-cart-plus"></i> <?php echo e($item->stok <= 0 ? 'Habis' : 'Tambah Pesanan'); ?>
-
+                        <button id="product-btn-<?php echo e($item->id); ?>" type="button" onclick="addToCart(this)" <?php echo e($item->stok <= 0 ? 'disabled' : ''); ?> class="w-full <?php echo e($item->stok <= 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#58CC02] hover:bg-[#46A302]'); ?> text-white py-2 rounded-xl transition font-bold text-xs flex items-center justify-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-cart-plus"></i> <span class="btn-text"><?php echo e($item->stok <= 0 ? 'Habis' : 'Tambah Pesanan'); ?></span>
                         </button>
                     </form>
                 </div>
@@ -211,6 +208,46 @@ function addToCart(btn) {
 
 document.getElementById('btnConfirmMitra').addEventListener('click', () => closeModal('modalAksesMitra'));
 document.getElementById('btnCancelMitra').addEventListener('click', () => closeModal('modalAksesMitra'));
+
+if (window.Echo) {
+    window.Echo.channel('produk-channel')
+        .listen('.ProdukUpdated', (e) => {
+            const prod = e.produk;
+            
+            const stockEl = document.getElementById(`product-stock-${prod.id}`);
+            if (stockEl) {
+                stockEl.textContent = `Stok: ${prod.stok}`;
+                if (prod.stok > 5) {
+                    stockEl.className = "text-[10px] font-bold text-gray-500 uppercase tracking-tight shrink-0";
+                } else {
+                    stockEl.className = "text-[10px] font-bold text-orange-500 uppercase tracking-tight shrink-0";
+                }
+            }
+            
+            const badgeEl = document.getElementById(`out-of-stock-badge-${prod.id}`);
+            if (badgeEl) {
+                if (prod.stok <= 0) {
+                    badgeEl.classList.remove('hidden');
+                } else {
+                    badgeEl.classList.add('hidden');
+                }
+            }
+            
+            const btnEl = document.getElementById(`product-btn-${prod.id}`);
+            if (btnEl) {
+                const textEl = btnEl.querySelector('.btn-text');
+                if (prod.stok <= 0) {
+                    btnEl.disabled = true;
+                    btnEl.className = "w-full bg-gray-300 cursor-not-allowed text-white py-2 rounded-xl transition font-bold text-xs flex items-center justify-center gap-2 shadow-sm";
+                    if (textEl) textEl.textContent = 'Habis';
+                } else {
+                    btnEl.disabled = false;
+                    btnEl.className = "w-full bg-[#58CC02] hover:bg-[#46A302] text-white py-2 rounded-xl transition font-bold text-xs flex items-center justify-center gap-2 shadow-sm";
+                    if (textEl) textEl.textContent = 'Tambah Pesanan';
+                }
+            }
+        });
+}
 </script>
 <?php $__env->stopSection(); ?>
 

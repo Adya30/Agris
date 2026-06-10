@@ -20,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'isUser'  => IsUser::class,
         ]);
 
+        $middleware->validateCsrfTokens(except: [
+            '/midtrans/callback',
+            '/biteship/webhook',
+        ]);
+
         $middleware->redirectTo(
             guests: '/login',
             users: function (Request $request) {

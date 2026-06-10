@@ -27,6 +27,7 @@ class User extends Authenticatable
         'isAdmin',
         'isActive',
         'desaId',
+        'biteship_location_id',
     ];
 
     protected $hidden = [

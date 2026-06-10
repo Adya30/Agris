@@ -10,6 +10,9 @@ use App\Http\Controllers\c_blog;
 use App\Http\Controllers\c_kemitraan;
 use App\Http\Controllers\c_chat;
 use App\Http\Controllers\c_pesanan;
+use App\Http\Controllers\c_laporan;
+use App\Http\Controllers\c_refund;
+use App\Http\Controllers\c_pembayaran;
 
 Route::get('/', function () {
     return view('guest.landing');
@@ -25,6 +28,10 @@ Route::get('/contact', function () {
 
 Route::get('/blog', [c_blog::class, 'indexGuest'])->name('guest.blog.index');
 Route::get('/blog/{id}', [c_blog::class, 'showGuest'])->name('guest.blog.show');
+
+// Public Tracking Page
+Route::get('/track', [c_pesanan::class, 'trackForm'])->name('guest.track');
+Route::post('/track/search', [c_pesanan::class, 'trackSearch'])->name('guest.track.search');
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
@@ -67,6 +74,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/produk/add-to-cart', [c_keranjang::class, 'tambah'])->name('agen.produk.add-to-cart');
         Route::post('/keranjang/tambah/{id}', [c_keranjang::class, 'tambahJumlah'])->name('agen.keranjang.tambah');
         Route::post('/keranjang/kurang/{id}', [c_keranjang::class, 'kurang'])->name('agen.keranjang.kurang');
+        Route::post('/keranjang/update/{id}', [c_keranjang::class, 'updateJumlah'])->name('agen.keranjang.update');
         Route::delete('/keranjang/{id}', [c_keranjang::class, 'destroy'])->name('agen.keranjang.destroy');
 
         Route::get('/blog', [c_blog::class, 'indexAgen'])->name('agen.blog.index');
@@ -85,6 +93,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/checkout/cek-ongkir', [c_pesanan::class, 'cekOngkir'])->name('agen.checkout.cek-ongkir');
         Route::get('/pesanan', [c_pesanan::class, 'index'])->name('agen.pesanan.index');
         Route::get('/pesanan/{id}', [c_pesanan::class, 'show'])->name('agen.pesanan.show');
+        Route::post('/pesanan/{id}/batal', [c_pesanan::class, 'cancelOrder'])->name('agen.pesanan.batal');
+        Route::post('/pesanan/{id}/bayar-simulasi', [c_pembayaran::class, 'bayarSimulasi'])->name('agen.pesanan.bayar-simulasi');
+        Route::post('/pesanan/{id}/batal-checkout', [c_pembayaran::class, 'batalCheckout'])->name('agen.pesanan.batal-checkout');
+        Route::post('/pesanan/{id}/cek-status', [c_pembayaran::class, 'cekStatus'])->name('agen.pesanan.cek-status');
+        Route::post('/pesanan/{id}/diterima', [c_pesanan::class, 'markDiterima'])->name('agen.pesanan.diterima');
+        Route::get('/pesanan/{id}/lacak', [c_pesanan::class, 'lacakPengiriman'])->name('agen.pesanan.lacak');
+
+        Route::post('/refund', [c_refund::class, 'store'])->name('agen.refund.store');
     });
 
     Route::prefix('admin')->middleware('isAdmin')->name('admin.')->group(function () {
@@ -109,6 +125,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/kemitraan/verify-mou/{id}', [c_kemitraan::class, 'verifyMou'])->name('kemitraan.verifyMou');
 
         Route::get('/chat', [c_chat::class, 'index'])->name('chat.index');
+
+        // Admin Pesanan Routes
+        Route::get('/pesanan', [c_pesanan::class, 'adminIndex'])->name('pesanan.index');
+        Route::get('/pesanan/{id}', [c_pesanan::class, 'adminShow'])->name('pesanan.show');
+        Route::post('/pesanan/{id}/action', [c_pesanan::class, 'adminAction'])->name('pesanan.action');
+        Route::get('/laporan', [c_laporan::class, 'index'])->name('laporan.index');
+
+        Route::get('/refund', [c_refund::class, 'adminIndex'])->name('refund.index');
+        Route::get('/refund/{id}', [c_refund::class, 'adminShow'])->name('refund.show');
+        Route::post('/refund/{id}/action', [c_refund::class, 'adminAction'])->name('refund.action');
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -120,3 +146,6 @@ Route::prefix('wilayah')->group(function () {
     Route::get('/kecamatan/{id}', [c_wilayah::class, 'getKecamatan'])->name('wilayah.kecamatan');
     Route::get('/desa/{id}', [c_wilayah::class, 'getDesa'])->name('wilayah.desa');
 });
+
+Route::post('/midtrans/callback', [c_pembayaran::class, 'paymentCallback'])->name('midtrans.callback');
+Route::post('/biteship/webhook', [c_pesanan::class, 'biteshipWebhook'])->name('biteship.webhook');

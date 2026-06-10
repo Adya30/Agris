@@ -82,8 +82,9 @@
                 $menus = [
                     ['name' => 'Produk', 'url' => route('admin.produk.index'), 'active' => 'admin/produk*', 'icon' => 'fa-seedling'],
                     ['name' => 'Kemitraan', 'url' => route('admin.kemitraan.index'), 'active' => 'admin/kemitraan*', 'icon' => 'fa-users'],
-                    ['name' => 'Transaksi', 'url' => '#', 'active' => 'admin/transaksi*', 'icon' => 'fa-wallet'],
-                    ['name' => 'Laporan', 'url' => '#', 'active' => 'admin/laporan*', 'icon' => 'fa-file-lines'],
+                    ['name' => 'Transaksi', 'url' => route('admin.pesanan.index'), 'active' => 'admin/pesanan*', 'icon' => 'fa-wallet'],
+                    ['name' => 'Refund', 'url' => route('admin.refund.index'), 'active' => 'admin/refund*', 'icon' => 'fa-rotate-left'],
+                    ['name' => 'Laporan', 'url' => route('admin.laporan.index'), 'active' => 'admin/laporan*', 'icon' => 'fa-file-lines'],
                     ['name' => 'Blog', 'url' => route('admin.blog.index'), 'active' => 'admin/blog*', 'icon' => 'fa-book-open'],
                 ];
             ?>

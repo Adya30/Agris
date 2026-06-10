@@ -102,4 +102,15 @@
         @endforeach
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.Echo) {
+            window.Echo.channel('kemitraan-status')
+                .listen('.KemitraanUpdated', (e) => {
+                    window.location.reload();
+                });
+        }
+    });
+</script>
 @endsection

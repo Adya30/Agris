@@ -78,7 +78,8 @@
                 @php $navs =
                 [['agen.blog.*', 'Blog', route('agen.blog.index')],
                 ['agen.produk.*', 'Produk', route('agen.produk.index')],
-                ['agen.pesanan.*', 'Transaksi', route('agen.pesanan.index')], ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]];
+                ['agen.pesanan.*', 'Transaksi', route('agen.pesanan.index')],
+                ['kemitraan.*', 'Kemitraan', route('kemitraan.index')]];
                 @endphp
                 @foreach($navs as $nav)
                     <a href="{{ $nav[2] }}" class="hover:text-white transition-all py-1 border-b-2 {{ $nav[0] && Route::is($nav[0]) ? 'border-white' : 'border-transparent' }} hover:border-white">
