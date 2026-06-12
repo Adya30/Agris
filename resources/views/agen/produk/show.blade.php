@@ -182,21 +182,19 @@ if (window.Echo) {
             const prod = e.produk;
             if (prod.id == "{{ $item->id }}") {
                 maxStok = parseInt(prod.stok);
-                
-                // Update stock count display
+
                 const stockEl = document.getElementById('detail-stock-count');
                 if (stockEl) {
                     const valEl = stockEl.querySelector('.stock-val');
                     if (valEl) valEl.textContent = maxStok;
-                    
+
                     if (maxStok > 0) {
                         stockEl.className = "text-lg font-black text-gray-800";
                     } else {
                         stockEl.className = "text-lg font-black text-red-500";
                     }
                 }
-                
-                // Update qty input max
+
                 if (qtyInput) {
                     qtyInput.max = maxStok;
                     if (parseInt(qtyInput.value) > maxStok) {
@@ -204,8 +202,7 @@ if (window.Echo) {
                         syncJumlah();
                     }
                 }
-                
-                // Toggle qty control container visibility
+
                 const controlContainer = document.getElementById('qty-control-container');
                 if (controlContainer) {
                     if (maxStok > 0) {
@@ -214,8 +211,7 @@ if (window.Echo) {
                         controlContainer.classList.add('hidden');
                     }
                 }
-                
-                // Update Add to Cart button state
+
                 const btnAddCart = document.getElementById('btn-add-cart');
                 if (btnAddCart) {
                     if (maxStok <= 0) {

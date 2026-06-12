@@ -8,13 +8,13 @@
         </div>
 
         <div class="flex-1 max-w-xl px-7 hidden md:block">
-            <div class="relative flex items-center bg-green-600/70 rounded-full p-1 shadow-inner border border-white/10">
-                <input type="text" id="navSearchInput" placeholder="Search...."
+            <form action="<?php echo e(route('admin.produk.index')); ?>" method="GET" class="relative flex items-center bg-green-600/70 rounded-full p-1 shadow-inner border border-white/10">
+                <input type="text" name="search" value="<?php echo e(request()->routeIs('admin.produk.*') ? request('search') : ''); ?>" placeholder="Cari Produk...."
                     class="w-full bg-white/90 rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none border-none placeholder-gray-400">
-                <button type="button" id="navSearchBtn" class="px-4 text-white hover:scale-110 transition-transform">
+                <button type="submit" class="px-4 text-white hover:scale-110 transition-transform">
                     <i class="fa-solid fa-magnifying-glass text-lg"></i>
                 </button>
-            </div>
+            </form>
         </div>
 
         <div class="flex items-center gap-2 md:gap-4">
@@ -209,18 +209,7 @@
             if (typeof closeModal === 'function') closeModal('logoutModal');
         });
 
-        const searchInput = document.getElementById('navSearchInput');
-        const searchBtn = document.getElementById('navSearchBtn');
 
-        function performNav() {
-            if(!searchInput) return;
-            const query = searchInput.value.toLowerCase().trim();
-            if (!query) return;
-            window.location.href = "<?php echo e(route('admin.produk.index')); ?>?search=" + encodeURIComponent(query);
-        }
-
-        if (searchInput) searchInput.addEventListener('keypress', (e) => e.key === 'Enter' && performNav());
-        if (searchBtn) searchBtn.addEventListener('click', performNav);
     });
 </script>
 <?php /**PATH D:\project\Agris\resources\views/components/topbar-admin.blade.php ENDPATH**/ ?>

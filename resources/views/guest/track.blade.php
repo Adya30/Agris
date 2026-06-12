@@ -6,7 +6,6 @@
 
 <x-navbar/>
 
-<!-- Hero Section -->
 <section class="relative min-h-[70vh] flex items-center overflow-hidden pt-20 pb-16">
     <div class="absolute inset-0 z-0">
         <img src="{{ asset('images/hero.jpg') }}" class="w-full h-full object-cover" alt="Background">
@@ -26,7 +25,6 @@
             Masukkan ID Pesanan Anda untuk melacak status pengiriman secara real-time melalui integrasi Biteship.
         </p>
 
-        <!-- Search Form -->
         <form id="trackForm" class="max-w-2xl mx-auto">
             <div class="relative flex flex-col sm:flex-row gap-3">
                 <div class="relative flex-1">
@@ -56,10 +54,9 @@
     </div>
 </section>
 
-<!-- Result Section -->
 <section id="resultSection" class="hidden py-12 px-6 bg-gray-50 min-h-[50vh]">
     <div class="max-w-4xl mx-auto">
-        <!-- Error State -->
+
         <div id="errorState" class="hidden">
             <div class="bg-white rounded-3xl border border-red-100 shadow-sm p-8 text-center">
                 <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -70,9 +67,8 @@
             </div>
         </div>
 
-        <!-- Success State -->
         <div id="successState" class="hidden space-y-6">
-            <!-- Order Header -->
+
             <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-gray-100">
                     <div>
@@ -92,7 +88,6 @@
                     </div>
                 </div>
 
-                <!-- Info Pengiriman Section -->
                 <div class="flex items-center gap-3 mb-4 pb-3 border-b border-gray-100">
                     <div class="w-9 h-9 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
                         <i class="fa-solid fa-truck-fast text-base"></i>
@@ -105,14 +100,12 @@
                 <div id="shippingInfoGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 </div>
 
-                <!-- Alamat -->
                 <div class="mt-4 bg-gray-50 rounded-2xl p-4 border border-gray-100">
                     <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Alamat Pengiriman</div>
                     <p id="alamatPengiriman" class="text-sm text-gray-700 font-medium leading-relaxed"></p>
                 </div>
             </div>
 
-            <!-- Tracking Timeline -->
             <div id="trackingTimelineCard" class="hidden bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-gray-100">
                     <div class="flex items-center gap-3">
@@ -130,7 +123,6 @@
                 </div>
             </div>
 
-            <!-- Order Items -->
             <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8">
                 <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
                     <div class="w-9 h-9 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
@@ -149,7 +141,6 @@
     </div>
 </section>
 
-<!-- Info Section -->
 <section class="py-16 px-6 bg-white">
     <div class="max-w-5xl mx-auto">
         <div class="text-center max-w-2xl mx-auto mb-12">
@@ -196,7 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorState = document.getElementById('errorState');
     const successState = document.getElementById('successState');
 
-    // Check URL params for auto-search
     const urlParams = new URLSearchParams(window.location.search);
     const queryParam = urlParams.get('q');
     if (queryParam) {
@@ -212,13 +202,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function doSearch(query) {
-        // Loading state
+
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mencari...';
         btn.classList.add('opacity-70');
         input.disabled = true;
 
-        // Show result section
         resultSection.classList.remove('hidden');
         errorState.classList.add('hidden');
         successState.classList.add('hidden');
@@ -249,7 +238,6 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.classList.remove('opacity-70');
             input.disabled = false;
 
-            // Scroll to result
             resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     }
@@ -264,11 +252,9 @@ document.addEventListener('DOMContentLoaded', function() {
         errorState.classList.add('hidden');
         successState.classList.remove('hidden');
 
-        // Order ID
         document.getElementById('orderId').textContent = data.order_id;
         document.getElementById('orderDate').textContent = data.tanggal_pesanan + ' WIB';
 
-        // Status badge
         const badge = document.getElementById('statusBadge');
         const colorMap = {
             amber: 'bg-amber-50 text-amber-600 border border-amber-100',
@@ -282,11 +268,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('statusIcon').className = 'fa-solid ' + data.status_icon;
         document.getElementById('statusLabel').textContent = data.status_label;
 
-        // Shipping info grid
         const grid = document.getElementById('shippingInfoGrid');
         grid.innerHTML = '';
 
-        // Helper to create info card
         function addInfoCard(label, value, icon, extraHtml) {
             const card = document.createElement('div');
             card.className = 'bg-gray-50 rounded-2xl p-4 border border-gray-100';
@@ -303,7 +287,6 @@ document.addEventListener('DOMContentLoaded', function() {
             grid.appendChild(card);
         }
 
-        // Kurir Pengiriman
         if (data.courier_info) {
             addInfoCard('Kurir Pengiriman', data.courier_info.toUpperCase(), 'fa-truck');
         } else if (data.is_pickup) {
@@ -312,7 +295,6 @@ document.addEventListener('DOMContentLoaded', function() {
             addInfoCard('Kurir Pengiriman', 'Belum ditentukan', 'fa-truck');
         }
 
-        // Nomor Resi
         if (data.no_resi) {
             currentResi = data.no_resi;
             addInfoCard('Nomor Resi', data.no_resi, 'fa-barcode',
@@ -327,20 +309,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Metode Pengiriman
         if (data.is_pickup) {
             addInfoCard('Tipe', 'Pengambilan Mandiri', 'fa-store');
         } else if (data.courier_info) {
             addInfoCard('Tipe', 'Pengiriman Kurir', 'fa-route');
         }
 
-        // Tanggal Pesanan
         addInfoCard('Tanggal Pesanan', data.tanggal_pesanan + ' WIB', 'fa-calendar');
 
-        // Alamat
         document.getElementById('alamatPengiriman').textContent = data.alamat_pengiriman;
 
-        // Biteship track button
         const biteshipBtnContainer = document.getElementById('biteshipTrackButtonContainer');
         biteshipBtnContainer.innerHTML = '';
         const trackId = data.biteship_order_id || data.no_resi;
@@ -352,7 +330,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
 
-        // Tracking timeline
         const timelineCard = document.getElementById('trackingTimelineCard');
         const timeline = document.getElementById('trackingTimeline');
 
@@ -395,13 +372,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 timeline.appendChild(div);
             });
         } else {
-            // Show order status steps instead
+
             timelineCard.classList.remove('hidden');
             timeline.innerHTML = '';
             renderOrderSteps(timeline, data);
         }
 
-        // Items
         const itemsContainer = document.getElementById('orderItems');
         itemsContainer.innerHTML = '';
         data.items.forEach(item => {
@@ -425,7 +401,6 @@ document.addEventListener('DOMContentLoaded', function() {
             itemsContainer.appendChild(div);
         });
 
-        // Total
         document.getElementById('orderTotal').textContent = 'Rp ' + formatRupiah(data.total);
     }
 

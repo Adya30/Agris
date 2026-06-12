@@ -8,7 +8,6 @@
 
     <div class="bg-white w-full max-w-md p-8 rounded-lg shadow relative">
 
-
         <h2 class="text-2xl font-bold text-center mb-6">
             Lupa Password
         </h2>

@@ -335,10 +335,10 @@ function triggerUpdateInput(input, id) {
 
     fetch(`/agen/keranjang/update/${id}`, {
         method: 'POST',
-        headers: { 
+        headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken, 
-            'X-Requested-With': 'XMLHttpRequest' 
+            'X-CSRF-TOKEN': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify({ jumlah: val })
     })

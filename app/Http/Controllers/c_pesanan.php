@@ -807,7 +807,7 @@ class c_pesanan extends Controller
                             'description' => $detail->produk ? ($detail->produk->deskripsi ?: 'Produk Agroindustri AGRIS') : 'Produk Agroindustri AGRIS',
                             'value' => $itemValue,
                             'quantity' => (int) $detail->jumlahPesanan,
-                            'weight' => (int) max(1, $weightKg * $detail->jumlahPesanan * 1000),
+                            'weight' => (int) max(1, $weightKg * 1000),
                             'height' => 0,
                             'length' => 0,
                             'width' => 0,
@@ -848,10 +848,15 @@ class c_pesanan extends Controller
                             $biteshipOrderId = $responseData['id'] ?? null;
                             Log::info('Biteship Order Created. ID: '.($biteshipOrderId ?? 'N/A').', Resi: '.$noResi);
                         } else {
+                            $errorMsg = $response->json()['error'] ?? 'Gagal membuat pesanan di Biteship.';
                             Log::error('Biteship Order Creation Failed: '.$response->body());
+                            DB::rollBack();
+                            return redirect()->back()->with('error', 'Gagal membuat pesanan Biteship: ' . $errorMsg);
                         }
                     } catch (\Exception $e) {
                         Log::error('Biteship Order Creation Exception: '.$e->getMessage());
+                        DB::rollBack();
+                        return redirect()->back()->with('error', 'Gagal menghubungi server Biteship: ' . $e->getMessage());
                     }
                 }
 
@@ -1088,6 +1093,14 @@ class c_pesanan extends Controller
             return null;
         }
 
+        $cacheKey = "biteship_tracking_{$biteshipOrderId}";
+        if (Cache::has($cacheKey)) {
+            $cached = Cache::get($cacheKey);
+            if ($cached !== null) {
+                return $cached;
+            }
+        }
+
         try {
             $apiKey = config('services.biteship.key');
             $baseUrl = $this->getBiteshipBaseUrl();
@@ -1099,10 +1112,13 @@ class c_pesanan extends Controller
             if ($response->successful()) {
                 $orderData = $response->json();
 
-                return [
+                $data = [
                     'status' => $orderData['status'] ?? null,
                     'history' => $orderData['courier']['history'] ?? [],
                 ];
+                Cache::put($cacheKey, $data, now()->addSeconds(30));
+
+                return $data;
             }
         } catch (\Exception $e) {
             Log::error('Biteship Tracking API Error: '.$e->getMessage());
@@ -1120,13 +1136,15 @@ class c_pesanan extends Controller
             $biteshipOrderId = $request->input('order_id');
             $status = $request->input('status');
 
+            // Invalidate the cache when a webhook is received, so that subsequent calls get fresh data from Biteship
+            Cache::forget("biteship_tracking_{$biteshipOrderId}");
+
             $pesanan = Pesanan::where('deskripsi', 'LIKE', "%Biteship Order ID: {$biteshipOrderId}%")->first();
 
             if ($pesanan) {
                 if ($status === 'delivered') {
                     if ($pesanan->status_pesanan !== 'selesai') {
                         $pesanan->update(['status_pesanan' => 'selesai']);
-                        event(new OrderStatusUpdated($pesanan));
                         Log::info("Biteship Webhook: Order {$pesanan->id} marked as selesai.");
                     }
                 } else {
@@ -1140,11 +1158,14 @@ class c_pesanan extends Controller
                     if (in_array($status, $shippingStatuses)) {
                         if ($pesanan->status_pesanan === 'diproses') {
                             $pesanan->update(['status_pesanan' => 'dikirim']);
-                            event(new OrderStatusUpdated($pesanan));
                             Log::info("Biteship Webhook: Order {$pesanan->id} marked as dikirim.");
                         }
                     }
                 }
+
+                // ALWAYS broadcast the update event so the frontend (both index and show) updates in real-time!
+                event(new OrderStatusUpdated($pesanan));
+                Log::info("Biteship Webhook: Order {$pesanan->id} status updated to {$status}. Broadcasted OrderStatusUpdated event.");
             }
         }
 

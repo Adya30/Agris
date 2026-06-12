@@ -114,9 +114,13 @@
                     </div>
 
                     <div class="flex items-center gap-3">
-                        @if($refund->foto_bukti)
+                        @if($refund->foto_bukti && $refund->foto_bukti !== 'refunds/cancel_order.png' && file_exists(public_path('storage/' . $refund->foto_bukti)))
                             <div class="w-12 h-12 rounded-xl overflow-hidden border border-gray-150 shrink-0">
                                 <img src="{{ asset('storage/' . $refund->foto_bukti) }}" class="w-full h-full object-cover">
+                            </div>
+                        @else
+                            <div class="w-12 h-12 rounded-xl bg-gray-50 border border-gray-150 flex items-center justify-center shrink-0">
+                                <span class="text-[8px] font-black text-gray-400 text-center uppercase tracking-tighter leading-none px-1">Tanpa<br>Foto</span>
                             </div>
                         @endif
                         <div class="min-w-0">

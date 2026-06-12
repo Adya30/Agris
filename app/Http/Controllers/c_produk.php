@@ -14,7 +14,13 @@ class c_produk extends Controller
         $query = Produk::with('kategori');
 
         if ($request->search) {
-            $query->where('namaProduk', 'like', '%' . $request->search . '%');
+            $keyword = '%' . $request->search . '%';
+            $query->where(function ($q) use ($keyword) {
+                $q->where('namaProduk', 'like', $keyword)
+                  ->orWhereHas('kategori', fn($k) => $k->where('jenisKategori', 'like', $keyword)
+                      ->orWhere('mutu', 'like', $keyword)
+                      ->orWhere('karung', 'like', $keyword));
+            });
         }
 
         if ($request->jenis) {
@@ -54,6 +60,16 @@ class c_produk extends Controller
     public function index(Request $request)
     {
         $query = Produk::with('kategori');
+
+        if ($request->search) {
+            $keyword = '%' . $request->search . '%';
+            $query->where(function ($q) use ($keyword) {
+                $q->where('namaProduk', 'like', $keyword)
+                  ->orWhereHas('kategori', fn($k) => $k->where('jenisKategori', 'like', $keyword)
+                      ->orWhere('mutu', 'like', $keyword)
+                      ->orWhere('karung', 'like', $keyword));
+            });
+        }
 
         if ($request->jenis) {
             $query->whereHas('kategori', fn($q) => $q->where('jenisKategori', $request->jenis));

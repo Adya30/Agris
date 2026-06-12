@@ -100,7 +100,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/pesanan/{id}/diterima', [c_pesanan::class, 'markDiterima'])->name('agen.pesanan.diterima');
         Route::get('/pesanan/{id}/lacak', [c_pesanan::class, 'lacakPengiriman'])->name('agen.pesanan.lacak');
 
+        Route::get('/refund/create', [c_refund::class, 'create'])->name('agen.refund.create');
         Route::post('/refund', [c_refund::class, 'store'])->name('agen.refund.store');
+
     });
 
     Route::prefix('admin')->middleware('isAdmin')->name('admin.')->group(function () {

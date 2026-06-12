@@ -13,6 +13,9 @@
 
     <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 mb-8">
         <form action="{{ route('agen.produk.index') }}" method="GET" class="flex flex-col md:flex-row items-end gap-4">
+            @if(request('search'))
+                <input type="hidden" name="search" value="{{ request('search') }}">
+            @endif
             <div class="w-full md:flex-1">
                 <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Jenis</label>
                 <select name="jenis" class="w-full px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50 outline-none focus:ring-2 focus:ring-[#58CC02] text-sm cursor-pointer appearance-none">
@@ -195,7 +198,7 @@ if (window.Echo) {
     window.Echo.channel('produk-channel')
         .listen('.ProdukUpdated', (e) => {
             const prod = e.produk;
-            
+
             const stockEl = document.getElementById(`product-stock-${prod.id}`);
             if (stockEl) {
                 stockEl.textContent = `Stok: ${prod.stok}`;
@@ -205,7 +208,7 @@ if (window.Echo) {
                     stockEl.className = "text-[10px] font-bold text-orange-500 uppercase tracking-tight shrink-0";
                 }
             }
-            
+
             const badgeEl = document.getElementById(`out-of-stock-badge-${prod.id}`);
             if (badgeEl) {
                 if (prod.stok <= 0) {
@@ -214,7 +217,7 @@ if (window.Echo) {
                     badgeEl.classList.add('hidden');
                 }
             }
-            
+
             const btnEl = document.getElementById(`product-btn-${prod.id}`);
             if (btnEl) {
                 const textEl = btnEl.querySelector('.btn-text');

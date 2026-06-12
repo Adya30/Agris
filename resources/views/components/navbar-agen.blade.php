@@ -15,7 +15,7 @@
 
             <div class="flex-1 max-w-xl hidden md:block px-4">
                 <form action="{{ route('agen.produk.index') }}" method="GET" class="relative flex items-center bg-green-600/40 rounded-full p-1 border border-white/10 group">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Produk...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none placeholder-gray-400 transition-all">
+                    <input type="text" name="search" value="{{ request()->routeIs('agen.produk.*') ? request('search') : '' }}" placeholder="Cari Produk...." class="w-full bg-white rounded-full py-2 px-5 text-sm text-gray-700 focus:outline-none placeholder-gray-400 transition-all">
                     <button type="submit" class="px-4 text-white hover:scale-110 transition-transform">
                         <i class="fa-solid fa-magnifying-glass text-base"></i>
                     </button>
@@ -101,6 +101,11 @@
                     <a href="{{ route('agen.profile') }}" class="text-sm font-bold text-[#0f8629] hover:underline">Profil</a>
                 </div>
             </div>
+
+            <form action="{{ route('agen.produk.index') }}" method="GET" class="flex items-center gap-2 bg-gray-100 rounded-xl px-4 py-2.5 border border-gray-200">
+                <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i>
+                <input type="text" name="search" value="{{ request()->routeIs('agen.produk.*') ? request('search') : '' }}" placeholder="Cari Produk...." class="flex-1 bg-transparent text-sm text-gray-700 focus:outline-none placeholder-gray-400">
+            </form>
 
             <div class="grid grid-cols-1 gap-2">
                 <a href="{{ route('agen.blog.index') }}" class="flex items-center py-3 px-4 rounded-xl {{ Route::is('agen.blog.*') ? 'bg-green-50 text-[#0f8629]' : 'text-gray-700 hover:bg-gray-50' }} font-bold">

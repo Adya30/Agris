@@ -6,7 +6,7 @@
 <script src="{{ config('services.midtrans.is_production', false) ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ $midtransClientKey }}"></script>
 
 <div class="max-w-6xl mx-auto pt-6 pb-20 px-4 sm:px-6">
-    
+
     <div class="mb-10 text-center sm:text-left flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
             <a href="{{ route('agen.keranjang.index') }}" class="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-400 hover:text-[#58CC02] transition-colors uppercase tracking-widest mb-3">
@@ -109,7 +109,7 @@
 
                     <div class="space-y-3">
                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Pilihan Layanan Ekspedisi</label>
-                        
+
                         <div id="shipping-loading" class="flex flex-col items-center justify-center py-10 text-slate-400 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
                             <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-[#58CC02]"></i>
                             <span class="text-xs font-bold">Menghubungkan Biteship API untuk memuat tarif terbaik...</span>
@@ -123,7 +123,7 @@
                         <select id="shipping_service" class="hidden">
                             <option value="">-- Pilih Kurir --</option>
                         </select>
- 
+
                         <div id="courier_cards_container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
                         </div>
                     </div>
@@ -143,7 +143,6 @@
                 </div>
             </div>
 
-            <!-- 2. PILIHAN METODE PEMBAYARAN -->
             <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm">
                 <div class="flex items-center gap-3.5 mb-8 pb-4 border-b border-slate-100">
                     <div class="w-10 h-10 rounded-2xl bg-[#58CC02]/10 flex items-center justify-center shrink-0">
@@ -159,7 +158,7 @@
                     <div class="absolute -right-8 -bottom-8 w-24 h-24 text-green-200/20 pointer-events-none">
                         <i class="fa-solid fa-shield-halved text-7xl"></i>
                     </div>
-                    
+
                     <div class="grow flex items-center gap-4 relative z-10">
                         <div class="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-xs shrink-0 font-extrabold text-[#0f8629]">
                             <i class="fa-solid fa-shield-halved text-2xl text-[#58CC02]"></i>
@@ -231,7 +230,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const loadingEl = document.getElementById('shipping-loading');
     const errorEl = document.getElementById('shipping-error');
     const cardsContainer = document.getElementById('courier_cards_container');
-    
+
     const shippingDisplay = document.getElementById('shipping-cost-display');
     const totalDisplay = document.getElementById('total-payment-display');
     const btnSubmit = document.getElementById('btnSubmitOrder');
@@ -313,16 +312,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                             </div>
                         </div>
                     `;
-                    
+
                     card.addEventListener('click', function() {
                         document.querySelectorAll('.courier-card').forEach(c => {
                             c.className = "courier-card relative flex flex-col p-5 rounded-2xl border-2 border-slate-100 bg-white cursor-pointer transition-all duration-300 hover:border-slate-300 hover:-translate-y-0.5 hover:shadow-xs";
                             c.querySelector('.select-check-icon').classList.add('hidden');
                         });
-                        
+
                         card.className = "courier-card relative flex flex-col p-5 rounded-2xl border-2 border-[#58CC02] bg-[#58CC02]/5 scale-[1.02] shadow-xs cursor-pointer transition-all duration-300";
                         card.querySelector('.select-check-icon').classList.remove('hidden');
-                        
+
                         selectedRateIndex = index;
                         const cost = rate.price;
                         const total = itemTotal + cost;
@@ -367,22 +366,22 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (type === 'kirim') {
                 cardKirim.className = "relative flex flex-col p-5 rounded-2xl border-2 border-[#58CC02] bg-[#58CC02]/5 cursor-pointer transition-all duration-300 shadow-xs hover:shadow-sm";
                 cardAmvil.className = "relative flex flex-col p-5 rounded-2xl border-2 border-slate-100 cursor-pointer transition-all duration-300 hover:border-slate-300 hover:shadow-sm";
-                
+
                 addressSection.classList.remove('hidden');
                 pickupSection.classList.add('hidden');
                 selectedRateIndex = null;
-                
+
                 await loadShippingRates();
             } else {
                 cardAmvil.className = "relative flex flex-col p-5 rounded-2xl border-2 border-[#58CC02] bg-[#58CC02]/5 cursor-pointer transition-all duration-300 shadow-xs hover:shadow-sm";
                 cardKirim.className = "relative flex flex-col p-5 rounded-2xl border-2 border-slate-100 cursor-pointer transition-all duration-300 hover:border-slate-300 hover:shadow-sm";
-                
+
                 addressSection.classList.add('hidden');
                 pickupSection.classList.remove('hidden');
-                
+
                 shippingDisplay.textContent = 'Rp 0';
                 totalDisplay.textContent = 'Rp ' + itemTotal.toLocaleString('id-ID');
-                
+
                 hiddenCourier.value = "Ambil di Tempat";
                 hiddenService.value = "Ambil Sendiri";
                 hiddenCost.value = "0";
@@ -507,11 +506,11 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 </script>
 
-<x-modal id="generalErrorModal" 
-         title="Kesalahan Sistem" 
-         message="Terjadi kesalahan jaringan atau konfigurasi Midtrans key belum valid." 
-         confirmText="Tutup" 
-         cancelText="Batal" 
-         confirmId="btnCloseErrorModal" 
+<x-modal id="generalErrorModal"
+         title="Kesalahan Sistem"
+         message="Terjadi kesalahan jaringan atau konfigurasi Midtrans key belum valid."
+         confirmText="Tutup"
+         cancelText="Batal"
+         confirmId="btnCloseErrorModal"
          cancelId="btnCloseErrorModal2" />
 @endsection

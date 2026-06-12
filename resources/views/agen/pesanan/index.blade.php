@@ -22,7 +22,8 @@
         </a>
     </div>
 
-    @if($activeTab === 'transaksi')
+    <div id="orders-list-container">
+        @if($activeTab === 'transaksi')
         @php $activeStatus = $status ?? 'all'; @endphp
         <div class="flex overflow-x-auto bg-white rounded-2xl border border-gray-200 p-1 mb-8 shadow-sm scrollbar-none">
             <a href="{{ route('agen.pesanan.index', ['tab' => 'transaksi', 'status' => 'all']) }}" class="flex-1 text-center py-3 px-4 rounded-xl text-xs font-black transition-all whitespace-nowrap {{ $activeStatus === 'all' ? 'bg-[#58CC02] text-white shadow-sm' : 'text-gray-500 hover:text-gray-800' }}">
@@ -294,5 +295,39 @@
             @endif
         @endif
     @endif
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const activeOrderIds = @json(
+            $activeTab === 'keuangan' && ($subTab ?? 'selesai') === 'refund'
+                ? (collect($refunds)->pluck('pesananId')->unique()->values()->all() ?? [])
+                : ($pesanans->pluck('id')->all() ?? [])
+        );
+
+        if (window.Echo && activeOrderIds.length > 0) {
+            activeOrderIds.forEach(orderId => {
+                window.Echo.channel('order.' + orderId)
+                    .listen('.OrderStatusUpdated', (e) => {
+                        console.log('Order status updated via Reverb on agent index page for order #' + orderId, e);
+                        
+                        // Fetch the current page content and update the list without refreshing the page
+                        fetch(window.location.href)
+                            .then(response => response.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const newContainer = doc.getElementById('orders-list-container');
+                                const oldContainer = document.getElementById('orders-list-container');
+                                if (newContainer && oldContainer) {
+                                    oldContainer.innerHTML = newContainer.innerHTML;
+                                }
+                            })
+                            .catch(err => console.error('Error fetching updated orders list:', err));
+                    });
+            });
+        }
+    });
+</script>
 @endsection

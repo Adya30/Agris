@@ -10,9 +10,32 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class c_refund extends Controller
 {
+    public function create(Request $request)
+    {
+        $pesanan = Pesanan::where('userId', Auth::id())
+            ->where('status_pesanan', 'selesai')
+            ->with('detailPesanans.produk')
+            ->findOrFail($request->input('pesananId'));
+
+        $detail = $pesanan->detailPesanans->firstWhere('id', $request->input('detailPesananId'));
+
+        if (! $detail) {
+            abort(404, 'Item pesanan tidak ditemukan.');
+        }
+
+        // Jumlah refund bebas, berdasarkan jumlah satuan produk yang dibeli
+        $maxQty = $detail->jumlahPesanan;
+
+        $existingRefunds = Refund::where('detailPesananId', $detail->id)->get();
+
+        return view('agen.refund.create', compact('pesanan', 'detail', 'maxQty', 'existingRefunds'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -30,14 +53,9 @@ class c_refund extends Controller
         $detail = DetailPesanan::where('pesananId', $pesanan->id)
             ->findOrFail($request->detailPesananId);
 
-        $refundedQty = Refund::where('detailPesananId', $detail->id)
-            ->whereIn('status', ['pending', 'disetujui'])
-            ->sum('jumlah');
-
-        $maxQty = $detail->jumlahPesanan - $refundedQty;
-
-        if ($request->jumlah > $maxQty) {
-            return back()->withErrors(['jumlah' => 'Jumlah barang yang diajukan refund melebihi batas pembelian.'])->withInput();
+        // Batas jumlah refund = total unit yang dibeli, tanpa memperhitungkan refund sebelumnya
+        if ($request->jumlah > $detail->jumlahPesanan) {
+            return back()->withErrors(['jumlah' => 'Jumlah tidak boleh melebihi jumlah produk yang dibeli (' . $detail->jumlahPesanan . ' unit).'])->withInput();
         }
 
         $fotoPath = $request->file('foto_bukti')->store('refunds', 'public');
@@ -90,14 +108,107 @@ class c_refund extends Controller
             return back()->with('error', 'Pengajuan refund sudah diproses sebelumnya.');
         }
 
-        DB::transaction(function () use ($request, $refund) {
+        $pembayaran = Pembayaran::where('pesananId', $refund->pesananId)->first();
+        $forceLocal = $request->input('force_local') === '1';
+
+        if ($request->action === 'setuju') {
+            $serverKey = config('services.midtrans.server_key');
+            $isProduction = config('services.midtrans.is_production', false);
+
+            $isRealMidtrans = $pembayaran
+                && $pembayaran->paymentType !== 'simulasi_midtrans'
+                && !empty($serverKey)
+                && !$forceLocal;
+
+            if ($isRealMidtrans) {
+                $transactionOrOrderId = $pembayaran->transactionId ?? $refund->pesananId;
+
+                // Determine exact payment type from Midtrans if it is still generic
+                $paymentType = $pembayaran->paymentType;
+                if (empty($paymentType) || $paymentType === 'midtrans_snap') {
+                    $statusUrl = $isProduction
+                        ? "https://api.midtrans.com/v2/{$transactionOrOrderId}/status"
+                        : "https://api.sandbox.midtrans.com/v2/{$transactionOrOrderId}/status";
+                    try {
+                        $statusResponse = Http::withBasicAuth($serverKey, '')
+                            ->timeout(10)
+                            ->get($statusUrl);
+                        if ($statusResponse->successful()) {
+                            $statusData = $statusResponse->json();
+                            $paymentType = $statusData['payment_type'] ?? $paymentType;
+                            $pembayaran->update(['paymentType' => $paymentType]);
+                        }
+                    } catch (\Exception $e) {
+                        Log::error("Midtrans Status Check during Refund failed: " . $e->getMessage());
+                    }
+                }
+
+                // Check if payment method is unsupported for online API refund
+                $unsupportedPaymentTypes = ['bank_transfer', 'echannel', 'cstore'];
+                $isUnsupportedType = in_array($paymentType, $unsupportedPaymentTypes);
+
+                if ($isUnsupportedType) {
+                    $methodName = str_replace('_', ' ', $paymentType);
+                    $warningMessage = 'Refund disetujui secara lokal. Karena pembayaran menggunakan ' . strtoupper($methodName) . ' yang tidak mendukung refund otomatis, harap lakukan transfer manual ke rekening agen.';
+
+                    DB::transaction(function () use ($request, $refund, $pembayaran, $paymentType) {
+                        $refund->update([
+                            'status' => 'disetujui',
+                            'catatan_admin' => $request->catatan_admin . "\n(Catatan: Refund diproses manual karena metode pembayaran " . strtoupper(str_replace('_', ' ', $paymentType)) . " tidak didukung oleh refund otomatis Midtrans)",
+                        ]);
+
+                        if ($pembayaran) {
+                            $pembayaran->update([
+                                'jumlahRefund' => ($pembayaran->jumlahRefund ?? 0) + $refund->nominal,
+                            ]);
+                        }
+                    });
+
+                    return redirect()->route('admin.pesanan.index', ['tab' => 'refund'])->with('success', $warningMessage);
+                }
+
+                $baseUrl = $isProduction
+                    ? 'https://api.midtrans.com'
+                    : 'https://api.sandbox.midtrans.com';
+                $refundUrl = "{$baseUrl}/v2/{$transactionOrOrderId}/refund";
+
+                try {
+                    $response = Http::withBasicAuth($serverKey, '')
+                        ->timeout(12)
+                        ->post($refundUrl, [
+                            'refund_key' => 'REF-' . $refund->id,
+                            'amount' => (int) $refund->nominal,
+                            'reason' => $refund->alasan ?? 'Refund disetujui oleh admin',
+                        ]);
+
+                    $resData = $response->json();
+                    $statusCode = $resData['status_code'] ?? null;
+
+                    if (!$response->successful() || ($statusCode && !str_starts_with($statusCode, '2'))) {
+                        $msg = $resData['status_message'] ?? 'Terjadi kesalahan pada server Midtrans.';
+                        Log::error("Midtrans Refund Error: " . $response->body());
+                        return back()->withInput()->with([
+                            'error' => 'Gagal memproses refund di Midtrans: ' . $msg,
+                            'show_force_local' => true
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Midtrans Refund Exception: " . $e->getMessage());
+                    return back()->withInput()->with([
+                        'error' => 'Gagal memproses refund: Terjadi kesalahan koneksi ke server Midtrans.',
+                        'show_force_local' => true
+                    ]);
+                }
+            }
+        }
+
+        DB::transaction(function () use ($request, $refund, $pembayaran) {
             if ($request->action === 'setuju') {
                 $refund->update([
                     'status' => 'disetujui',
                     'catatan_admin' => $request->catatan_admin,
                 ]);
 
-                $pembayaran = Pembayaran::where('pesananId', $refund->pesananId)->first();
                 if ($pembayaran) {
                     $pembayaran->update([
                         'jumlahRefund' => ($pembayaran->jumlahRefund ?? 0) + $refund->nominal,

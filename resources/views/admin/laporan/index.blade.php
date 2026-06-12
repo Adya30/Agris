@@ -11,22 +11,68 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-6 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-green-50 to-transparent rounded-bl-full pointer-events-none"></div>
-            <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider block">Total Pemasukan</span>
-            <span class="text-2xl font-black text-green-600 mt-2 block">Rp {{ number_format($totalPemasukan, 0, ',', '.') }}</span>
+    @php
+        $isProfit    = $saldoNeto >= 0;
+        $ratioBar    = $totalPemasukan > 0 ? min(100, round(($totalPengeluaran / $totalPemasukan) * 100)) : 0;
+        $netoPercent = $totalPemasukan > 0 ? round(abs($saldoNeto) / $totalPemasukan * 100, 1) : 0;
+    @endphp
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+
+        {{-- Total Pemasukan --}}
+        <div class="bg-white rounded-3xl border border-green-100 shadow-sm p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-green-50 to-transparent rounded-bl-full pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Pemasukan</span>
+                <div class="w-9 h-9 rounded-2xl bg-green-100 flex items-center justify-center text-green-600 shrink-0">
+                    <i class="fa-solid fa-arrow-trend-up text-sm"></i>
+                </div>
+            </div>
+            <span class="text-2xl font-black text-green-600 block leading-tight">
+                Rp {{ number_format($totalPemasukan, 0, ',', '.') }}
+            </span>
+            <span class="text-[10px] text-gray-400 font-semibold mt-1 block">Seluruh pembayaran berhasil</span>
         </div>
-        <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-6 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-red-50 to-transparent rounded-bl-full pointer-events-none"></div>
-            <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider block">Total Pengeluaran</span>
-            <span class="text-2xl font-black text-red-600 mt-2 block">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</span>
+
+        {{-- Total Pengeluaran --}}
+        <div class="bg-white rounded-3xl border border-red-100 shadow-sm p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-red-50 to-transparent rounded-bl-full pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Pengeluaran</span>
+                <div class="w-9 h-9 rounded-2xl bg-red-100 flex items-center justify-center text-red-500 shrink-0">
+                    <i class="fa-solid fa-arrow-trend-down text-sm"></i>
+                </div>
+            </div>
+            <span class="text-2xl font-black text-red-600 block leading-tight">
+                Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}
+            </span>
+            <span class="text-[10px] text-gray-400 font-semibold mt-1 block">Refund &amp; pembatalan</span>
         </div>
-        <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-6 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-blue-50 to-transparent rounded-bl-full pointer-events-none"></div>
-            <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider block">Saldo Neto</span>
-            <span class="text-2xl font-black text-gray-900 mt-2 block">Rp {{ number_format($saldoNeto, 0, ',', '.') }}</span>
+
+        {{-- Saldo Neto --}}
+        <div class="bg-white rounded-3xl border {{ $isProfit ? 'border-blue-100' : 'border-red-200' }} shadow-sm p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl {{ $isProfit ? 'from-blue-50' : 'from-red-50' }} to-transparent rounded-bl-full pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Neto</span>
+                <div class="w-9 h-9 rounded-2xl {{ $isProfit ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600' }} flex items-center justify-center shrink-0">
+                    <i class="fa-solid {{ $isProfit ? 'fa-wallet' : 'fa-triangle-exclamation' }} text-sm"></i>
+                </div>
+            </div>
+            <span class="text-2xl font-black {{ $isProfit ? 'text-blue-700' : 'text-red-600' }} block leading-tight">
+                {{ $isProfit ? '+' : '-' }} Rp {{ number_format(abs($saldoNeto), 0, ',', '.') }}
+            </span>
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-wider">Rasio Pengeluaran</span>
+                    <span class="text-[9px] font-black {{ $isProfit ? 'text-blue-600' : 'text-red-600' }}">{{ $ratioBar }}%</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-500 {{ $ratioBar > 80 ? 'bg-red-400' : ($ratioBar > 50 ? 'bg-amber-400' : 'bg-blue-400') }}"
+                         style="width: {{ $ratioBar }}%"></div>
+                </div>
+                <span class="text-[9px] text-gray-400 font-semibold mt-1 block">Neto = {{ $netoPercent }}% dari pemasukan</span>
+            </div>
         </div>
+
     </div>
 
     <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden hidden md:block">

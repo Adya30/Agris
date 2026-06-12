@@ -26,7 +26,7 @@
                 {{ $cancelText }}
             </button>
 
-            <button type="button" id="{{ $confirmId }}" class="flex-1 py-4 bg-[#58CC02] hover:bg-[#4fb802] text-white font-bold rounded-2xl transition-all shadow-lg shadow-green-100 active:scale-95">
+            <button type="button" id="{{ $confirmId }}" class="flex-1 py-4 bg-[#58CC02] hover:bg-[#4fb802] text-white font-bold rounded-2xl transition-all shadow-lg shadow-green-100 active:scale-95 btn-confirm-modal">
                 {{ $confirmText }}
             </button>
         </div>
@@ -40,6 +40,22 @@
         const content = document.getElementById('content-' + id);
 
         if (!modal || !content) return;
+
+        // Restore disabled state and text of confirm button if it was clicked previously
+        const confirmBtn = modal.querySelector('.btn-confirm-modal');
+        if (confirmBtn) {
+            if (confirmBtn.disabled || confirmBtn.style.pointerEvents === 'none') {
+                confirmBtn.disabled = false;
+                confirmBtn.style.pointerEvents = '';
+                confirmBtn.classList.remove('cursor-wait');
+                confirmBtn.classList.add('hover:bg-[#4fb802]', 'active:scale-95');
+                if (confirmBtn.hasAttribute('data-original-text')) {
+                    confirmBtn.innerHTML = confirmBtn.getAttribute('data-original-text');
+                }
+            } else {
+                confirmBtn.setAttribute('data-original-text', confirmBtn.innerHTML);
+            }
+        }
 
         document.body.style.overflow = 'hidden';
         modal.classList.remove('hidden');
@@ -72,6 +88,34 @@
             if (e.target.classList.contains('modal-overlay')) {
                 const modalId = e.target.getAttribute('data-modal-id');
                 window.closeModal(modalId);
+            }
+
+            const confirmBtn = e.target.closest('.btn-confirm-modal');
+            if (confirmBtn) {
+                // If already clicked, block any further interaction
+                if (confirmBtn.style.pointerEvents === 'none' || confirmBtn.disabled) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    return;
+                }
+
+                const btnText = confirmBtn.textContent.trim().toLowerCase();
+                const triggerTexts = ['iya', 'ya', 'hapus', 'lengkapi', 'setuju', 'proses', 'tambah', 'simpan', 'update', 'kirim'];
+                if (triggerTexts.includes(btnText)) {
+                    // Save original text if not already saved
+                    if (!confirmBtn.hasAttribute('data-original-text')) {
+                        confirmBtn.setAttribute('data-original-text', confirmBtn.innerHTML);
+                    }
+                    
+                    confirmBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i>';
+                    confirmBtn.classList.add('cursor-wait');
+                    confirmBtn.classList.remove('hover:bg-[#4fb802]', 'active:scale-95');
+                    confirmBtn.style.pointerEvents = 'none'; // Instant protection against double-click
+                    
+                    setTimeout(() => {
+                        confirmBtn.disabled = true;
+                    }, 10);
+                }
             }
         });
     });
