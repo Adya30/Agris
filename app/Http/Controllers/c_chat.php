@@ -15,12 +15,12 @@ class c_chat extends Controller
     {
         $user = Auth::user();
         if ($user->isAdmin) {
-            $users = User::where('isAdmin', false)->get();
+            $users = User::isAdmin(false)->get();
             return view('admin.chat.index', compact('users'));
         }
 
-        $admin = User::where('isAdmin', true)->first();
-        $chats = Chat::where(function($q) use ($user, $admin) {
+        $admin = User::isAdmin(true)->first();
+        $chats = Chat::query()->where(function($q) use ($user, $admin) {
             $q->where(function($inner) use ($user, $admin) {
                 $inner->where('id_pengirim', $user->id)->where('id_penerima', $admin->id);
             })->orWhere(function($inner) use ($user, $admin) {
@@ -28,7 +28,7 @@ class c_chat extends Controller
             });
         })->orWhere('id_penerima', 'GLOBAL')->orderBy('waktu_chat', 'asc')->get();
 
-        Chat::where('id_pengirim', $admin->id)->where('id_penerima', $user->id)->where('status', 'terkirim')->update(['status' => 'dibaca']);
+        Chat::whereIdPengirim($admin->id)->whereIdPenerima($user->id)->whereStatus('terkirim')->update(['status' => 'dibaca']);
 
         $lastChat = $chats->where('id_pengirim', $admin->id)->last();
         if($lastChat) {
@@ -38,16 +38,16 @@ class c_chat extends Controller
         return view('agen.chat.index', compact('chats', 'admin'));
     }
 
-    public function show($id)
+    public function show(string $id)
     {
         $user = Auth::user();
         if ($id === 'GLOBAL') {
-            $chats = Chat::where('id_penerima', 'GLOBAL')->orderBy('waktu_chat', 'asc')->get();
+            $chats = Chat::whereIdPenerima('GLOBAL')->orderBy('waktu_chat', 'asc')->get();
             return response()->json(['target' => ['id' => 'GLOBAL', 'name' => 'PENGUMUMAN GLOBAL'], 'chats' => $chats]);
         }
 
         $targetUser = User::findOrFail($id);
-        $chats = Chat::where(function($q) use ($user, $targetUser) {
+        $chats = Chat::query()->where(function($q) use ($user, $targetUser) {
             $q->where(function($inner) use ($user, $targetUser) {
                 $inner->where('id_pengirim', $user->id)->where('id_penerima', $targetUser->id);
             })->orWhere(function($inner) use ($user, $targetUser) {
@@ -55,7 +55,7 @@ class c_chat extends Controller
             });
         })->orderBy('waktu_chat', 'asc')->get();
 
-        Chat::where('id_pengirim', $targetUser->id)->where('id_penerima', $user->id)->where('status', 'terkirim')->update(['status' => 'dibaca']);
+        Chat::whereIdPengirim($targetUser->id)->whereIdPenerima($user->id)->whereStatus('terkirim')->update(['status' => 'dibaca']);
 
         broadcast(new MessageSent(['id_penerima' => $targetUser->id, 'id_pengirim' => $user->id, 'status' => 'dibaca'], false, true))->toOthers();
 
@@ -101,15 +101,16 @@ class c_chat extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(string $id)
     {
         try {
-            $chat = Chat::where('id', $id)->where('id_pengirim', Auth::id())->firstOrFail();
+            /** @var Chat $chat */
+            $chat = Chat::whereId($id)->whereIdPengirim(Auth::id())->firstOrFail();
             broadcast(new MessageSent(['id' => $chat->id, 'id_penerima' => $chat->id_penerima, 'id_pengirim' => $chat->id_pengirim], true))->toOthers();
             if ($chat->foto_chat) {
                 Storage::disk('public')->delete($chat->foto_chat);
             }
-            $chat->delete();
+            Chat::whereId($chat->id)->delete();
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

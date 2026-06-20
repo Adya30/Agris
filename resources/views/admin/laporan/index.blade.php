@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto pt-5 pb-12 px-4 sm:px-6">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8" data-aos="fade-up">
         <div>
             <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Laporan Keuangan</h1>
             <p class="text-gray-500 text-xs md:text-sm mt-1">Pantau ringkasan pemasukan dan pengeluaran transaksi secara real-time</p>
@@ -19,7 +19,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
 
         {{-- Total Pemasukan --}}
-        <div class="bg-white rounded-3xl border border-green-100 shadow-sm p-6 relative overflow-hidden">
+        <div class="bg-white rounded-3xl border border-green-100 shadow-sm p-6 relative overflow-hidden" data-aos="zoom-in">
             <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-green-50 to-transparent rounded-bl-full pointer-events-none"></div>
             <div class="flex items-center justify-between mb-3">
                 <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Pemasukan</span>
@@ -34,7 +34,7 @@
         </div>
 
         {{-- Total Pengeluaran --}}
-        <div class="bg-white rounded-3xl border border-red-100 shadow-sm p-6 relative overflow-hidden">
+        <div class="bg-white rounded-3xl border border-red-100 shadow-sm p-6 relative overflow-hidden" data-aos="zoom-in" data-aos-delay="100">
             <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-red-50 to-transparent rounded-bl-full pointer-events-none"></div>
             <div class="flex items-center justify-between mb-3">
                 <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Pengeluaran</span>
@@ -45,11 +45,11 @@
             <span class="text-2xl font-black text-red-600 block leading-tight">
                 Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}
             </span>
-            <span class="text-[10px] text-gray-400 font-semibold mt-1 block">Refund &amp; pembatalan</span>
+            <span class="text-[10px] text-gray-400 font-semibold mt-1 block">Pembatalan</span>
         </div>
 
         {{-- Saldo Neto --}}
-        <div class="bg-white rounded-3xl border {{ $isProfit ? 'border-blue-100' : 'border-red-200' }} shadow-sm p-6 relative overflow-hidden">
+        <div class="bg-white rounded-3xl border {{ $isProfit ? 'border-blue-100' : 'border-red-200' }} shadow-sm p-6 relative overflow-hidden" data-aos="zoom-in" data-aos-delay="200">
             <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl {{ $isProfit ? 'from-blue-50' : 'from-red-50' }} to-transparent rounded-bl-full pointer-events-none"></div>
             <div class="flex items-center justify-between mb-3">
                 <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Neto</span>
@@ -75,7 +75,7 @@
 
     </div>
 
-    <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden hidden md:block">
+    <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden hidden md:block" data-aos="fade-up" data-aos-delay="100">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -119,7 +119,7 @@
         </div>
     </div>
 
-    <div class="space-y-4 md:hidden">
+    <div class="space-y-4 md:hidden" data-aos="fade-up" data-aos-delay="100">
         @forelse($riwayat as $item)
             <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-5 space-y-3">
                 <div class="flex justify-between items-center pb-2 border-b border-gray-100">

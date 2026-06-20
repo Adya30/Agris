@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto pt-5 pb-12 px-6">
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4" data-aos="fade-up">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Keranjang</h1>
             <p class="text-gray-500 text-sm">Gunakan keranjang Anda</p>
@@ -12,7 +12,7 @@
     </div>
 
     @if($keranjangs->isEmpty())
-    <div class="py-24 text-center bg-white rounded-2xl border border-gray-100 shadow-sm">
+    <div class="py-24 text-center bg-white rounded-2xl border border-gray-100 shadow-sm" data-aos="zoom-in">
         <i class="fa-solid fa-cart-shopping text-5xl text-gray-200 mb-4"></i>
         <p class="text-gray-400 font-bold uppercase text-sm tracking-widest mb-4">Keranjang masih kosong.</p>
         <a href="{{ route('agen.produk.index') }}" class="inline-block bg-[#58CC02] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-[#46A302] transition">
@@ -20,7 +20,7 @@
         </a>
     </div>
     @else
-    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden" data-aos="fade-up" data-aos-delay="100">
         <div class="hidden md:block w-full overflow-x-auto">
             <table class="w-full">
                 <thead>
@@ -112,7 +112,7 @@
             @endforeach
         </div>
 
-        <div class="px-6 py-5 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="px-6 py-5 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" data-aos="fade-up" data-aos-delay="200">
             <div class="flex flex-col sm:flex-row gap-4 sm:items-end">
                 <div>
                     <p class="text-gray-500 text-sm font-semibold mb-0.5">Total Harga :</p>

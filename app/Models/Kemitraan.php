@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
@@ -21,6 +22,15 @@ class Kemitraan extends Model
     protected $casts = [
         'tanggalPengajuan' => 'date',
     ];
+
+    /**
+     * @param Builder<static> $query
+     * @return Builder<static>
+     */
+    public function scopeUserId(Builder $query, string $value): Builder
+    {
+        return $query->where('userId', $value);
+    }
 
     public function user()
     {

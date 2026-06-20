@@ -4,16 +4,16 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto pt-5 pb-12 px-1">
-    <div class="mb-6 flex items-center gap-4">
+    <div class="mb-6 flex items-center gap-4" data-aos="fade-up">
         <a href="{{ route('agen.blog.index') }}" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 bg-white shadow-sm transition-all">
             <i class="fa-solid fa-arrow-left text-sm"></i>
         </a>
         <h2 class="text-xl font-bold text-gray-800">Detail Blog</h2>
     </div>
 
-    <div class="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden" data-aos="fade-up" data-aos-delay="100">
         @if($blog->fotoBlog)
-            <div class="w-full h-64 md:h-100 overflow-hidden">
+            <div class="w-full h-64 md:h-100 overflow-hidden" data-aos="fade-down" data-aos-delay="200">
                 <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover">
             </div>
         @endif

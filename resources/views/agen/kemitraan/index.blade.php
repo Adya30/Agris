@@ -4,15 +4,15 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto pt-5 pb-12 px-6">
-    <div class="mb-8">
+    <div class="mb-8" data-aos="fade-up">
         <h1 class="text-2xl font-bold text-gray-800">Status Kemitraan Agen</h1>
         <p class="text-gray-500 text-sm">Pantau sejauh mana proses pengajuan kemitraan Anda.</p>
     </div>
 
     @if(!$kemitraan || $kemitraan->statusPengajuan == 'Ditolak')
-    <div class="bg-white rounded-3xl border border-gray-100 p-8 md:p-12 shadow-sm">
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 md:p-12 shadow-sm" data-aos="fade-up" data-aos-delay="100">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div class="text-center md:text-left">
+            <div class="text-center md:text-left" data-aos="fade-right" data-aos-delay="200">
                 <div class="w-16 h-16 {{ !$kemitraan ? 'bg-green-50 text-[#58CC02]' : 'bg-red-50 text-red-500' }} rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
                     <i class="fa-solid {{ !$kemitraan ? 'fa-handshake' : 'fa-circle-xmark' }} text-2xl"></i>
                 </div>
@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <div class="bg-gray-50 rounded-4xl p-8 border border-gray-100">
+            <div class="bg-gray-50 rounded-4xl p-8 border border-gray-100" data-aos="fade-left" data-aos-delay="200">
                 <h3 class="font-bold text-gray-800 mb-6 flex items-center gap-2">
                     <i class="fa-solid {{ !$kemitraan ? 'fa-gem text-yellow-500' : 'fa-circle-exclamation text-red-500' }}"></i>
                     {{ !$kemitraan ? 'Keunggulan Mitra Resmi' : 'Catatan Penolakan' }}
@@ -67,7 +67,7 @@
         $currentStep = $steps[$kemitraan->statusPengajuan] ?? 1;
     @endphp
 
-    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm" data-aos="fade-up" data-aos-delay="100">
         <div class="relative flex items-center justify-between mb-16 px-4">
             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 z-0"></div>
             <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#58CC02] transition-all duration-500 z-0" style="width: {{ ($currentStep - 1) * 50 }}%"></div>
@@ -82,7 +82,7 @@
             @endforeach
         </div>
 
-        <div class="mt-20 pt-8 border-t border-gray-50">
+        <div class="mt-20 pt-8 border-t border-gray-50" data-aos="fade-up" data-aos-delay="200">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center p-6 bg-gray-50 rounded-3xl border border-gray-100">
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Status Saat Ini</p>

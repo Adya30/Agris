@@ -15,7 +15,7 @@
         $isFailed = $kemitraan->statusPengajuan == 'Ditolak';
     @endphp
 
-    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm mb-12">
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm mb-12" data-aos="fade-up">
         <div class="relative flex items-center justify-between mb-12">
             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 z-0"></div>
             <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 {{ $isFailed ? 'bg-red-500' : 'bg-[#58CC02]' }} z-0" style="width: {{ $isFailed ? '100' : ($currentStep - 1) * 50 }}%"></div>
@@ -38,13 +38,13 @@
     </div>
     @endif
 
-    <div class="mb-8 text-center">
+    <div class="mb-8 text-center" data-aos="fade-up" data-aos-delay="100">
         <h1 class="text-2xl font-bold text-gray-800">Lengkapi Dokumen Kemitraan</h1>
         <p class="text-gray-500">Unggah file MOU dalam format PDF untuk diverifikasi oleh admin.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="md:col-span-1">
+        <div class="md:col-span-1" data-aos="fade-right" data-aos-delay="150">
             <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm mb-6">
                 <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm uppercase tracking-wider">
                     <i class="fa-solid fa-list-check text-[#58CC02]"></i> Ketentuan
@@ -67,7 +67,7 @@
             </div>
         </div>
 
-        <div class="md:col-span-2">
+        <div class="md:col-span-2" data-aos="fade-left" data-aos-delay="150">
             <form id="formUploadMou" action="{{ route('kemitraan.store') }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
                 @csrf
                 <div id="dropzone" class="border-2 border-dashed border-gray-200 rounded-3xl p-10 text-center hover:border-[#58CC02] transition-all group relative">

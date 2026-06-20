@@ -43,14 +43,16 @@ class c_pembayaran extends Controller
         return response()->json(['message' => 'Order/Payment not found'], 404);
     }
 
-    private function updatePaymentAndOrderStatus($orderId, $transactionStatus, $paymentType, $transactionId, $rawData)
+    private function updatePaymentAndOrderStatus(string $orderId, string $transactionStatus, ?string $paymentType, ?string $transactionId, array $rawData): bool
     {
-        $pesanan = Pesanan::find($orderId);
+        /** @var Pesanan|null $pesanan */
+        $pesanan = Pesanan::query()->find($orderId);
         if (!$pesanan) {
             return false;
         }
 
-        $pembayaran = Pembayaran::where('pesananId', $orderId)->first();
+        /** @var Pembayaran|null $pembayaran */
+        $pembayaran = Pembayaran::pesananId($orderId)->first();
         if (!$pembayaran) {
             return false;
         }
@@ -76,7 +78,7 @@ class c_pembayaran extends Controller
             $statusPembayaran = 'gagal';
             $statusPesanan = 'dibatalkan';
 
-            $detailPesanans = DetailPesanan::where('pesananId', $orderId)->get();
+            $detailPesanans = DetailPesanan::pesananId($orderId)->get();
             foreach ($detailPesanans as $detail) {
                 if ($detail->produk) {
                     $detail->produk->increment('stok', $detail->jumlahPesanan);
@@ -85,31 +87,31 @@ class c_pembayaran extends Controller
         }
 
         if ($statusPembayaran === 'berhasil') {
-            $detailPesanans = DetailPesanan::where('pesananId', $orderId)->get();
+            $detailPesanans = DetailPesanan::pesananId($orderId)->get();
             foreach ($detailPesanans as $detail) {
-                Keranjang::where('userId', $pesanan->userId)
-                    ->where('produkId', $detail->produkId)
+                Keranjang::userId($pesanan->userId)
+                    ->produkId($detail->produkId)
                     ->delete();
             }
         }
 
-        $pembayaran->update([
+        Pembayaran::whereId($pembayaran->id)->update([
             'statusPembayaran' => $statusPembayaran,
             'transactionId' => $transactionId,
             'paymentType' => $paymentType,
         ]);
 
-        $pesanan->update([
+        Pesanan::whereId($pesanan->id)->update([
             'status_pesanan' => $statusPesanan,
         ]);
 
         return true;
     }
 
-    public function cekStatus($id)
+    public function cekStatus(string $id)
     {
-        $pesanan = Pesanan::where('userId', Auth::id())->findOrFail($id);
-        $pembayaran = Pembayaran::where('pesananId', $id)->first();
+        $pesanan = Pesanan::userId(Auth::id())->findOrFail($id);
+        $pembayaran = Pembayaran::pesananId($id)->first();
 
         if (!$pembayaran) {
             return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
@@ -165,25 +167,25 @@ class c_pembayaran extends Controller
         return redirect()->back();
     }
 
-    public function bayarSimulasi($id)
+    public function bayarSimulasi(string $id)
     {
-        $pesanan = Pesanan::where('userId', Auth::id())->findOrFail($id);
+        $pesanan = Pesanan::userId(Auth::id())->findOrFail($id);
 
-        $pembayaran = Pembayaran::where('pesananId', $id)->first();
+        $pembayaran = Pembayaran::pesananId($id)->first();
         if (!$pembayaran) {
             return response()->json(['success' => false, 'message' => 'Data pembayaran tidak ditemukan.'], 404);
         }
 
         DB::beginTransaction();
         try {
-            $pembayaran->update([
+            Pembayaran::whereId($pembayaran->id)->update([
                 'statusPembayaran' => 'berhasil',
                 'waktuDibayar' => now(),
                 'paymentType' => 'simulasi_midtrans',
                 'transactionId' => 'SIM-' . strtoupper(Str::random(12)),
             ]);
 
-            $pesanan->update([
+            Pesanan::whereId($pesanan->id)->update([
                 'status_pesanan' => 'diproses',
             ]);
 
@@ -197,9 +199,9 @@ class c_pembayaran extends Controller
         }
     }
 
-    public function batalCheckout($id)
+    public function batalCheckout(string $id)
     {
-        $pesanan = Pesanan::with('detailPesanans')->where('userId', Auth::id())->where('status_pesanan', 'pending')->findOrFail($id);
+        $pesanan = Pesanan::with('detailPesanans')->userId(Auth::id())->statusPesanan('pending')->findOrFail($id);
 
         DB::beginTransaction();
         try {
@@ -217,10 +219,10 @@ class c_pembayaran extends Controller
             }
 
             if ($pesanan->pembayaran) {
-                $pesanan->pembayaran->delete();
+                Pembayaran::pesananId($pesanan->id)->delete();
             }
-            $pesanan->detailPesanans()->delete();
-            $pesanan->delete();
+            DetailPesanan::pesananId($pesanan->id)->delete();
+            Pesanan::whereId($pesanan->id)->delete();
 
             DB::commit();
             return response()->json(['success' => true]);

@@ -261,7 +261,8 @@ class c_profile extends Controller
                 $data = $response->json();
                 $locationId = $data['id'] ?? null;
                 if ($locationId) {
-                    $user->update(['biteship_location_id' => $locationId]);
+                    $user->fill(['biteship_location_id' => $locationId]);
+                    $user->save();
                     Log::info("Biteship Location Created successfully: " . $locationId);
                 }
             } else {

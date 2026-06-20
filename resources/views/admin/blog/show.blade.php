@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto pt-4 pb-12 px-4">
-    <div class="mb-8 flex items-center justify-between gap-4">
+    <div class="mb-8 flex items-center justify-between gap-4" data-aos="fade-up">
         <div class="flex items-center">
             <a href="{{ route('admin.blog.index') }}" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 bg-white shadow-sm transition-all">
                 <i class="fa-solid fa-arrow-left text-sm"></i>
@@ -22,9 +22,9 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden" data-aos="fade-up" data-aos-delay="100">
         @if($blog->fotoBlog)
-            <div class="w-full aspect-video max-h-100 overflow-hidden bg-gray-50">
+            <div class="w-full aspect-video max-h-100 overflow-hidden bg-gray-50" data-aos="fade-down" data-aos-delay="200">
                 <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover">
             </div>
         @endif

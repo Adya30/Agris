@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto pt-5 pb-12 px-6">
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4" data-aos="fade-up">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Blog Agris</h1>
             <p class="text-gray-500 text-sm">Informasi Seputar Agris</p>
@@ -13,7 +13,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         @forelse($blogs as $blog)
-        <div class="group relative bg-white rounded-3xl overflow-hidden shadow-sm flex flex-col border border-gray-100 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300">
+        <div class="group relative bg-white rounded-3xl overflow-hidden shadow-sm flex flex-col border border-gray-100 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300" data-aos="zoom-in" data-aos-delay="{{ ($loop->iteration - 1) * 100 }}">
             <a href="{{ route('agen.blog.show', $blog->id) }}" class="absolute inset-0 z-20" aria-label="Baca {{ $blog->judulBlog }}"></a>
 
             <div class="relative h-44 sm:h-48 md:h-52 w-full overflow-hidden">
@@ -54,7 +54,7 @@
             </div>
         </div>
         @empty
-        <div class="col-span-full py-16 text-center bg-gray-50 rounded-4xl border-2 border-dashed border-gray-200 px-6">
+        <div class="col-span-full py-16 text-center bg-gray-50 rounded-4xl border-2 border-dashed border-gray-200 px-6" data-aos="zoom-in">
             <div class="mb-3">
                 <i class="fa-solid fa-box-open text-3xl text-gray-200"></i>
             </div>

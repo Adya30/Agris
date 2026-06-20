@@ -8,7 +8,6 @@ use App\Models\DetailPesanan;
 use App\Models\Keranjang;
 use App\Models\Pembayaran;
 use App\Models\Pesanan;
-use App\Models\Refund;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,65 +58,66 @@ class c_pesanan extends Controller
         if ($activeTab === 'keuangan') {
             $subTab = $request->input('sub', 'selesai');
             $pesanans = [];
-            $refunds = [];
 
-            if ($subTab === 'refund') {
-                $refunds = Refund::whereHas('pesanan', function ($q) {
-                    $q->where('userId', Auth::id());
-                })
-                    ->with(['pesanan', 'detailPesanan.produk'])
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-            } elseif ($subTab === 'batal') {
+            if ($subTab === 'batal') {
                 $pesanans = Pesanan::with(['detailPesanans.produk', 'pembayaran'])
-                    ->where('userId', Auth::id())
-                    ->where('status_pesanan', 'dibatalkan')
+                    ->userId(Auth::id())
+                    ->statusPesanan('dibatalkan')
                     ->orderBy('created_at', 'desc')
                     ->get();
             } else {
                 $pesanans = Pesanan::with(['detailPesanans.produk', 'pembayaran'])
-                    ->where('userId', Auth::id())
-                    ->where('status_pesanan', 'selesai')
+                    ->userId(Auth::id())
+                    ->statusPesanan('selesai')
                     ->orderBy('created_at', 'desc')
                     ->get();
             }
 
-            return view('agen.pesanan.index', compact('activeTab', 'subTab', 'pesanans', 'refunds'));
+            return view('agen.pesanan.index', compact('activeTab', 'subTab', 'pesanans'));
         }
 
         $status = $request->input('status', 'all');
         $query = Pesanan::with(['detailPesanans.produk', 'pembayaran'])
-            ->where('userId', Auth::id())
+            ->userId(Auth::id())
             ->whereIn('status_pesanan', ['diproses', 'dikirim']);
 
         if ($status !== 'all') {
-            $query->where('status_pesanan', $status);
+            $query->statusPesanan($status);
         }
 
         $pesanans = $query->orderBy('created_at', 'desc')->get();
 
-        return view('agen.pesanan.index', compact('activeTab', 'status', 'pesanans'));
+        // Fetch Biteship tracking status for each 'dikirim' order
+        $biteshipStatuses = [];
+        foreach ($pesanans as $p) {
+            if ($p->status_pesanan === 'dikirim') {
+                $trackingData = $this->getBiteshipTracking($p->deskripsi);
+                $biteshipStatuses[$p->id] = $trackingData['status'] ?? null;
+            }
+        }
+
+        return view('agen.pesanan.index', compact('activeTab', 'status', 'pesanans', 'biteshipStatuses'));
     }
 
-    public function show($id)
+    public function show(string $id)
     {
         $pesanan = Pesanan::with(['detailPesanans.produk', 'pembayaran'])
-            ->where('userId', Auth::id())
+            ->userId(Auth::id())
             ->findOrFail($id);
 
         if (request('status') === 'success' && $pesanan->status_pesanan === 'pending') {
             DB::transaction(function () use ($pesanan) {
                 if ($pesanan->pembayaran) {
-                    $pesanan->pembayaran->update([
+                    Pembayaran::whereId($pesanan->pembayaran->id)->update([
                         'statusPembayaran' => 'berhasil',
                         'waktuDibayar' => now(),
                     ]);
                 }
-                $pesanan->update(['status_pesanan' => 'diproses']);
+                Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'diproses']);
 
                 foreach ($pesanan->detailPesanans as $detail) {
-                    Keranjang::where('userId', $pesanan->userId)
-                        ->where('produkId', $detail->produkId)
+                    Keranjang::userId($pesanan->userId)
+                        ->produkId($detail->produkId)
                         ->delete();
                 }
             });
@@ -129,7 +129,7 @@ class c_pesanan extends Controller
             $biteshipStatus = $trackingData['status'] ?? null;
             if ($biteshipStatus === 'delivered') {
                 if ($pesanan->status_pesanan !== 'selesai') {
-                    $pesanan->update(['status_pesanan' => 'selesai']);
+                    Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'selesai']);
                     $pesanan->refresh();
                     event(new OrderStatusUpdated($pesanan));
                 }
@@ -142,7 +142,7 @@ class c_pesanan extends Controller
                     'droppingOff', 'dropping_off',
                 ];
                 if (in_array($biteshipStatus, $shippingStatuses) && $pesanan->status_pesanan === 'diproses') {
-                    $pesanan->update(['status_pesanan' => 'dikirim']);
+                    Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'dikirim']);
                     $pesanan->refresh();
                     event(new OrderStatusUpdated($pesanan));
                 }
@@ -161,7 +161,7 @@ class c_pesanan extends Controller
         $itemIds = explode(',', $request->items);
         $keranjangs = Keranjang::with('produk.kategori')
             ->whereIn('id', $itemIds)
-            ->where('userId', Auth::id())
+            ->userId(Auth::id())
             ->get();
 
         if ($keranjangs->isEmpty()) {
@@ -181,7 +181,7 @@ class c_pesanan extends Controller
             $totalWeight += $item->produk->kategori->karung * $item->jumlah;
         }
 
-        $admin = User::where('isAdmin', true)->first();
+        $admin = User::isAdmin(true)->first();
         $originAreaId = null;
         if ($admin && $admin->desaId) {
             $originAreaId = $this->getOrCreateBiteshipArea($admin->desaId);
@@ -311,7 +311,7 @@ class c_pesanan extends Controller
         $itemIds = explode(',', $request->items);
         $keranjangs = Keranjang::with('produk.kategori')
             ->whereIn('id', $itemIds)
-            ->where('userId', Auth::id())
+            ->userId(Auth::id())
             ->get();
 
         if ($keranjangs->isEmpty()) {
@@ -330,7 +330,7 @@ class c_pesanan extends Controller
 
         if ($request->delivery_type === 'kirim') {
 
-            $admin = User::where('isAdmin', true)->first();
+            $admin = User::isAdmin(true)->first();
             $originAreaId = ($admin && $admin->desaId) ? $this->getOrCreateBiteshipArea($admin->desaId) : null;
             if (! $originAreaId) {
                 $originAreaId = 'IDNP6IDNC148IDND843IDZ12250';
@@ -536,9 +536,9 @@ class c_pesanan extends Controller
         return null;
     }
 
-    public function cancelOrder($id)
+    public function cancelOrder(string $id)
     {
-        $pesanan = Pesanan::where('userId', Auth::id())->findOrFail($id);
+        $pesanan = Pesanan::userId(Auth::id())->findOrFail($id);
 
         if (! in_array($pesanan->status_pesanan, ['pending', 'diproses'])) {
             return redirect()->back()->with('error', 'Pesanan tidak dapat dibatalkan karena sudah dalam pengiriman atau selesai.');
@@ -546,7 +546,7 @@ class c_pesanan extends Controller
 
         DB::beginTransaction();
         try {
-            $pesanan->update([
+            Pesanan::whereId($pesanan->id)->update([
                 'status_pesanan' => 'dibatalkan',
             ]);
             event(new OrderStatusUpdated($pesanan));
@@ -556,7 +556,7 @@ class c_pesanan extends Controller
 
             if ($pembayaran) {
                 if (!$hasPaid) {
-                    $pembayaran->update([
+                    Pembayaran::whereId($pembayaran->id)->update([
                         'statusPembayaran' => 'gagal',
                     ]);
                 }
@@ -566,24 +566,11 @@ class c_pesanan extends Controller
                 if ($detail->produk) {
                     $detail->produk->increment('stok', $detail->jumlahPesanan);
                 }
-
-                if ($hasPaid) {
-                    Refund::create([
-                        'pesananId' => $pesanan->id,
-                        'detailPesananId' => $detail->id,
-                        'jumlah' => $detail->jumlahPesanan,
-                        'nominal' => $detail->subtotal,
-                        'alasan' => 'Dibatalkan oleh Agen',
-                        'foto_bukti' => 'refunds/cancel_order.png',
-                        'status' => 'pending',
-                        'catatan_admin' => 'Menunggu persetujuan admin.',
-                    ]);
-                }
             }
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Pesanan Anda berhasil dibatalkan dan pengajuan refund sedang menunggu persetujuan admin.');
+            return redirect()->back()->with('success', 'Pesanan Anda berhasil dibatalkan.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Pembatalan Pesanan Gagal: '.$e->getMessage());
@@ -592,7 +579,7 @@ class c_pesanan extends Controller
         }
     }
 
-    public function lacakPengiriman($id)
+    public function lacakPengiriman(string $id)
     {
         $pesanan = Pesanan::findOrFail($id);
 
@@ -614,25 +601,28 @@ class c_pesanan extends Controller
         $trackId = $biteshipOrderId ?: $noResi;
 
         if ($trackId && ! str_contains(strtoupper($trackId), 'AMBIL')) {
-            return redirect("https://track.biteship.com/{$trackId}");
+            return redirect("https://track-sandbox.biteship.com/{$trackId}");
         }
 
         return redirect()->route('guest.track', ['q' => $id]);
     }
 
-    public function markDiterima($id)
+    public function markDiterima(string $id)
     {
-        $pesanan = Pesanan::where('userId', Auth::id())->findOrFail($id);
+        $pesanan = Pesanan::userId(Auth::id())->findOrFail($id);
 
         if ($pesanan->status_pesanan !== 'dikirim') {
             return redirect()->back()->with('error', 'Status pesanan tidak valid untuk diselesaikan.');
         }
 
         try {
-            $pesanan->update([
+            Pesanan::whereId($pesanan->id)->update([
                 'status_pesanan' => 'selesai',
             ]);
             event(new OrderStatusUpdated($pesanan));
+
+            // Sync status to Biteship as delivered
+            $this->syncBiteshipStatus($pesanan, 'delivered');
 
             return redirect()->back()->with('success', 'Terima kasih! Pesanan Anda telah ditandai sebagai selesai.');
         } catch (\Exception $e) {
@@ -647,31 +637,6 @@ class c_pesanan extends Controller
         self::cancelOldOrders();
 
         $activeTab = $request->input('tab', 'aktif');
-
-        if ($activeTab === 'refund') {
-            $refundStatus = $request->input('refund_status', 'all');
-            $query = Refund::with(['pesanan.user', 'detailPesanan.produk']);
-
-            if ($request->filled('search')) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('id', 'LIKE', "%{$search}%")
-                        ->orWhere('pesananId', 'LIKE', "%{$search}%")
-                        ->orWhereHas('pesanan.user', function ($uq) use ($search) {
-                            $uq->where('namaLengkap', 'LIKE', "%{$search}%")
-                                ->orWhere('username', 'LIKE', "%{$search}%");
-                        });
-                });
-            }
-
-            if ($refundStatus !== 'all') {
-                $query->where('status', $refundStatus);
-            }
-
-            $refunds = $query->orderBy('created_at', 'desc')->paginate(10);
-
-            return view('admin.pesanan.index', compact('activeTab', 'refunds', 'refundStatus'));
-        }
 
         $query = Pesanan::with(['user', 'pembayaran', 'detailPesanans.produk']);
 
@@ -695,7 +660,7 @@ class c_pesanan extends Controller
         }
 
         if ($request->filled('status') && $request->status !== 'all') {
-            $query->where('status_pesanan', $request->status);
+            $query->statusPesanan($request->status);
         }
 
         $pesanans = $query->orderBy('created_at', 'desc')->paginate(10);
@@ -703,7 +668,7 @@ class c_pesanan extends Controller
         return view('admin.pesanan.index', compact('activeTab', 'pesanans'));
     }
 
-    public function adminShow($id)
+    public function adminShow(string $id)
     {
         $pesanan = Pesanan::with(['user.desa.kecamatan.kabupaten.provinsi', 'pembayaran', 'detailPesanans.produk'])
             ->findOrFail($id);
@@ -713,7 +678,7 @@ class c_pesanan extends Controller
             $biteshipStatus = $trackingData['status'] ?? null;
             if ($biteshipStatus === 'delivered') {
                 if ($pesanan->status_pesanan !== 'selesai') {
-                    $pesanan->update(['status_pesanan' => 'selesai']);
+                    Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'selesai']);
                     $pesanan->refresh();
                     event(new OrderStatusUpdated($pesanan));
                 }
@@ -726,7 +691,7 @@ class c_pesanan extends Controller
                     'droppingOff', 'dropping_off',
                 ];
                 if (in_array($biteshipStatus, $shippingStatuses) && $pesanan->status_pesanan === 'diproses') {
-                    $pesanan->update(['status_pesanan' => 'dikirim']);
+                    Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'dikirim']);
                     $pesanan->refresh();
                     event(new OrderStatusUpdated($pesanan));
                 }
@@ -736,7 +701,7 @@ class c_pesanan extends Controller
         return view('admin.pesanan.show', compact('pesanan', 'trackingData'));
     }
 
-    public function adminAction(Request $request, $id)
+    public function adminAction(Request $request, string $id)
     {
         $pesanan = Pesanan::findOrFail($id);
         $action = $request->input('action');
@@ -744,10 +709,10 @@ class c_pesanan extends Controller
         DB::beginTransaction();
         try {
             if ($action === 'proses') {
-                $pesanan->update(['status_pesanan' => 'diproses']);
+                Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'diproses']);
                 event(new OrderStatusUpdated($pesanan));
                 if ($pesanan->pembayaran && $pesanan->pembayaran->statusPembayaran !== 'berhasil') {
-                    $pesanan->pembayaran->update([
+                    Pembayaran::whereId($pesanan->pembayaran->id)->update([
                         'statusPembayaran' => 'berhasil',
                         'waktuDibayar' => now(),
                     ]);
@@ -778,7 +743,7 @@ class c_pesanan extends Controller
                         }
                     }
 
-                    $admin = User::with('desa.kecamatan.kabupaten.provinsi')->where('isAdmin', true)->first();
+                    $admin = User::with('desa.kecamatan.kabupaten.provinsi')->isAdmin(true)->first();
                     $originAreaId = null;
                     if ($admin && $admin->desaId) {
                         $originAreaId = $this->getOrCreateBiteshipArea($admin->desaId);
@@ -870,7 +835,7 @@ class c_pesanan extends Controller
                 if (! empty($biteshipOrderId)) {
                     $newDescription .= ' | Biteship Order ID: '.$biteshipOrderId;
                 }
-                $pesanan->update([
+                Pesanan::whereId($pesanan->id)->update([
                     'status_pesanan' => 'dikirim',
                     'deskripsi' => $newDescription,
                 ]);
@@ -880,45 +845,28 @@ class c_pesanan extends Controller
                     ? 'Pesanan siap diambil.'
                     : 'Pesanan berhasil dikirim dengan Nomor Resi otomatis Biteship: '.$noResi;
             } elseif ($action === 'selesai') {
-                $pesanan->update(['status_pesanan' => 'selesai']);
+                Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'selesai']);
+                $pesanan->refresh();
                 event(new OrderStatusUpdated($pesanan));
+                $this->syncBiteshipStatus($pesanan, 'delivered');
                 $msg = 'Pesanan berhasil ditandai sebagai selesai.';
             } elseif ($action === 'batal') {
-                $pesanan->update(['status_pesanan' => 'dibatalkan']);
+                Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'dibatalkan']);
                 event(new OrderStatusUpdated($pesanan));
 
                 $pembayaran = $pesanan->pembayaran;
                 $hasPaid = $pembayaran && $pembayaran->statusPembayaran === 'berhasil';
 
-                if ($pembayaran) {
-                    if ($hasPaid) {
-                        $pembayaran->update([
-                            'jumlahRefund' => $pembayaran->totalPembayaran,
-                        ]);
-                    } else {
-                        $pembayaran->update(['statusPembayaran' => 'gagal']);
-                    }
+                if ($pembayaran && !$hasPaid) {
+                    Pembayaran::whereId($pembayaran->id)->update(['statusPembayaran' => 'gagal']);
                 }
 
                 foreach ($pesanan->detailPesanans as $detail) {
                     if ($detail->produk) {
                         $detail->produk->increment('stok', $detail->jumlahPesanan);
                     }
-
-                    if ($hasPaid) {
-                        Refund::create([
-                            'pesananId' => $pesanan->id,
-                            'detailPesananId' => $detail->id,
-                            'jumlah' => $detail->jumlahPesanan,
-                            'nominal' => $detail->subtotal,
-                            'alasan' => 'Dibatalkan oleh Admin/Sistem',
-                            'foto_bukti' => 'refunds/cancel_order.png',
-                            'status' => 'disetujui',
-                            'catatan_admin' => 'Transaksi dibatalkan oleh Admin/Sistem.',
-                        ]);
-                    }
                 }
-                $msg = 'Pesanan berhasil dibatalkan dan stok produk serta pembayaran refund telah diproses.';
+                $msg = 'Pesanan berhasil dibatalkan dan stok produk telah dikembalikan.';
             } else {
                 return redirect()->back()->with('error', 'Aksi tidak valid.');
             }
@@ -999,7 +947,7 @@ class c_pesanan extends Controller
                 'delivered',
             ];
             if (in_array($biteshipStatus, $shippingStatuses) && $pesanan->status_pesanan === 'diproses') {
-                $pesanan->update(['status_pesanan' => 'dikirim']);
+                Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'dikirim']);
                 $pesanan->refresh();
             }
         }
@@ -1073,7 +1021,7 @@ class c_pesanan extends Controller
         ]);
     }
 
-    private function getBiteshipTracking($deskripsi)
+    private function getBiteshipTracking(?string $deskripsi): ?array
     {
         if (! $deskripsi) {
             return null;
@@ -1136,15 +1084,14 @@ class c_pesanan extends Controller
             $biteshipOrderId = $request->input('order_id');
             $status = $request->input('status');
 
-            // Invalidate the cache when a webhook is received, so that subsequent calls get fresh data from Biteship
             Cache::forget("biteship_tracking_{$biteshipOrderId}");
 
-            $pesanan = Pesanan::where('deskripsi', 'LIKE', "%Biteship Order ID: {$biteshipOrderId}%")->first();
+            $pesanan = Pesanan::query()->where('deskripsi', 'LIKE', "%Biteship Order ID: {$biteshipOrderId}%")->first();
 
             if ($pesanan) {
                 if ($status === 'delivered') {
                     if ($pesanan->status_pesanan !== 'selesai') {
-                        $pesanan->update(['status_pesanan' => 'selesai']);
+                        Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'selesai']);
                         Log::info("Biteship Webhook: Order {$pesanan->id} marked as selesai.");
                     }
                 } else {
@@ -1157,19 +1104,60 @@ class c_pesanan extends Controller
                     ];
                     if (in_array($status, $shippingStatuses)) {
                         if ($pesanan->status_pesanan === 'diproses') {
-                            $pesanan->update(['status_pesanan' => 'dikirim']);
+                            Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'dikirim']);
                             Log::info("Biteship Webhook: Order {$pesanan->id} marked as dikirim.");
                         }
                     }
                 }
 
-                // ALWAYS broadcast the update event so the frontend (both index and show) updates in real-time!
                 event(new OrderStatusUpdated($pesanan));
                 Log::info("Biteship Webhook: Order {$pesanan->id} status updated to {$status}. Broadcasted OrderStatusUpdated event.");
             }
         }
 
         return response()->json(['success' => true]);
+    }
+
+    private function syncBiteshipStatus(Pesanan $pesanan, string $status)
+    {
+        if (! $pesanan->deskripsi) {
+            return;
+        }
+
+        $biteshipOrderId = null;
+        $parts = explode('|', $pesanan->deskripsi);
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if (str_starts_with(strtolower($part), 'biteship order id:')) {
+                $biteshipOrderId = trim(substr($part, 18));
+                break;
+            }
+        }
+
+        if (! $biteshipOrderId) {
+            Log::info("Sync Biteship: No Biteship Order ID found for pesanan {$pesanan->id}");
+            return;
+        }
+
+        try {
+            $apiKey = config('services.biteship.key');
+            $baseUrl = $this->getBiteshipBaseUrl();
+
+            $response = Http::withToken($apiKey)
+                ->timeout(12)
+                ->post("$baseUrl/orders/$biteshipOrderId", [
+                    'status' => $status,
+                ]);
+
+            if ($response->successful()) {
+                Log::info("Sync Biteship: Order $biteshipOrderId status updated to '$status' for pesanan {$pesanan->id}");
+                Cache::forget("biteship_tracking_{$biteshipOrderId}");
+            } else {
+                Log::warning("Sync Biteship: Failed to update order $biteshipOrderId to '$status'. Response: " . $response->body());
+            }
+        } catch (\Exception $e) {
+            Log::error("Sync Biteship Exception: " . $e->getMessage());
+        }
     }
 
     private function getBiteshipBaseUrl()

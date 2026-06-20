@@ -4,14 +4,14 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto pt-5 pb-12 px-6">
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4" data-aos="fade-up">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Daftar Produk</h1>
             <p class="text-gray-500 text-sm">Cari dan pilih produk berdasarkan kategori yang tersedia</p>
         </div>
     </div>
 
-    <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 mb-8">
+    <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 mb-8" data-aos="fade-up" data-aos-delay="100">
         <form action="{{ route('agen.produk.index') }}" method="GET" class="flex flex-col md:flex-row items-end gap-4">
             @if(request('search'))
                 <input type="hidden" name="search" value="{{ request('search') }}">
@@ -56,7 +56,7 @@
 
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
         @forelse($produks as $item)
-        <div id="product-card-{{ $item->id }}" class="group bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col h-full relative">
+        <div id="product-card-{{ $item->id }}" class="group bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col h-full relative" data-aos="zoom-in" data-aos-delay="{{ ($loop->iteration - 1) * 50 }}">
             <a href="{{ route('agen.produk.show', $item->id) }}" class="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                 @if($item->fotoProduk)
                     <img src="{{ asset('storage/' . $item->fotoProduk) }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="{{ $item->namaProduk }}">

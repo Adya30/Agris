@@ -17,7 +17,7 @@ class c_kemitraan extends Controller
             $kemitraans = Kemitraan::with(['user.desa.kecamatan.kabupaten.provinsi'])->latest()->get();
             return view('admin.kemitraan.index', compact('kemitraans'));
         }
-        $kemitraan = Kemitraan::where('userId', $user->id)->first();
+        $kemitraan = Kemitraan::userId($user->id)->first();
         return view('agen.kemitraan.index', compact('kemitraan'));
     }
 
@@ -27,7 +27,7 @@ class c_kemitraan extends Controller
         if (empty($user->namaLengkap) || empty($user->noTelp) || empty($user->desaId) || empty($user->detailAlamat)) {
             return redirect()->route('admin.profile')->with('modalIncomplete', true);
         }
-        $kemitraan = Kemitraan::where('userId', $user->id)->first();
+        $kemitraan = Kemitraan::userId($user->id)->first();
         if ($kemitraan && !in_array($kemitraan->statusPengajuan, ['Ditolak', 'Menunggu Upload MOU'])) {
             return redirect()->route('kemitraan.index');
         }
@@ -61,7 +61,7 @@ class c_kemitraan extends Controller
             $status = 'Menunggu Upload MOU';
         } elseif ($request->action === 'tolak' || $request->action === 'hentikan') {
             $status = 'Ditolak';
-            if ($request->action === 'hentikan') User::where('id', $kemitraan->userId)->update(['isActive' => 0]);
+            if ($request->action === 'hentikan') User::whereId($kemitraan->userId)->update(['isActive' => 0]);
         }
 
         $kemitraan->update(['statusPengajuan' => $status]);
@@ -73,11 +73,13 @@ class c_kemitraan extends Controller
     public function uploadMou(Request $request, string $id)
     {
         $request->validate(['fileKemitraan' => 'required|mimes:pdf|max:10240']);
-        $kemitraan = Kemitraan::where('id', $id)->where('userId', Auth::id())->firstOrFail();
+        /** @var Kemitraan $kemitraan */
+        $kemitraan = Kemitraan::whereId($id)->userId(Auth::id())->firstOrFail();
         $file = $request->file('fileKemitraan');
         $base64 = base64_encode(file_get_contents($file->getRealPath()));
 
-        $kemitraan->update(['fileKemitraan' => $base64, 'statusPengajuan' => 'Menunggu Verifikasi MOU']);
+        $kemitraan->fill(['fileKemitraan' => $base64, 'statusPengajuan' => 'Menunggu Verifikasi MOU']);
+        $kemitraan->save();
 
         broadcast(new KemitraanUpdated($id, 'Menunggu Verifikasi MOU'));
 
@@ -93,7 +95,7 @@ class c_kemitraan extends Controller
             $kemitraan->update(['statusPengajuan' => 'Ditolak', 'fileKemitraan' => null]);
         } else {
             $kemitraan->update(['statusPengajuan' => 'Aktif']);
-            User::where('id', $kemitraan->userId)->update(['isActive' => 1]);
+            User::whereId($kemitraan->userId)->update(['isActive' => 1]);
         }
 
         broadcast(new KemitraanUpdated($id, $request->status));

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto pt-4 pb-12">
-    <div class="flex items-center justify-between mb-6 px-4 md:px-0">
+    <div class="flex items-center justify-between mb-6 px-4 md:px-0" data-aos="fade-up">
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.produk.index') }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition shadow-sm">
                 <i class="fa-solid fa-arrow-left"></i>
@@ -17,9 +17,9 @@
         </span>
     </div>
 
-    <div class="bg-white rounded-3xl border border-gray-200 overflow-hidden mx-4 md:mx-0 shadow-sm">
+    <div class="bg-white rounded-3xl border border-gray-200 overflow-hidden mx-4 md:mx-0 shadow-sm" data-aos="fade-up" data-aos-delay="100">
         <div class="flex flex-col lg:flex-row">
-            <div class="lg:w-2/5 bg-gray-50 p-4 md:p-8 flex flex-col items-center justify-start border-b lg:border-b-0 lg:border-r border-gray-100">
+            <div class="lg:w-2/5 bg-gray-50 p-4 md:p-8 flex flex-col items-center justify-start border-b lg:border-b-0 lg:border-r border-gray-100" data-aos="fade-right" data-aos-delay="200">
                 <div class="w-full rounded-2xl overflow-hidden bg-white">
                     @if($item->fotoProduk)
                         <img src="{{ asset('storage/' . $item->fotoProduk) }}" class="w-full h-auto max-h-125 object-contain mx-auto">
@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <div class="lg:w-3/5 p-8 md:p-10">
+            <div class="lg:w-3/5 p-8 md:p-10" data-aos="fade-left" data-aos-delay="200">
                 <div class="flex flex-wrap gap-2 mb-4">
                     <span class="text-[10px] font-bold uppercase text-gray-800 bg-gray-800/10 px-3 py-1 rounded-lg">
                         {{ $item->kategori->jenisKategori }}

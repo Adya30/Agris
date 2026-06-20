@@ -30,7 +30,7 @@
 @endphp
 <div id="order-detail-container" class="max-w-6xl mx-auto pt-5 pb-12">
 
-    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4" data-aos="fade-up">
         <div>
             <a href="{{ route('admin.pesanan.index') }}" class="inline-flex items-center gap-1 text-[10px] md:text-xs font-bold text-gray-400 hover:text-gray-600 transition uppercase tracking-wider mb-2">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Transaksi
@@ -44,7 +44,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
-        <div class="lg:col-span-2 space-y-6">
+        <div class="lg:col-span-2 space-y-6" data-aos="fade-right" data-aos-delay="100">
 
             <div class="bg-white p-4 md:p-6 rounded-3xl shadow-md">
                 <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
@@ -235,7 +235,7 @@
                         $trackId = $biteshipOrderId ?: $noResi;
                     @endphp
                     @if(!empty($trackId) && !str_contains(strtoupper($trackId), 'AMBIL'))
-                        <a href="https://track.biteship.com/{{ $trackId }}" target="_blank" class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-100 px-3 py-1 rounded-lg text-blue-650 font-bold text-[10px] hover:bg-blue-100 transition">
+                        <a href="https://track-sandbox.biteship.com/{{ $trackId }}" target="_blank" class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-100 px-3 py-1 rounded-lg text-blue-650 font-bold text-[10px] hover:bg-blue-100 transition">
                             <i class="fa-solid fa-arrow-up-right-from-square"></i> Lacak di Paket
                         </a>
                     @endif
@@ -490,7 +490,7 @@
 
         </div>
 
-        <div class="lg:sticky lg:top-28 space-y-6">
+        <div class="lg:sticky lg:top-28 space-y-6" data-aos="fade-left" data-aos-delay="100">
             <div class="bg-white p-4 md:p-6 rounded-3xl shadow-md relative overflow-hidden">
 
                 <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-green-50 to-transparent pointer-events-none rounded-bl-full"></div>

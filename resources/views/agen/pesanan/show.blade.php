@@ -37,7 +37,7 @@
 @endphp
 
 <div id="order-detail-container" class="max-w-5xl mx-auto pb-16 px-6 pt-5">
-    <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4" data-aos="fade-up">
         <div>
             <a href="{{ route('agen.pesanan.index') }}" class="text-xs font-bold text-gray-400 hover:text-gray-600 flex items-center gap-1.5 mb-2 uppercase tracking-wider transition-colors">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar
@@ -193,7 +193,7 @@
             @endphp
 
             <!-- Status Tracking Pengiriman (Vertical Timeline) -->
-            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-6" data-aos="fade-up" data-aos-delay="100">
                 <div class="flex items-center justify-between pb-3 border-b border-gray-50">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-2xl bg-[#58CC02]/10 flex items-center justify-center text-[#58CC02]">
@@ -387,15 +387,10 @@
             </div>
             @endif
 
-            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm" data-aos="fade-up" data-aos-delay="200">
                 <h2 class="font-extrabold text-gray-800 text-xs mb-4 uppercase tracking-wider text-gray-400 pb-2 border-b border-gray-50">Daftar Produk</h2>
                 <div class="divide-y divide-gray-100">
                     @foreach($pesanan->detailPesanans as $detail)
-                        @php
-                            $refunds = \App\Models\Refund::where('detailPesananId', $detail->id)->get();
-                            $refundedQty = $refunds->whereIn('status', ['pending', 'disetujui'])->sum('jumlah');
-                            $maxQty = $detail->jumlahPesanan - $refundedQty;
-                        @endphp
                         <div class="flex items-center gap-3 md:gap-4 py-4 first:pt-0 last:pb-0">
                             <div class="w-12 h-12 md:w-14 md:h-14 bg-gray-50 rounded-xl overflow-hidden border border-gray-100 flex items-center justify-center p-1 shrink-0">
                                 @if($detail->produk && $detail->produk->fotoProduk)
@@ -412,34 +407,21 @@
                                 <p class="text-[10px] md:text-[11px] text-gray-400 font-semibold mt-0.5">
                                     {{ $detail->jumlahPesanan }} barang x Rp {{ number_format($detail->harga_satuan, 0, ',', '.') }}
                                 </p>
-                                @if($refunds->isNotEmpty())
-                                    @foreach($refunds as $ref)
-                                        <span class="block mt-1 text-[9px] font-bold {{ $ref->status === 'disetujui' ? 'text-green-600' : ($ref->status === 'pending' ? 'text-amber-600' : 'text-red-500') }}">
-                                            Refund {{ $ref->jumlah }} unit ({{ strtoupper($ref->status) }})
-                                        </span>
-                                    @endforeach
-                                @endif
                             </div>
 
-                            <div class="text-right shrink-0 flex items-center gap-3">
+                            <div class="text-right shrink-0">
                                 <div class="text-right">
                                     <span class="font-bold text-gray-800 text-[11px] md:text-xs block">
                                         Rp {{ number_format($detail->subtotal, 0, ',', '.') }}
                                     </span>
                                 </div>
-                                @if($pesanan->status === 'selesai' && $maxQty > 0)
-                                    <a href="{{ route('agen.refund.create', ['pesananId' => $pesanan->id, 'detailPesananId' => $detail->id]) }}"
-                                       class="text-[10px] bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1 rounded-lg border border-red-200 transition font-bold cursor-pointer flex items-center gap-1">
-                                        <i class="fa-solid fa-rotate-left text-[9px]"></i> Refund
-                                    </a>
-                                @endif
                             </div>
                         </div>
                     @endforeach
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="flex items-center gap-3 pb-3 border-b border-gray-50">
                     <div class="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400">
                         <i class="fa-solid fa-location-dot text-sm"></i>
@@ -455,7 +437,7 @@
 
         </div>
 
-        <div class="space-y-6">
+        <div class="space-y-6" data-aos="fade-up" data-aos-delay="150">
 
             @if(in_array($pesanan->status_pesanan, ['diproses', 'dikirim', 'selesai']))
             <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
@@ -642,51 +624,6 @@
         }
     });
 </script>
-@endif
-
-@php
-    $orderRefunds = \App\Models\Refund::where('pesananId', $pesanan->id)->with('detailPesanan.produk')->get();
-@endphp
-
-@if($orderRefunds->isNotEmpty())
-    <div class="bg-white p-4 md:p-6 rounded-3xl border border-gray-100 shadow-sm mt-6">
-        <h2 class="font-extrabold text-[10px] md:text-xs mb-4 uppercase tracking-wider text-gray-400 pb-2 border-b border-gray-50">Daftar Pengajuan Refund Pesanan Ini</h2>
-        <div class="divide-y divide-gray-150">
-            @foreach($orderRefunds as $refund)
-                <div class="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs font-semibold">
-                    <div class="flex items-center gap-3">
-                        @if($refund->foto_bukti)
-                            <a href="{{ asset('storage/' . $refund->foto_bukti) }}" target="_blank" class="w-10 h-10 rounded-lg overflow-hidden border border-gray-150 shrink-0 block hover:opacity-85 transition">
-                                <img src="{{ asset('storage/' . $refund->foto_bukti) }}" class="w-full h-full object-cover">
-                            </a>
-                        @endif
-                        <div>
-                            <p class="text-gray-800">{{ $refund->detailPesanan->produk->namaProduk ?? 'Produk Telah Dihapus' }} ({{ $refund->jumlah }} unit)</p>
-                            <p class="text-[10px] text-gray-400 mt-0.5">Alasan: {{ $refund->alasan }}</p>
-                            @if($refund->catatan_admin)
-                                <p class="text-[10px] text-red-500 mt-0.5">Catatan Admin: {{ $refund->catatan_admin }}</p>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3 justify-between sm:justify-end">
-                        <div class="text-right">
-                            <span class="text-[9px] text-gray-400 block uppercase font-bold">Nominal</span>
-                            <span class="font-black text-gray-900">Rp {{ number_format($refund->nominal, 0, ',', '.') }}</span>
-                        </div>
-                        <div>
-                            @if($refund->status === 'pending')
-                                <span class="bg-amber-50 text-amber-600 border border-amber-200 px-2 py-0.5 rounded-full text-[9px] uppercase font-black tracking-wide">Pending</span>
-                            @elseif($refund->status === 'disetujui')
-                                <span class="bg-green-50 text-green-600 border border-green-200 px-2 py-0.5 rounded-full text-[9px] uppercase font-black tracking-wide">Disetujui</span>
-                            @else
-                                <span class="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full text-[9px] uppercase font-black tracking-wide">Ditolak</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
 @endif
 
 @if($pesanan->status === 'diproses')

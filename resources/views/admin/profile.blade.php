@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-full mx-auto py-4">
     <div class="flex flex-col lg:flex-row gap-3 items-start">
-        <div class="w-full lg:w-auto">
+        <div class="w-full lg:w-auto" data-aos="fade-up">
             <a href="{{ route('admin.produk.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 border text-white bg-[#58CC02] rounded-xl transition-all duration-300 text-xs font-bold group">
                 <i class="fas fa-arrow-left"></i> Beranda
             </a>
@@ -15,7 +15,7 @@
             @csrf
             @method('PUT')
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" data-aos="fade-up" data-aos-delay="100">
                 <div class="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-gray-50/50">
                     <h1 class="text-xl font-black text-gray-800">Profil</h1>
                     <div class="flex gap-2">

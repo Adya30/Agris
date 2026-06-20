@@ -4,14 +4,14 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto pt-4 pb-12">
-    <div class="flex items-center gap-4 mb-6 px-4 md:px-0">
+    <div class="flex items-center gap-4 mb-6 px-4 md:px-0" data-aos="fade-up">
         <h1 class="text-xl font-bold text-gray-800">Edit Data Blog</h1>
     </div>
 
     <form action="{{ route('admin.blog.update', $blog->id) }}" method="POST" enctype="multipart/form-data" id="formBlog">
         @csrf
         @method('PUT')
-        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden mx-4 md:mx-0 shadow-sm">
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden mx-4 md:mx-0 shadow-sm" data-aos="fade-up" data-aos-delay="100">
             <div class="flex flex-col lg:flex-row">
                 <div class="lg:w-1/3 bg-gray-50 p-8 border-b lg:border-b-0 lg:border-r border-gray-200">
                     <div class="flex flex-col items-center">

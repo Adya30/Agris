@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="w-full pt-2 pb-10 px-4 md:px-0">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4" data-aos="fade-up">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Manajemen Blog</h1>
             <p class="text-gray-500 text-sm">Buat dan bagikan cerita Anda</p>
@@ -16,7 +16,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @forelse($blogs as $blog)
-        <div class="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col h-full">
+        <div class="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col h-full" data-aos="zoom-in" data-aos-delay="{{ ($loop->iteration - 1) * 100 }}">
             <div class="relative aspect-video w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                 @if($blog->fotoBlog)
                     <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="{{ $blog->judulBlog }}">

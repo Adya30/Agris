@@ -4,16 +4,16 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto pt-5 pb-12 px-6">
-    <div class="flex items-center gap-3 pb-5">
+    <div class="flex items-center gap-3 pb-5" data-aos="fade-up">
         <a href="{{ route('agen.produk.index') }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition shadow-sm">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
         <h1 class="text-xl font-bold text-gray-800">Detail Produk</h1>
     </div>
 
-    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden" data-aos="fade-up" data-aos-delay="100">
         <div class="grid grid-cols-1 md:grid-cols-2">
-            <div class="p-6 md:p-10 bg-gray-50 flex items-center justify-center">
+            <div class="p-6 md:p-10 bg-gray-50 flex items-center justify-center" data-aos="fade-right" data-aos-delay="200">
                 <div class="relative w-auto rounded-2xl overflow-hidden shadow-lg bg-white">
                     @if($item->fotoProduk)
                         <img src="{{ asset('storage/' . $item->fotoProduk) }}" class="w-full h-full max-h-125 object-cover transition duration-500" alt="{{ $item->namaProduk }}">
@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <div class="p-8 md:p-12 flex flex-col">
+            <div class="p-8 md:p-12 flex flex-col" data-aos="fade-left" data-aos-delay="200">
                 <div class="mb-6">
                     <h1 class="text-3xl md:text-4xl font-black text-gray-900 leading-tight mb-2">{{ $item->namaProduk }}</h1>
                     <p class="text-2xl font-bold text-[#58CC02]">

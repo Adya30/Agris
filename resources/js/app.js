@@ -3,13 +3,10 @@ import Pusher from 'pusher-js';
 import axios from 'axios';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-
 import './wilayah';
 import './upload-handler';
 import './eye';
 import './form-refresh';
-
-// Expose AOS globally so views can call AOS.refresh() if needed
 window.AOS = AOS;
 
 window.Pusher = Pusher;

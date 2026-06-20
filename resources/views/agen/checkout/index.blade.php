@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto pt-5 pb-12 px-6">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-2 space-y-6">
+        <div class="lg:col-span-2 space-y-6" data-aos="fade-right">
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <h3 class="font-bold text-gray-800 mb-4 uppercase text-xs">Alamat Pengiriman</h3>
                 <div class="p-4 bg-gray-50 rounded-xl">
@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div class="lg:col-span-1">
+        <div class="lg:col-span-1" data-aos="fade-left">
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-5">
                 <h3 class="font-bold text-gray-800 mb-4 uppercase text-xs">Ringkasan Pembayaran</h3>
                 <div class="space-y-3 mb-4">

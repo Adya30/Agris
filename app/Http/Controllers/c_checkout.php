@@ -19,7 +19,7 @@ class c_checkout extends Controller
         $selectedIds = $request->input('selected_ids', []);
         if (empty($selectedIds)) return redirect()->route('agen.keranjang.index');
 
-        $items = Keranjang::with('produk.kategori')->whereIn('id', $selectedIds)->where('userId', Auth::id())->get();
+        $items = Keranjang::with('produk.kategori')->whereIn('id', $selectedIds)->userId(Auth::id())->get();
         $totalHarga = 0;
         $totalBeratGram = 0;
 
@@ -29,7 +29,7 @@ class c_checkout extends Controller
         }
 
         $user = Auth::user();
-        $admin = User::where('isAdmin', true)->first();
+        $admin = User::isAdmin(true)->first();
 
         return view('agen.checkout.index', compact('items', 'user', 'admin', 'totalHarga', 'totalBeratGram', 'selectedIds'));
     }
@@ -38,12 +38,11 @@ class c_checkout extends Controller
     {
         try {
             $user = Auth::user();
-            $admin = User::where('isAdmin', true)->with('desa.kecamatan')->first();
+            $admin = User::isAdmin(true)->with('desa.kecamatan')->first();
 
             $originKecId = $admin->desa->kecamatanId ?? null;
             $destKecId = $user->desa->kecamatanId ?? null;
 
-            // Ambil ID Area atau generate otomatis jika belum ada di database
             $originAreaId = $this->getOrSyncBiteshipArea($originKecId);
             $destAreaId = $this->getOrSyncBiteshipArea($destKecId);
 
@@ -70,19 +69,17 @@ class c_checkout extends Controller
         }
     }
 
-    private function getOrSyncBiteshipArea($kecamatanId)
+    private function getOrSyncBiteshipArea(int|null $kecamatanId): ?string
     {
         if (!$kecamatanId) return null;
 
         $kec = DB::table('kecamatans')->where('id', $kecamatanId)->first();
         if (!$kec) return null;
 
-        // Jika sudah ada di DB, langsung kembalikan
         if (!empty($kec->biteship_area_id)) {
             return $kec->biteship_area_id;
         }
 
-        // Jika belum ada, coba sinkronisasi otomatis ke Biteship
         try {
             $kab = DB::table('kabupatens')->where('id', $kec->kabupatenId)->first();
             $cleanKec = trim(str_ireplace(['Kecamatan', 'Kec.'], '', $kec->namaKecamatan));

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class Chat extends Model
 {
@@ -31,5 +32,15 @@ class Chat extends Model
     public function penerima(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_penerima');
+    }
+
+    /**
+     * @param Builder $query
+     * @param string $status
+     * @return Builder
+     */
+    public function scopeStatus(Builder $query, string $status): Builder
+    {
+        return $query->where('status', $status);
     }
 }

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto pt-4 pb-12 px-4">
-    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4" data-aos="fade-up">
         <div class="flex items-center gap-4">
             <a href="{{ route('admin.kemitraan.index') }}" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition shadow-sm">
                 <i class="fa-solid fa-arrow-left"></i>
@@ -36,7 +36,7 @@
         $isFailed = $kemitraan->statusPengajuan == 'Ditolak';
     @endphp
 
-    <div class="bg-white rounded-3xl border border-gray-100 p-6 md:p-8 shadow-sm mb-8">
+    <div class="bg-white rounded-3xl border border-gray-100 p-6 md:p-8 shadow-sm mb-8" data-aos="fade-up" data-aos-delay="100">
         <div class="relative flex items-center justify-between mb-16 px-4">
             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 z-0"></div>
             <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 {{ $isFailed ? 'bg-red-500' : 'bg-[#58CC02]' }} transition-all duration-500 z-0" style="width: {{ $isFailed ? '100' : ($currentStep - 1) * 50 }}%"></div>
@@ -58,7 +58,7 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-2 space-y-6" data-aos="fade-right" data-aos-delay="200">
                 <div>
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Profil Agen</h3>
                     <div class="flex flex-col md:flex-row gap-6 p-6 bg-gray-50 rounded-3xl border border-gray-100">
@@ -112,7 +112,7 @@
                 </div>
             </div>
 
-            <div class="space-y-6">
+            <div class="space-y-6" data-aos="fade-left" data-aos-delay="200">
                 <div>
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Verifikasi Dokumen</h3>
                     <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100">

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto pt-2 pb-10 px-4 md:px-0">
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4" data-aos="fade-up">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Daftar Produk</h1>
             <p class="text-gray-500 text-sm">Kelola stok berdasarkan inputan kategori admin</p>
@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-gray-100 mb-8">
+    <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-gray-100 mb-8" data-aos="fade-up" data-aos-delay="100">
         <form action="{{ route('admin.produk.index') }}" method="GET" class="flex flex-col md:flex-row items-end gap-4">
             @if(request('search'))
                 <input type="hidden" name="search" value="{{ request('search') }}">
@@ -64,7 +64,7 @@
 
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
         @forelse($produks as $item)
-        <a href="{{ route('admin.produk.show', $item->id) }}" class="group">
+        <a href="{{ route('admin.produk.show', $item->id) }}" class="group" data-aos="zoom-in" data-aos-delay="{{ ($loop->iteration - 1) * 50 }}">
             <div class="bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col h-full relative">
                 <div class="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                     @if($item->fotoProduk)

@@ -11,12 +11,17 @@ class c_keranjang extends Controller
 {
     private function cartCount(): int
     {
-        return Keranjang::where('userId', Auth::id())->distinct('produkId')->count('produkId');
+        return (int) Keranjang::query()
+            ->where('userId', Auth::id())
+            ->select('produkId')
+            ->distinct()
+            ->toBase()
+            ->getCountForPagination();
     }
 
     public function index()
     {
-        $keranjangs = Keranjang::with(['produk.kategori'])->where('userId', Auth::id())->get();
+        $keranjangs = Keranjang::with(['produk.kategori'])->userId(Auth::id())->get();
         $total = 0;
 
         return view('agen.keranjang.index', compact('keranjangs', 'total'));
@@ -39,8 +44,9 @@ class c_keranjang extends Controller
             return response()->json(['message' => 'Stok produk habis.'], 422);
         }
 
-        $keranjang = Keranjang::where('userId', Auth::id())
-            ->where('produkId', $request->produkId)
+        /** @var Keranjang $keranjang */
+        $keranjang = Keranjang::userId(Auth::id())
+            ->produkId($request->produkId)
             ->first();
 
         if ($keranjang) {
@@ -50,7 +56,7 @@ class c_keranjang extends Controller
                 return response()->json(['message' => 'Jumlah melebihi stok yang tersedia.'], 422);
             }
 
-            $keranjang->update(['jumlah' => $newJumlah]);
+            Keranjang::whereId($keranjang->id)->update(['jumlah' => $newJumlah]);
         } else {
             if ($request->jumlah > $produk->stok) {
                 return response()->json(['message' => 'Jumlah melebihi stok yang tersedia.'], 422);
@@ -69,10 +75,11 @@ class c_keranjang extends Controller
         ]);
     }
 
-    public function tambahJumlah(Request $request, $id)
+    public function tambahJumlah(Request $request, string $id)
     {
-        $keranjang = Keranjang::where('id', $id)
-            ->where('userId', Auth::id())
+        /** @var Keranjang $keranjang */
+        $keranjang = Keranjang::whereId($id)
+            ->userId(Auth::id())
             ->firstOrFail();
 
         $produk = $keranjang->produk;
@@ -85,7 +92,7 @@ class c_keranjang extends Controller
             ], 422);
         }
 
-        $keranjang->increment('jumlah');
+        Keranjang::whereId($keranjang->id)->increment('jumlah');
 
         return response()->json([
             'message'   => 'Jumlah berhasil ditambah.',
@@ -95,14 +102,15 @@ class c_keranjang extends Controller
         ]);
     }
 
-    public function kurang(Request $request, $id)
+    public function kurang(Request $request, string $id)
     {
-        $keranjang = Keranjang::where('id', $id)->where('userId', Auth::id())->firstOrFail();
+        /** @var Keranjang $keranjang */
+        $keranjang = Keranjang::whereId($id)->userId(Auth::id())->firstOrFail();
 
         $produk = $keranjang->produk;
 
         if ($keranjang->jumlah > 1) {
-            $keranjang->decrement('jumlah');
+            Keranjang::whereId($keranjang->id)->decrement('jumlah');
         }
 
         return response()->json([
@@ -113,14 +121,15 @@ class c_keranjang extends Controller
         ]);
     }
 
-    public function updateJumlah(Request $request, $id)
+    public function updateJumlah(Request $request, string $id)
     {
         $request->validate([
             'jumlah' => 'required|integer|min:1',
         ]);
 
-        $keranjang = Keranjang::where('id', $id)
-            ->where('userId', Auth::id())
+        /** @var Keranjang $keranjang */
+        $keranjang = Keranjang::whereId($id)
+            ->userId(Auth::id())
             ->firstOrFail();
 
         $produk = $keranjang->produk;
@@ -134,7 +143,7 @@ class c_keranjang extends Controller
             ], 422);
         }
 
-        $keranjang->update(['jumlah' => $jumlah]);
+        Keranjang::whereId($keranjang->id)->update(['jumlah' => $jumlah]);
 
         return response()->json([
             'message' => 'Jumlah berhasil diperbarui.',
@@ -144,11 +153,12 @@ class c_keranjang extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        $keranjang = Keranjang::where('id', $id)->where('userId', Auth::id())->firstOrFail();
+        /** @var Keranjang $keranjang */
+        $keranjang = Keranjang::whereId($id)->userId(Auth::id())->firstOrFail();
 
-        $keranjang->delete();
+        Keranjang::whereId($keranjang->id)->delete();
 
         return response()->json([
             'message'   => 'Produk berhasil dihapus dari keranjang.',

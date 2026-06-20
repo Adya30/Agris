@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const trackId = data.biteship_order_id || data.no_resi;
         if (trackId && !data.is_pickup) {
             biteshipBtnContainer.innerHTML = `
-                <a href="https://track.biteship.com/${trackId}" target="_blank" class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-100 px-3.5 py-2 rounded-xl text-blue-600 font-extrabold text-xs hover:bg-blue-100 transition shadow-xs">
+                <a href="https://track-sandbox.biteship.com/${trackId}" target="_blank" class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-100 px-3.5 py-2 rounded-xl text-blue-600 font-extrabold text-xs hover:bg-blue-100 transition shadow-xs">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Lacak via Biteship
                 </a>
             `;

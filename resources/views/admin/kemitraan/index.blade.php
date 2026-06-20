@@ -4,12 +4,12 @@
 
 @section('content')
 <div class="w-full pt-2 pb-10 px-4 md:px-0">
-    <div class="mb-8">
+    <div class="mb-8" data-aos="fade-up">
         <h1 class="text-2xl font-bold text-gray-800">Manajemen Kemitraan</h1>
         <p class="text-gray-500 text-sm">Verifikasi data pengajuan agen baru.</p>
     </div>
 
-    <div class="hidden md:block bg-white rounded-4xl border border-gray-100 overflow-hidden shadow-sm">
+    <div class="hidden md:block bg-white rounded-4xl border border-gray-100 overflow-hidden shadow-sm" data-aos="fade-up" data-aos-delay="100">
         <table class="w-full text-left">
             <thead>
                 <tr class="bg-gray-50 border-b border-gray-100">
@@ -60,7 +60,7 @@
         </table>
     </div>
 
-    <div class="grid grid-cols-1 gap-2 md:hidden">
+    <div class="grid grid-cols-1 gap-2 md:hidden" data-aos="fade-up" data-aos-delay="100">
         @foreach($kemitraans as $item)
         <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
             <div class="flex justify-between items-start mb-4">
