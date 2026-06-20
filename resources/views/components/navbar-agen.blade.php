@@ -9,7 +9,7 @@
     <div class="bg-[#0f8629] py-3 px-4 md:px-6">
         <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
             <a href="{{ route('agen.produk.index') }}" class="flex items-center gap-2 shrink-0">
-                <img src="{{ asset('images/icon.png') }}" class="w-12 h-auto" alt="Logo AGRIS">
+                <img src="{{ asset('images/icon.svg') }}" class="w-12 h-auto" alt="Logo AGRIS">
                 <span class="text-2xl font-bold text-white uppercase tracking-tight">AGRIS</span>
             </a>
 

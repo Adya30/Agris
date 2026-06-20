@@ -2,16 +2,16 @@
     <div class="max-w-7xl mx-auto px-6 py-10">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
 
-            <div>
+            <div data-aos="fade-up">
                 <div class="mb-4">
-                    <img src="{{ asset('images/icon.png') }}" class="w-40" alt="Logo AGRIS">
+                    <img src="{{ asset('images/icon.svg') }}" class="w-40" alt="Logo AGRIS">
                 </div>
                 <p class="text-gray-400 text-sm leading-relaxed">
                     Marketplace pertanian modern yang menyediakan kebutuhan terbaik untuk petani dengan sistem terpercaya.
                 </p>
             </div>
 
-            <div>
+            <div data-aos="fade-up" data-aos-delay="100">
                 <h3 class="text-lg font-semibold mb-4 text-white">Navigasi</h3>
                 <ul class="space-y-2 text-gray-400 text-sm">
                     <li><a href="{{ route('landing') }}" class="hover:text-[#58CC02] transition">Beranda</a></li>
@@ -22,7 +22,7 @@
                 </ul>
             </div>
 
-            <div>
+            <div data-aos="fade-up" data-aos-delay="200">
                 <h3 class="text-lg font-semibold mb-4 text-white">Kontak</h3>
                 <ul class="space-y-3 text-gray-400 text-sm">
                     <li class="flex items-start gap-2">
@@ -53,7 +53,7 @@
                 </div>
             </div>
 
-            <div>
+            <div data-aos="fade-up" data-aos-delay="300">
                 <h3 class="text-lg font-semibold mb-4 text-white">Lokasi</h3>
                 @php
                     $alamatLengkap = '';

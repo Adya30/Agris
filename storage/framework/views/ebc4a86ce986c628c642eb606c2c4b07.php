@@ -1,13 +1,30 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Tentang Kami - PT Surya Kencana Agrifarm'); ?>
 
-@section('title', 'Tentang Kami - PT Surya Kencana Agrifarm')
-
-@section('content')
-<x-navbar />
+<?php $__env->startSection('content'); ?>
+<?php if (isset($component)) { $__componentOriginala591787d01fe92c5706972626cdf7231 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala591787d01fe92c5706972626cdf7231 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.navbar','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('navbar'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala591787d01fe92c5706972626cdf7231)): ?>
+<?php $attributes = $__attributesOriginala591787d01fe92c5706972626cdf7231; ?>
+<?php unset($__attributesOriginala591787d01fe92c5706972626cdf7231); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala591787d01fe92c5706972626cdf7231)): ?>
+<?php $component = $__componentOriginala591787d01fe92c5706972626cdf7231; ?>
+<?php unset($__componentOriginala591787d01fe92c5706972626cdf7231); ?>
+<?php endif; ?>
 
 <section class="relative pt-32 pb-20 px-6 overflow-hidden">
     <div class="absolute inset-0 z-0">
-        <img src="{{ asset('images/hero.svg') }}" class="w-full h-full object-cover" alt="Background">
+        <img src="<?php echo e(asset('images/hero.svg')); ?>" class="w-full h-full object-cover" alt="Background">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
     </div>
 
@@ -27,7 +44,7 @@
 <section class="py-20 bg-gray-200 px-6">
     <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
         <div data-aos="fade-up">
-            <img src="{{ asset('images/about.svg') }}" class="rounded-3xl shadow-xl w-full h-112 object-cover">
+            <img src="<?php echo e(asset('images/about.svg')); ?>" class="rounded-3xl shadow-xl w-full h-112 object-cover">
         </div>
         <div class="space-y-8" data-aos="fade-up" data-aos-delay="100">
             <div>
@@ -86,5 +103,26 @@
     </div>
 </section>
 
-<x-footer />
-@endsection
+<?php if (isset($component)) { $__componentOriginal8a8716efb3c62a45938aca52e78e0322 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal8a8716efb3c62a45938aca52e78e0322 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.footer','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('footer'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal8a8716efb3c62a45938aca52e78e0322)): ?>
+<?php $attributes = $__attributesOriginal8a8716efb3c62a45938aca52e78e0322; ?>
+<?php unset($__attributesOriginal8a8716efb3c62a45938aca52e78e0322); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal8a8716efb3c62a45938aca52e78e0322)): ?>
+<?php $component = $__componentOriginal8a8716efb3c62a45938aca52e78e0322; ?>
+<?php unset($__componentOriginal8a8716efb3c62a45938aca52e78e0322); ?>
+<?php endif; ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\project\Agris\resources\views/guest/about.blade.php ENDPATH**/ ?>

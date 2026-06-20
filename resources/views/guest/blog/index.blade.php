@@ -7,11 +7,11 @@
 
 <section class="relative pt-28 pb-20 px-6 overflow-hidden">
     <div class="absolute inset-0 z-0">
-        <img src="{{ asset('images/hero.jpg') }}" class="w-full h-full object-cover" alt="Background">
+        <img src="{{ asset('images/hero.svg') }}" class="w-full h-full object-cover" alt="Background">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto text-center">
+    <div class="relative z-10 max-w-7xl mx-auto text-center" data-aos="fade-up">
         <span class="text-[#58CC02] font-bold tracking-widest uppercase text-sm mb-4 block">
             Blog
         </span>
@@ -28,7 +28,7 @@
     <div class="max-w-7xl mx-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($blogs as $blog)
-            <a href="{{ route('guest.blog.show', $blog->id) }}" class="group bg-white rounded-4xl overflow-hidden shadow-sm border border-gray-100 flex flex-col">
+            <a href="{{ route('guest.blog.show', $blog->id) }}" class="group bg-white rounded-4xl overflow-hidden shadow-sm border border-gray-100 flex flex-col" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                 <div class="relative h-64 overflow-hidden">
                     @if($blog->fotoBlog)
                         <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">

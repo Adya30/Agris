@@ -8,11 +8,11 @@
 
 <section class="relative min-h-[70vh] flex items-center overflow-hidden pt-20 pb-16">
     <div class="absolute inset-0 z-0">
-        <img src="{{ asset('images/hero.jpg') }}" class="w-full h-full object-cover" alt="Background">
+        <img src="{{ asset('images/hero.svg') }}" class="w-full h-full object-cover" alt="Background">
         <div class="absolute inset-0 bg-gradient-to-b from-[#0f8629]/80 via-[#0f8629]/70 to-[#0f8629]/90"></div>
     </div>
 
-    <div class="relative z-10 max-w-4xl mx-auto px-6 w-full text-center">
+    <div class="relative z-10 max-w-4xl mx-auto px-6 w-full text-center" data-aos="fade-up">
         <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-full text-xs font-bold mb-6">
             <i class="fa-solid fa-truck-fast"></i>
             Lacak Pesanan Anda
@@ -143,26 +143,26 @@
 
 <section class="py-16 px-6 bg-white">
     <div class="max-w-5xl mx-auto">
-        <div class="text-center max-w-2xl mx-auto mb-12">
+        <div class="text-center max-w-2xl mx-auto mb-12" data-aos="fade-up">
             <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-3">Cara Melacak Pesanan</h2>
             <p class="text-gray-500 text-sm">Ikuti langkah-langkah mudah berikut untuk memantau status pengiriman Anda</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 text-center group hover:shadow-lg hover:border-green-200 transition-all duration-300">
+            <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 text-center group hover:shadow-lg hover:border-green-200 transition-all duration-300" data-aos="zoom-in">
                 <div class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-[#58CC02] text-2xl mx-auto mb-4 group-hover:bg-[#58CC02] group-hover:text-white transition-all duration-300">
                     <i class="fa-solid fa-hashtag"></i>
                 </div>
                 <h3 class="font-extrabold text-gray-800 text-sm mb-2">1. Siapkan ID Pesanan</h3>
                 <p class="text-xs text-gray-500 leading-relaxed">Salin ID Pesanan dari halaman riwayat pesanan atau email konfirmasi Anda.</p>
             </div>
-            <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 text-center group hover:shadow-lg hover:border-green-200 transition-all duration-300">
+            <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 text-center group hover:shadow-lg hover:border-green-200 transition-all duration-300" data-aos="zoom-in" data-aos-delay="100">
                 <div class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-[#58CC02] text-2xl mx-auto mb-4 group-hover:bg-[#58CC02] group-hover:text-white transition-all duration-300">
                     <i class="fa-solid fa-keyboard"></i>
                 </div>
                 <h3 class="font-extrabold text-gray-800 text-sm mb-2">2. Masukkan di Kolom Pencarian</h3>
                 <p class="text-xs text-gray-500 leading-relaxed">Tempelkan ID Pesanan Anda pada kolom pencarian di atas, lalu klik "Lacak Sekarang".</p>
             </div>
-            <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 text-center group hover:shadow-lg hover:border-green-200 transition-all duration-300">
+            <div class="bg-gray-50 rounded-3xl p-6 border border-gray-100 text-center group hover:shadow-lg hover:border-green-200 transition-all duration-300" data-aos="zoom-in" data-aos-delay="200">
                 <div class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-[#58CC02] text-2xl mx-auto mb-4 group-hover:bg-[#58CC02] group-hover:text-white transition-all duration-300">
                     <i class="fa-solid fa-map-location-dot"></i>
                 </div>

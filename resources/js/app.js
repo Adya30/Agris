@@ -1,6 +1,16 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 import axios from 'axios';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
+import './wilayah';
+import './upload-handler';
+import './eye';
+import './form-refresh';
+
+// Expose AOS globally so views can call AOS.refresh() if needed
+window.AOS = AOS;
 
 window.Pusher = Pusher;
 window.axios = axios;
@@ -17,6 +27,14 @@ window.Echo = new Echo({
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    AOS.init({
+        duration: 800,
+        easing: 'ease-out-cubic',
+        once: false,
+        mirror: true,
+        offset: 50,
+    });
+
     if (window.Echo) {
         window.Echo.channel('chat.global')
             .listen('.MessageSent', (e) => {
@@ -42,8 +60,3 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 });
-
-import './wilayah';
-import './upload-handler';
-import './eye';
-import './form-refresh';

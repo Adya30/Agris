@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title><?php echo $__env->yieldContent('title', 'Agris'); ?></title>
-    <link rel="icon" type="image/png" href="<?php echo e(asset('images/icon.png')); ?>">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('images/icon.svg')); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 </head>
@@ -42,7 +42,9 @@
     <?php endif; ?>
 </div>
 
+<div>
 <?php echo $__env->yieldContent('content'); ?>
+</div>
 
 <?php echo $__env->yieldPushContent('scripts'); ?>
 

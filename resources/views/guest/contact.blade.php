@@ -7,11 +7,11 @@
 
 <section class="relative pt-32 pb-20 px-6 overflow-hidden">
     <div class="absolute inset-0 z-0">
-        <img src="{{ asset('images/hero.jpg') }}" class="w-full h-full object-cover" alt="Background">
+        <img src="{{ asset('images/hero.svg') }}" class="w-full h-full object-cover" alt="Background">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto text-center">
+    <div class="relative z-10 max-w-7xl mx-auto text-center" data-aos="fade-up">
         <span class="text-[#58CC02] font-bold tracking-widest uppercase text-sm mb-4 block">
             Kontak
         </span>
@@ -27,12 +27,12 @@
 <section class="pt-20 pb-20 bg-gray-100 px-6">
     <div class="max-w-7xl mx-auto">
         <div class="grid md:grid-cols-1 gap-16 items-center">
-            <div>
+            <div data-aos="fade-up">
                 <h1 class="text-4xl font-bold text-gray-800 mb-6">Hubungi Kami</h1>
                 <p class="text-gray-500 mb-10 text-lg">Ada pertanyaan atau ingin bekerja sama sebagai mitra? Tim kami siap membantu Anda dengan sepenuh hati.</p>
 
                 <div class="space-y-6">
-                    <div class="flex items-start gap-6 p-6 rounded-3xl border-2 border-gray-300 hover:border-[#58CC02]/30 hover:bg-[#58CC02]/5 transition-all duration-300">
+                    <div class="flex items-start gap-6 p-6 rounded-3xl border-2 border-gray-300 hover:border-[#58CC02]/30 hover:bg-[#58CC02]/5 transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
                         <div class="w-14 h-14 bg-[#58CC02]/10 rounded-2xl flex items-center justify-center text-[#58CC02] shrink-0">
                             <i class="fa-solid fa-location-dot text-2xl"></i>
                         </div>
@@ -51,7 +51,7 @@
                         </div>
                     </div>
 
-                    <div class="flex items-start gap-6 p-6 rounded-3xl border-2 border-gray-300 hover:border-[#58CC02]/30 hover:bg-[#58CC02]/5 transition-all duration-300">
+                    <div class="flex items-start gap-6 p-6 rounded-3xl border-2 border-gray-300 hover:border-[#58CC02]/30 hover:bg-[#58CC02]/5 transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
                         <div class="w-14 h-14 bg-[#58CC02]/10 rounded-2xl flex items-center justify-center text-[#58CC02] shrink-0">
                             <i class="fa-solid fa-phone text-2xl"></i>
                         </div>
@@ -61,7 +61,7 @@
                         </div>
                     </div>
 
-                    <div class="flex items-start gap-6 p-6 rounded-3xl border-2 border-gray-300 hover:border-[#58CC02]/30 hover:bg-[#58CC02]/5 transition-all duration-300">
+                    <div class="flex items-start gap-6 p-6 rounded-3xl border-2 border-gray-300 hover:border-[#58CC02]/30 hover:bg-[#58CC02]/5 transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
                         <div class="w-14 h-14 bg-[#58CC02]/10 rounded-2xl flex items-center justify-center text-[#58CC02] shrink-0">
                             <i class="fa-solid fa-envelope text-2xl"></i>
                         </div>

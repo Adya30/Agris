@@ -7,7 +7,7 @@
 
 <section class="relative pt-25 pb-24 bg-white px-6">
     <div class="max-w-4xl mx-auto">
-        <div class="flex items-center gap-2 mb-5">
+        <div class="flex items-center gap-2 mb-5" data-aos="fade-up">
             <div class="flex justify-between">
                 <a href="{{ route('guest.blog.index') }}" class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#58CC02] bg-white shadow-sm transition-all">
                     <i class="fa-solid fa-arrow-left"></i>
@@ -16,7 +16,7 @@
             <span class="font-bold text-2xl items-center pl-3">Detail Blog</span>
         </div>
 
-        <div class="bg-white rounded-[48px] border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-[48px] border border-gray-100 shadow-sm overflow-hidden" data-aos="fade-up" data-aos-delay="100">
             @if($blog->fotoBlog)
                 <div class="w-full aspect-video max-h-112.5 overflow-hidden bg-gray-50">
                     <img src="{{ asset('storage/' . $blog->fotoBlog) }}" class="w-full h-full object-cover">

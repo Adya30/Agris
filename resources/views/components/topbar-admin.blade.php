@@ -2,7 +2,7 @@
     <div class="flex items-center justify-between h-full px-6">
         <div class="flex items-center gap-4">
             <a href="{{ route('admin.produk.index') }}" class="flex items-center gap-2">
-                <img src="{{ asset('images/icon.png') }}" class="h-9 w-9 object-contain">
+                <img src="{{ asset('images/icon.svg') }}" class="h-9 w-9 object-contain">
                 <span class="text-2xl font-bold text-white uppercase tracking-wider">AGRIS</span>
             </a>
         </div>

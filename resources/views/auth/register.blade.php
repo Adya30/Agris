@@ -8,11 +8,11 @@
 
     <div class="hidden md:flex w-1/2 bg-[#0f8629] flex-col justify-between p-12">
         <div>
-            <img src="{{ asset('images/icon.png') }}" class="w-20">
+            <img src="{{ asset('images/icon.svg') }}" class="w-20">
         </div>
 
         <div class="flex justify-center items-center flex-1">
-            <img src="{{ asset('images/plant.png') }}" class="w-50">
+            <img src="{{ asset('images/plant.svg') }}" class="w-50">
         </div>
 
         <div class="text-white text-center text-lg font-medium leading-relaxed mb-6">
