@@ -17,11 +17,11 @@
 
                             <h2 style="margin:0 0 8px; font-size:20px; font-weight:700; color:#222;">Reset Password</h2>
                             <p style="margin:0 0 24px; font-size:14px; color:#666;">
-                                Halo {{ $user->namaLengkap }}, kami menerima permintaan reset password untuk akun AGRIS Anda. Klik tombol di bawah untuk membuat password baru:
+                                Halo <?php echo e($user->namaLengkap); ?>, kami menerima permintaan reset password untuk akun AGRIS Anda. Klik tombol di bawah untuk membuat password baru:
                             </p>
 
                             <div style="text-align:center; margin:0 0 24px;">
-                                <a href="{{ $url }}" style="display:inline-block; background:#58CC02; color:white; font-size:14px; font-weight:600; padding:12px 32px; border-radius:6px; text-decoration:none;">
+                                <a href="<?php echo e($url); ?>" style="display:inline-block; background:#58CC02; color:white; font-size:14px; font-weight:600; padding:12px 32px; border-radius:6px; text-decoration:none;">
                                     Reset Password Saya
                                 </a>
                             </div>
@@ -39,7 +39,7 @@
                     <tr>
                         <td align="center" style="padding-top:24px;">
                             <p style="font-size:12px; color:#999; margin:0;">
-                                © {{ date('Y') }} AGRIS
+                                © <?php echo e(date('Y')); ?> AGRIS
                             </p>
                         </td>
                     </tr>
@@ -51,3 +51,4 @@
 
 </body>
 </html>
+<?php /**PATH D:\project\Agris\resources\views/emails/reset-password.blade.php ENDPATH**/ ?>

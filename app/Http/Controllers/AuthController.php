@@ -80,7 +80,7 @@ class AuthController extends Controller
             'register_otp_expires' => now()->addMinutes(10)
         ]);
 
-        Mail::raw("Kode OTP AGRIS kamu adalah : $otp\nBerlaku 10 menit.", function ($message) use ($validated) {
+        Mail::send('emails.otp', ['otp' => $otp, 'namaLengkap' => $validated['namaLengkap']], function ($message) use ($validated) {
             $message->to($validated['email'])->subject('Kode OTP Verifikasi AGRIS');
         });
 
@@ -133,7 +133,7 @@ class AuthController extends Controller
 
         $email = session('register_data')['email'];
 
-        Mail::raw("Kode OTP AGRIS baru kamu adalah : $otp\nBerlaku 10 menit.", function ($message) use ($email) {
+        Mail::send('emails.otp', ['otp' => $otp, 'namaLengkap' => session('register_data')['namaLengkap']], function ($message) use ($email) {
             $message->to($email)->subject('Resend: Kode OTP Verifikasi AGRIS');
         });
 
