@@ -18,7 +18,6 @@
                     <li><a href="<?php echo e(route('about')); ?>" class="hover:text-[#58CC02] transition">Tentang</a></li>
                     <li><a href="<?php echo e(route('guest.blog.index')); ?>" class="hover:text-[#58CC02] transition">Blog</a></li>
                     <li><a href="<?php echo e(route('contact')); ?>" class="hover:text-[#58CC02] transition">Kontak</a></li>
-                    <li><a href="<?php echo e(route('guest.track')); ?>" class="hover:text-[#58CC02] transition">Lacak Pesanan</a></li>
                 </ul>
             </div>
 

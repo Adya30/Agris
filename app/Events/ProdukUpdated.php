@@ -15,17 +15,11 @@ class ProdukUpdated implements ShouldBroadcast
 
     public $produk;
 
-    /**
-     * Create a new event instance.
-     */
     public function __construct(Produk $produk)
     {
         $this->produk = $produk;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     */
     public function broadcastOn(): array
     {
         return [
@@ -33,9 +27,6 @@ class ProdukUpdated implements ShouldBroadcast
         ];
     }
 
-    /**
-     * Get the broadcast name.
-     */
     public function broadcastAs(): string
     {
         return 'ProdukUpdated';

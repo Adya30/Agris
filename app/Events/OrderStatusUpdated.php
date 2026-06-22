@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\Models\Pesanan;
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -15,17 +16,11 @@ class OrderStatusUpdated implements ShouldBroadcast
 
     public $pesanan;
 
-    /**
-     * Create a new event instance.
-     */
     public function __construct(Pesanan $pesanan)
     {
         $this->pesanan = $pesanan;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     */
     public function broadcastOn(): array
     {
         return [
@@ -33,9 +28,6 @@ class OrderStatusUpdated implements ShouldBroadcast
         ];
     }
 
-    /**
-     * Get the broadcast name.
-     */
     public function broadcastAs(): string
     {
         return 'OrderStatusUpdated';

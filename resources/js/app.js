@@ -25,6 +25,7 @@ window.Echo = new Echo({
 
 document.addEventListener('DOMContentLoaded', () => {
     AOS.init({
+        disable: typeof window !== 'undefined' && typeof window.isAdmin !== 'undefined',
         duration: 800,
         easing: 'ease-out-cubic',
         once: false,
