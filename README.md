@@ -1,88 +1,88 @@
-# AGRIS (Agroindustri System)
+# AGRIS (Agroindustrial System)
 
-AGRIS adalah platform e-commerce dan kemitraan agroindustri modern yang dirancang untuk menghubungkan produsen/admin dengan agen penyalur. Platform ini dibangun menggunakan framework **Laravel 13** dan **Tailwind CSS v4** dengan integrasi API pihak ketiga seperti **Midtrans**, **Biteship**, **Wilayah.id**, dan **Google OAuth** untuk menghadirkan pengalaman berbelanja, manajemen logistik, serta pembayaran online yang terotomatisasi secara aman dan real-time.
-
----
-
-## 🚀 Fitur Utama (Core Features)
-
-Berikut adalah daftar fitur utama yang tersedia di sistem AGRIS berdasarkan peran pengguna (*Admin* dan *Agen*):
-
-### 1. Keamanan & Autentikasi Pengguna (Security & Auth)
-- **Registrasi & Verifikasi OTP**: Pendaftaran akun menggunakan email dengan sistem verifikasi OTP (One-Time Password) yang dikirim otomatis melalui Email (Laravel Mailer) untuk menjamin validitas akun.
-- **Google OAuth (Sign In with Google)**: Kemudahan masuk dan mendaftar dengan sekali klik menggunakan akun Google (Laravel Socialite).
-- **Reset Password**: Alur reset password mandiri yang aman menggunakan token verifikasi via email.
-- **Login Throttling**: Proteksi tambahan terhadap serangan brute-force dengan membatasi jumlah kegagalan login berturut-turut.
-
-### 2. Modul Kemitraan Agen (Partnership Module)
-- **Pengajuan Kemitraan**: Agen dapat mendaftar menjadi mitra resmi AGRIS.
-- **Unggah MOU Digital**: Agen mengunggah dokumen nota kesepahaman (MOU) yang telah ditandatangani untuk diverifikasi.
-- **Verifikasi Kemitraan**: Admin memiliki panel khusus untuk menyetujui/menolak berkas kemitraan dan menandatangani kerja sama.
-
-### 3. Manajemen Produk & Kategori (Product Catalog & Inventory)
-- **Katalog Terkategori**: Pengelompokan produk pertanian dan agroindustri berdasarkan kategori (misalnya: pupuk, beras premium, pestisida, dsb).
-- **CRUD Inventaris oleh Admin**: Manajemen data produk yang dinamis oleh Admin lengkap dengan upload gambar produk, detail harga, deskripsi, dan berat/karung.
-- **Soft Deletes (Keranjang Sampah)**: Fitur *Trash*, *Restore*, dan *Force Delete* untuk mengamankan data produk dari penghapusan permanen yang tidak disengaja.
-
-### 4. Keranjang & Sistem Transaksi (Cart & Transaction System)
-- **Keranjang Belanja Interaktif**: Tambah, edit jumlah, dan hapus produk dari keranjang secara real-time sebelum checkout.
-- **Opsi Pengambilan**: Pilihan fleksibel bagi agen untuk memilih metode pengiriman:
-  1. **Kirim via Kurir**: Menggunakan jasa ekspedisi terintegrasi.
-  2. **Ambil di Tempat**: Mengambil langsung di gudang utama AGRIS (Patrang, Jember) tanpa biaya pengiriman.
-
-### 5. Logistik Terintegrasi (Biteship Shipping API)
-- **Cek Ongkir Otomatis**: Integrasi dengan API Biteship untuk menghitung tarif pengiriman berdasarkan bobot total pesanan dan alamat tujuan secara real-time.
-- **Pelacakan Pengiriman (Live Tracking)**: Pengguna dapat melacak status perjalanan paket dengan tautan pelacakan langsung Biteship.
-- **Sinkronisasi Otomatis**: Webhook Biteship menerima pembaruan dari ekspedisi dan mengubah status pesanan (`diproses` ➔ `dikirim` ➔ `selesai`) secara otomatis.
-
-### 6. Gerbang Pembayaran Digital (Midtrans Payment Gateway)
-- **Pembayaran Online**: Integrasi dengan Midtrans Snap untuk pembayaran aman via Virtual Account, E-Wallet (GoPay, ShopeePay), Kartu Kredit, atau QRIS.
-- **Simulasi Pembayaran (Staging/Local)**: Fitur pembayaran simulasi offline khusus untuk lingkungan lokal (pengujian) sehingga tidak membutuhkan saldo riil.
-- **Webhook Callback Status**: Midtrans webhook yang otomatis memperbarui status pembayaran (`pending` ➔ `berhasil` / `gagal` / `daluwarsa`).
-- **Pengembalian Stok Otomatis**: Jika transaksi pembayaran dibatalkan atau kedaluwarsa, stok produk akan dikembalikan secara otomatis oleh sistem.
-
-### 7. Konsultasi & Chat Real-Time (Live Chat Support)
-- **Live Chat**: Komunikasi langsung (dua arah) antara Admin dengan Agen untuk mempermudah konsultasi kemitraan atau kendala teknis.
-- **WebSocket Engine**: Didukung oleh Laravel Reverb (WebSocket server) dan Laravel Echo di sisi frontend untuk transfer pesan yang instan dan tanpa reload.
-
-### 8. Wilayah Administrasi Indonesia (Wilayah.id API)
-- **Dropdown Lokasi Dinamis**: Sinkronisasi data provinsi, kabupaten/kota, kecamatan, hingga desa secara dinamis saat agen melengkapi profil alamat untuk akurasi alamat pengiriman.
-
-### 9. Manajemen Blog & Laporan Penjualan (Dashboard & Report)
-- **Blog Informasi**: Dashboard untuk menyajikan berita industri tani, tips agro, atau promo terbaru.
-- **Laporan Keuangan & Penjualan**: Laporan transaksi terperinci bagi Admin untuk melihat rekapitulasi penjualan, total pendapatan, dan log transaksi.
+AGRIS is a modern agroindustrial e-commerce and partnership platform designed to connect agricultural producers/administrators (Admin) with distribution partners (Agents). Built on the **Laravel 13** framework and **Tailwind CSS v4**, the platform integrates third-party APIs such as **Midtrans**, **Biteship**, **Wilayah.id**, and **Google OAuth** to deliver a secure, automated, and real-time shopping, logistics, and digital payment experience.
 
 ---
 
-## 🛠️ API & Layanan Pihak Ketiga (Integrations)
+## 🚀 Key Features
 
-Aplikasi AGRIS memanfaatkan beberapa layanan eksternal untuk memperkaya fungsionalitas dan otomasinya:
+AGRIS provides distinct dashboards and functional features tailored for two primary roles (*Admin* and *Agent*):
+
+### 1. Security & Authentication
+- **Registration & OTP Verification**: Account registration with dynamic One-Time Password (OTP) verification codes sent automatically via Email (Laravel Mailer) to validate user authenticity.
+- **Google OAuth (Sign In with Google)**: Fast and seamless authentication using Google accounts (Laravel Socialite).
+- **Self-Service Password Reset**: Secure password reset flow utilizing token verification links delivered via email.
+- **Login Throttling**: Enhanced security to prevent brute-force attacks by limiting consecutive failed login attempts.
+
+### 2. Agent Partnership Module (Kemitraan)
+- **Partnership Application**: Agents can apply to become official AGRIS distribution partners.
+- **Digital MOU Upload**: Applicants can upload signed Memorandum of Understanding (MOU) documents.
+- **Partnership Verification**: Admins have a dedicated dashboard to review, approve/reject applications, and finalize agreements.
+
+### 3. Product Catalog & Inventory Management
+- **Categorized Catalog**: Products grouped by specific agricultural categories (e.g., fertilizers, premium rice, pesticides).
+- **Admin CRUD & Inventory Control**: Dynamic product management with image uploads, pricing, detailed specifications, and bag weight parameters.
+- **Soft Deletes (Trash Bin)**: Includes *Trash*, *Restore*, and *Force Delete* safety nets to prevent accidental data loss.
+
+### 4. Interactive Cart & Transactions
+- **Interactive Shopping Cart**: Real-time item additions, quantity updates, and cart deletion prior to checkout.
+- **Flexible Shipping/Delivery Options**:
+  1. **Courier Shipping**: Integrates third-party logistics services.
+  2. **Self-Pickup**: Agents can choose to pick up items directly from the AGRIS main warehouse (Patrang, Jember) to eliminate shipping costs.
+
+### 5. Automated Logistics Integration (Biteship API)
+- **Real-Time Postage Cost (Ongkir)**: Integrates the Biteship API to compute exact shipping rates based on total order weight and destination.
+- **Live Shipping Tracking**: Real-time parcel tracking via Biteship track links.
+- **Automated Webhooks**: Biteship webhook callbacks automatically update order status (`processed` ➔ `shipped` ➔ `completed`).
+
+### 6. Digital Payment Gateway (Midtrans API)
+- **Secure Online Payments**: Integrated Midtrans Snap popup supporting Virtual Accounts, E-Wallets (GoPay, ShopeePay), Credit Cards, and QRIS.
+- **Offline Payment Simulator**: A testing simulation button in the local/development environment to complete payments without spending real funds.
+- **Callback Status Webhook**: Automatic status updates synced from Midtrans (`pending` ➔ `successful` / `failed` / `expired`).
+- **Auto Stock Recovery**: Returns reserved items back to the product stock if a payment expires or is canceled.
+
+### 7. Real-Time Chat & Consultation (Live Chat Support)
+- **Live Chat**: Directly links Agents and Admins for partner consultations or customer support.
+- **WebSocket Engine**: Utilizes Laravel Reverb (local WebSocket server) and Laravel Echo on the frontend to deliver instant message routing without page refreshes.
+
+### 8. Administrative Areas (Wilayah.id API)
+- **Hierarchical Address Dropdown**: Automatically synchronizes Indonesian provinces, cities/regencies, sub-districts, and villages dynamically during profile setup to guarantee shipping address accuracy.
+
+### 9. Admin Blog & Reporting Dashboard
+- **Agricultural Blog**: Admins can publish agro-tips, product promotions, and company announcements.
+- **Financial & Sales Reports**: Detailed transactional summaries and analytics for tracking total revenue, sales volume, and order histories.
+
+---
+
+## 🛠️ API & Third-Party Integrations
+
+The AGRIS application utilizes several external APIs to orchestrate its automated workflows:
 
 1. **Midtrans Payment Gateway API**
-   - **Endpoint Integrasi**: `https://app.sandbox.midtrans.com/snap/v1/transactions` (Sandbox) / `https://app.midtrans.com/snap/v1/transactions` (Production)
-   - **Kegunaan**: Pembuatan snap token transaksi, pengecekan status pembayaran real-time, pembatalan/pengembalian (refund) pembayaran, dan penanganan webhook callback.
-   - **Library**: `midtrans/midtrans-php`
+   - **Integration Endpoints**: `https://app.sandbox.midtrans.com/snap/v1/transactions` (Sandbox) / `https://app.midtrans.com/snap/v1/transactions` (Production)
+   - **Usage**: Snap token generation, payment status queries, cancellations/refunds, and asynchronous webhook handling.
+   - **Package**: `midtrans/midtrans-php`
 
 2. **Biteship Courier Aggregator API**
-   - **Endpoint Integrasi**: `https://api.biteship.com/v1` (atau sandbox)
-   - **Kegunaan**: Pencarian area koordinat ID, kalkulasi tarif pengantar (jne, sicepat, jnt, tiki, lion, ninja, anteraja), pemesanan kurir (courier booking), live tracking resi, dan penanganan status update melalui webhook.
+   - **Integration Endpoint**: `https://api.biteship.com/v1` (or sandbox alternative)
+   - **Usage**: Area coordinates lookup, shipping rate calculations (JNE, SiCepat, J&T, TIKI, Lion, Ninja, Anteraja), courier booking, live tracking, and shipping status webhooks.
    - **Client**: `Illuminate\Support\Facades\Http`
 
 3. **Wilayah.id API**
-   - **Endpoint Integrasi**: `https://wilayah.id/api`
-   - **Kegunaan**: Pengambilan data wilayah administratif Indonesia secara hierarkis (Provinsi ➔ Kabupaten ➔ Kecamatan ➔ Desa).
+   - **Integration Endpoint**: `https://wilayah.id/api`
+   - **Usage**: Retrieves dynamic hierarchical lists of Indonesian administrative subdivisions.
    - **Client**: `Illuminate\Support\Facades\Http`
 
 4. **Google OAuth API**
-   - **Kegunaan**: Autentikasi agen menggunakan akun Google pihak ketiga secara aman.
-   - **Library**: `laravel/socialite`
+   - **Usage**: Authenticates and registers agents using Google accounts.
+   - **Package**: `laravel/socialite`
 
 5. **Laravel Reverb (Pusher Protocol)**
-   - **Kegunaan**: Mesin broker WebSocket real-time lokal untuk fungsionalitas Live Chatting.
-   - **Library**: `laravel/reverb` & `pusher/pusher-php-server`
+   - **Usage**: Local real-time WebSocket messaging server for the live chat channel.
+   - **Packages**: `laravel/reverb` & `pusher/pusher-php-server`
 
 6. **Laravel Mailer (SMTP)**
-   - **Kegunaan**: Mengirimkan kode OTP verifikasi pendaftaran akun dan tautan ganti kata sandi.
+   - **Usage**: Sends OTP codes and password reset links.
 
 ---
 
@@ -92,37 +92,37 @@ Aplikasi AGRIS memanfaatkan beberapa layanan eksternal untuk memperkaya fungsion
 - **Database**: MySQL / MariaDB (Database Session, Queue, Cache)
 - **Frontend Utility**: Tailwind CSS v4, Alpine.js, Axios, AOS (Animate on Scroll)
 - **Real-Time Client**: Laravel Echo & Pusher JS
-- **Testing Tool**: Pest PHP
+- **Testing Engine**: Pest PHP
 
 ---
 
-## ⚙️ Panduan Instalasi & Pengembangan Lokal
+## ⚙️ Installation & Local Setup
 
-Ikuti langkah-langkah di bawah ini untuk memasang aplikasi AGRIS di komputer lokal Anda:
+Follow these steps to set up the AGRIS application locally:
 
-### Prasyarat (Prerequisites)
+### Prerequisites
 - PHP >= 8.3
 - Composer
 - Node.js & NPM
 - MySQL / MariaDB Server
 
-### Langkah-Langkah
+### Installation Steps
 
-1. **Clone Repository & Masuk ke Direktori**
+1. **Clone the Repository & Navigate**
    ```bash
    git clone <repository-url>
    cd Agris
    ```
 
-2. **Jalankan Setup Otomatis**
-   Aplikasi telah dilengkapi dengan script setup bawaan untuk mempercepat proses pemasangan:
+2. **Run Automatic Setup Script**
+   The project includes a predefined script to handle dependency installation and workspace configuration:
    ```bash
    composer run setup
    ```
-   *Script ini secara otomatis akan menjalankan `composer install`, menyalin `.env.example` ke `.env`, membuat `APP_KEY`, menjalankan migrasi tabel database, memasang paket Node.js, dan melakukan build aset frontend via Vite.*
+   *This command runs `composer install`, copies `.env.example` to `.env`, generates the application key (`APP_KEY`), runs database migrations, runs `npm install`, and builds the frontend assets with Vite.*
 
-3. **Konfigurasi Environment (`.env`)**
-   Buka berkas `.env` yang baru dibuat dan isi konfigurasi koneksi database Anda:
+3. **Configure the Environment (`.env`)**
+   Open the `.env` file and set up your database connection:
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -132,7 +132,7 @@ Ikuti langkah-langkah di bawah ini untuk memasang aplikasi AGRIS di komputer lok
    DB_PASSWORD=your_password
    ```
 
-   Tambahkan API key dan kredensial untuk layanan pihak ketiga yang dibutuhkan:
+   Provide credentials for the third-party integrations:
    ```env
    # Midtrans Credentials
    MIDTRANS_SERVER_KEY=your_midtrans_server_key
@@ -147,7 +147,7 @@ Ikuti langkah-langkah di bawah ini untuk memasang aplikasi AGRIS di komputer lok
    GOOGLE_CLIENT_SECRET=your_google_client_secret
    GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
 
-   # Mail/SMTP Credentials (untuk kirim OTP)
+   # Mail/SMTP Configuration (for OTP delivery)
    MAIL_MAILER=smtp
    MAIL_HOST=smtp.mailtrap.io
    MAIL_PORT=2525
@@ -155,32 +155,32 @@ Ikuti langkah-langkah di bawah ini untuk memasang aplikasi AGRIS di komputer lok
    MAIL_PASSWORD=your_mailtrap_password
    ```
 
-4. **Isi Data Awal Database (Seeding)**
-   Jalankan seeder untuk memasang data kategori produk dasar dan akun Admin utama:
+4. **Seed the Database**
+   Run the database seeders to populate initial product categories and establish the default administrator account:
    ```bash
    php artisan db:seed
    ```
    > [!NOTE]
-   > **Akun Admin Default**:
+   > **Default Admin Account**:
    > - **Email**: `agrisagroindustri@gmail.com`
    > - **Password**: `admin123`
 
-5. **Jalankan Server Pengembangan**
-   Untuk memulai server web, queue, Vite bundler, dan server WebSocket Reverb secara bersamaan, jalankan satu perintah berikut:
+5. **Start the Development Servers**
+   To spin up the web server, queue listener, Vite asset bundler, and Reverb WebSocket server simultaneously, execute:
    ```bash
    composer run dev
    ```
-   Atau jika menggunakan NPM:
+   Or using NPM:
    ```bash
    npm run dev
    ```
-   *Server web Anda akan berjalan di `http://localhost:8000` (atau port terdekat yang tersedia).*
+   *Your application will be available at `http://localhost:8000`.*
 
 ---
 
-## 🧪 Pengujian (Testing)
+## 🧪 Automated Testing
 
-Untuk menjalankan unit dan integrasi testing dengan Pest PHP, gunakan perintah berikut:
+To run the test suites with Pest PHP:
 ```bash
 composer run test
 ```
