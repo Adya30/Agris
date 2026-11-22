@@ -24,6 +24,16 @@
         </div>
     @endif
 
+    <div class="bg-amber-50 border border-amber-200 text-amber-900 p-4 sm:p-5 rounded-2xl mb-8 flex items-start gap-3.5 shadow-xs">
+        <div class="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0 mt-0.5">
+            <i class="fa-solid fa-circle-exclamation text-base"></i>
+        </div>
+        <div class="text-xs leading-relaxed">
+            <strong class="font-extrabold text-amber-950 block text-sm mb-0.5">Penting: Transaksi Pemesanan Online Dibatasi Hanya 1 Kali</strong>
+            <span>Setiap akun pengguna dibatasi untuk melakukan transaksi pemesanan online maksimal <strong>1 kali</strong> untuk efisiensi kuota layanan sistem. Harap pastikan produk, jumlah pesanan, dan pilihan pengiriman Anda telah sesuai sebelum menekan tombol bayar.</span>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div class="lg:col-span-2 space-y-6">
             <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm">
@@ -214,6 +224,9 @@
                     <button type="submit" id="btnSubmitOrder" disabled class="w-full bg-slate-100 text-slate-400 py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed transition-all duration-300">
                         <i class="fa-solid fa-credit-card text-xs"></i> Bayar Sekarang
                     </button>
+                    <p class="text-[11px] text-amber-700 font-semibold text-center mt-2.5 flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation text-xs"></i> Transaksi online dibatasi hanya 1x per akun
+                    </p>
                 </form>
             </div>
         </div>

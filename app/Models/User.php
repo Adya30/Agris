@@ -2,21 +2,24 @@
 
 namespace App\Models;
 
+use App\Notifications\CustomResetPasswordNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Notifications\CustomResetPasswordNotification;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUlids;
+    use HasFactory, HasUlids, Notifiable;
 
     protected $table = 'users';
+
     protected $primaryKey = 'id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -35,6 +38,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'biteship_location_id',
     ];
 
     protected $appends = ['alamatLengkap'];
@@ -43,19 +47,17 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'tanggalLahir'      => 'date',
-            'isAdmin'           => 'boolean',
-            'isActive'          => 'boolean',
+            'password' => 'hashed',
+            'tanggalLahir' => 'date',
+            'isAdmin' => 'boolean',
+            'isActive' => 'boolean',
         ];
     }
-
 
     public function desa(): BelongsTo
     {
         return $this->belongsTo(Desa::class, 'desaId', 'id');
     }
-
 
     public function getKecamatanAttribute()
     {
@@ -72,10 +74,9 @@ class User extends Authenticatable
         return $this->desa?->kecamatan?->kabupaten?->provinsi;
     }
 
-
     public function getAlamatLengkapAttribute(): string
     {
-        if (!$this->desa) {
+        if (! $this->desa) {
             return $this->detailAlamat ?? '';
         }
 
@@ -91,7 +92,7 @@ class User extends Authenticatable
     }
 
     /**
-     * @param Builder<static> $query
+     * @param  Builder<static>  $query
      * @return Builder<static>
      */
     public function scopeIsAdmin(Builder $query, bool $value): Builder
@@ -100,7 +101,7 @@ class User extends Authenticatable
     }
 
     /**
-     * @param Builder<static> $query
+     * @param  Builder<static>  $query
      * @return Builder<static>
      */
     public function scopeIsActive(Builder $query, bool $value): Builder

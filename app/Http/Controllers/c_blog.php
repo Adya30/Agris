@@ -12,18 +12,21 @@ class c_blog extends Controller
     public function index()
     {
         $blogs = Blog::query()->latest()->paginate(9);
+
         return view('admin.blog.index', compact('blogs'));
     }
 
     public function indexAgen()
     {
         $blogs = Blog::query()->latest()->paginate(9);
+
         return view('agen.blog.index', compact('blogs'));
     }
 
     public function indexGuest()
     {
         $blogs = Blog::query()->latest()->paginate(9);
+
         return view('guest.blog.index', compact('blogs'));
     }
 
@@ -37,12 +40,15 @@ class c_blog extends Controller
         $request->validate([
             'judulBlog' => 'required|max:200',
             'isiBlog' => 'required',
-            'fotoBlog' => 'nullable|image|mimes:jpg,jpeg,png|max:10120',
-        ],[
-            'required' => 'Data harus diisi!'
+            'fotoBlog' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
+        ], [
+            'required' => 'Data harus diisi!',
+            'fotoBlog.max' => 'Ukuran foto blog maksimal 1MB.',
+            'fotoBlog.image' => 'File harus berupa gambar.',
+            'fotoBlog.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau WEBP.',
         ]);
 
-        $blog = new Blog();
+        $blog = new Blog;
         $blog->userId = Auth::id();
         $blog->judulBlog = $request->judulBlog;
         $blog->isiBlog = $request->isiBlog;
@@ -61,24 +67,28 @@ class c_blog extends Controller
     public function show(string $id)
     {
         $blog = Blog::with('user')->findOrFail($id);
+
         return view('admin.blog.show', compact('blog'));
     }
 
     public function showAgen(string $id)
     {
         $blog = Blog::with('user')->findOrFail($id);
+
         return view('agen.blog.show', compact('blog'));
     }
 
     public function showGuest(string $id)
     {
         $blog = Blog::with('user')->findOrFail($id);
+
         return view('guest.blog.show', compact('blog'));
     }
 
     public function edit(string $id)
     {
         $blog = Blog::findOrFail($id);
+
         return view('admin.blog.edit', compact('blog'));
     }
 
@@ -87,9 +97,12 @@ class c_blog extends Controller
         $request->validate([
             'judulBlog' => 'required|max:200',
             'isiBlog' => 'required',
-            'fotoBlog' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
-        ],[
-            'required' => 'Data harus diisi!'
+            'fotoBlog' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
+        ], [
+            'required' => 'Data harus diisi!',
+            'fotoBlog.max' => 'Ukuran foto blog maksimal 1MB.',
+            'fotoBlog.image' => 'File harus berupa gambar.',
+            'fotoBlog.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau WEBP.',
         ]);
 
         $blog = Blog::findOrFail($id);

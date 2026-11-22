@@ -120,9 +120,9 @@
                             @if($kemitraan->fileKemitraan)
                                 <i class="fa-solid fa-file-pdf text-5xl text-red-500 mb-3"></i>
                                 <p class="text-xs font-bold text-gray-800 mb-4 uppercase">File Dokumen MOU</p>
-                                <button type="button" onclick="previewBase64Pdf('{{ $kemitraan->fileKemitraan }}')" class="w-full inline-flex justify-center items-center px-4 py-2.5 bg-gray-800 text-white text-xs font-bold rounded-xl hover:bg-black transition-all border-none cursor-pointer">
+                                <a href="{{ route('admin.kemitraan.previewMou', $kemitraan->id) }}" target="_blank" rel="noopener noreferrer" class="w-full inline-flex justify-center items-center px-4 py-2.5 bg-gray-800 text-white text-xs font-bold rounded-xl hover:bg-black transition-all border-none cursor-pointer">
                                     <i class="fa-solid fa-eye mr-2"></i> Preview PDF
-                                </button>
+                                </a>
                             @else
                                 <i class="fa-solid fa-file-circle-question text-5xl text-gray-200 mb-3"></i>
                                 <p class="text-xs font-medium text-gray-400 italic">File tidak tersedia</p>
@@ -172,18 +172,6 @@
 <x-modal id="modalTolakMou" message="Yakin ingin menolak pengajuan kemitraan ini?" confirmText="Iya" cancelText="Batal" confirmId="btnConfirmTolakMou" cancelId="btnCancelTolakMou" />
 
 <script>
-    function previewBase64Pdf(base64String) {
-        const byteCharacters = atob(base64String);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], {type: 'application/pdf'});
-        const fileURL = URL.createObjectURL(blob);
-        window.open(fileURL, '_blank');
-    }
-
     function triggerModal(id) {
         if (typeof openModal === 'function') {
             openModal(id);

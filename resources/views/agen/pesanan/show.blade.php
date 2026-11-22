@@ -573,7 +573,7 @@
                     <p class="text-xs text-gray-400 font-semibold leading-relaxed">Pesanan Anda telah disimpan. Silakan lakukan pembayaran agar pesanan dapat segera diproses.</p>
 
                     @if($pembayaran && $pembayaran->snapToken)
-                        @if($isMock || str_starts_with($pembayaran->snapToken, 'MOCK-SNAP-TOKEN-'))
+                        @if(($isMock || str_starts_with($pembayaran->snapToken, 'MOCK-SNAP-TOKEN-')) && !app()->isProduction() && !config('services.midtrans.is_production'))
                             <button id="btnSimulatePay" class="w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white py-3 rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-sm transition duration-200 cursor-pointer">
                                 <i class="fa-solid fa-laptop-code"></i> Simulasikan Pembayaran (Offline)
                             </button>
@@ -647,7 +647,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        window.location.href = `/agen/pesanan/{{ $pesanan->id }}?status=success`;
+                        window.location.href = `/agen/pesanan/{{ $pesanan->id }}`;
                     } else {
                         alert(data.message || 'Gagal memproses simulasi pembayaran.');
                         btnSimulate.disabled = false;

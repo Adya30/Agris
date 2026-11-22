@@ -6,11 +6,14 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 
 class AuthController extends Controller
 {
@@ -19,6 +22,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return $this->redirectByRole(Auth::user());
         }
+
         return view('auth.login');
     }
 
@@ -38,6 +42,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             $user = Auth::user();
+
             return $this->redirectByRole($user)->with('success', 'Login Berhasil');
         }
 
@@ -49,6 +54,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return $this->redirectByRole(Auth::user());
         }
+
         return view('auth.register');
     }
 
@@ -74,10 +80,11 @@ class AuthController extends Controller
                 'email' => $validated['email'],
                 'noTelp' => $validated['noTelp'],
                 'password' => Hash::make($validated['password']),
-                'isAdmin' => false
+                'isAdmin' => false,
             ],
             'register_otp' => $otp,
-            'register_otp_expires' => now()->addMinutes(10)
+            'register_otp_expires' => now()->addMinutes(10),
+            'register_otp_attempts' => 0,
         ]);
 
         Mail::send('emails.otp', ['otp' => $otp, 'namaLengkap' => $validated['namaLengkap']], function ($message) use ($validated) {
@@ -89,9 +96,10 @@ class AuthController extends Controller
 
     public function showOtpForm()
     {
-        if (!session('register_data')) {
+        if (! session('register_data')) {
             return redirect()->route('register');
         }
+
         return view('auth.otp');
     }
 
@@ -99,8 +107,13 @@ class AuthController extends Controller
     {
         $request->validate(['otp' => 'required|digits:6']);
 
-        if (!session('register_data')) {
+        if (! session('register_data')) {
             return redirect()->route('register');
+        }
+
+        $attempts = (int) session('register_otp_attempts', 0);
+        if ($attempts >= 5) {
+            return back()->with('error', 'Terlalu banyak percobaan kode OTP yang salah. Silakan minta kirim ulang OTP baru.');
         }
 
         if (now()->gt(session('register_otp_expires'))) {
@@ -108,11 +121,17 @@ class AuthController extends Controller
         }
 
         if ($request->otp != session('register_otp')) {
-            return back()->with('error', 'Kode OTP salah');
+            session(['register_otp_attempts' => $attempts + 1]);
+            $remaining = 4 - $attempts;
+            $msg = $remaining > 0
+                ? "Kode OTP salah. Sisa percobaan: {$remaining} kali."
+                : 'Kode OTP salah. Batas percobaan habis, silakan klik kirim ulang OTP.';
+
+            return back()->with('error', $msg);
         }
 
         $user = User::create(session('register_data'));
-        session()->forget(['register_data', 'register_otp', 'register_otp_expires']);
+        session()->forget(['register_data', 'register_otp', 'register_otp_expires', 'register_otp_attempts']);
 
         Auth::login($user);
 
@@ -121,14 +140,15 @@ class AuthController extends Controller
 
     public function resendOtp(Request $request)
     {
-        if (!session('register_data')) {
+        if (! session('register_data')) {
             return redirect()->route('register');
         }
 
         $otp = rand(100000, 999999);
         session([
             'register_otp' => $otp,
-            'register_otp_expires' => now()->addMinutes(10)
+            'register_otp_expires' => now()->addMinutes(10),
+            'register_otp_attempts' => 0,
         ]);
 
         $email = session('register_data')['email'];
@@ -140,30 +160,78 @@ class AuthController extends Controller
         return back()->with('success', 'Kode OTP baru telah dikirim.');
     }
 
-    public function redirectToGoogle()
+    public function redirectToGoogle(Request $request)
     {
+        $key = 'google-redirect:'.$request->ip();
+        if (RateLimiter::tooManyAttempts($key, 10)) {
+            $seconds = RateLimiter::availableIn($key);
+
+            return redirect()->route('login')->with('error', "Terlalu banyak permintaan redirect. Silakan tunggu {$seconds} detik.");
+        }
+        RateLimiter::hit($key, 60);
+
         return Socialite::driver('google')->redirect();
     }
 
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(Request $request)
     {
+        $key = 'google-callback:'.$request->ip();
+        if (RateLimiter::tooManyAttempts($key, 10)) {
+            $seconds = RateLimiter::availableIn($key);
+
+            return redirect()->route('login')->with('error', "Terlalu banyak percobaan login Google. Silakan coba lagi dalam {$seconds} detik.");
+        }
+        RateLimiter::hit($key, 60);
+
+        if ($request->has('error')) {
+            Log::warning('Google OAuth callback cancelled or returned error: '.$request->input('error'));
+
+            return redirect()->route('login')->with('error', 'Login dengan Google dibatalkan atau ditolak.');
+        }
+
+        if (! $request->has('code')) {
+            return redirect()->route('login')->with('error', 'Permintaan otorisasi Google tidak valid.');
+        }
+
         try {
-            $googleUser = Socialite::driver('google')->user();
+            try {
+                $googleUser = Socialite::driver('google')->user();
+            } catch (InvalidStateException $e) {
+                // Fallback untuk toleransi localhost vs 127.0.0.1 hanya di environment lokal
+                if (config('app.env') === 'local') {
+                    $googleUser = Socialite::driver('google')->stateless()->user();
+                } else {
+                    Log::warning('Google OAuth InvalidStateException blocked in non-local environment: '.$e->getMessage());
+
+                    return redirect()->route('login')->with('error', 'Sesi login Google tidak valid atau telah kadaluarsa (Anti-CSRF). Silakan coba lagi.');
+                }
+            }
         } catch (\Exception $e) {
-            return redirect()->route('login')->with('error', 'Gagal login Google.');
+            Log::error('Google Login Exception: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $errorMessage = config('app.debug')
+                ? 'Gagal login Google: '.$e->getMessage()
+                : 'Gagal login Google. Silakan coba lagi atau hubungi administrator.';
+
+            return redirect()->route('login')->with('error', $errorMessage);
+        }
+
+        $email = $googleUser->getEmail();
+        if (empty($email) || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return redirect()->route('login')->with('error', 'Akun Google tidak memiliki alamat email yang valid.');
         }
 
         $user = User::firstOrCreate(
-            ['email' => $googleUser->getEmail()],
+            ['email' => $email],
             [
-                'namaLengkap' => $googleUser->getName(),
-                'password' => Hash::make(Str::random(16)),
+                'namaLengkap' => Str::limit(strip_tags($googleUser->getName() ?: 'Pengguna Google'), 100),
+                'password' => Hash::make(Str::random(32)),
                 'noTelp' => '-',
                 'isAdmin' => false,
             ]
         );
 
         Auth::login($user, true);
+
         return $this->redirectByRole($user)->with('success', 'Login Berhasil');
     }
 
@@ -172,6 +240,7 @@ class AuthController extends Controller
         if ($user->isAdmin) {
             return redirect()->intended(route('admin.produk.index'));
         }
+
         return redirect()->intended(route('agen.produk.index'));
     }
 
@@ -180,6 +249,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('landing');
     }
 
@@ -230,6 +300,7 @@ class AuthController extends Controller
         }
 
         $request->user()->sendEmailVerificationNotification();
+
         return back()->with('success', 'Link verifikasi baru telah dikirim.');
     }
 }

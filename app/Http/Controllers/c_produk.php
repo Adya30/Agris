@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Produk;
 use App\Models\KategoriProduk;
+use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,25 +14,25 @@ class c_produk extends Controller
         $query = Produk::with('kategori');
 
         if ($request->search) {
-            $keyword = '%' . $request->search . '%';
+            $keyword = '%'.$request->search.'%';
             $query->where(function ($q) use ($keyword) {
                 $q->where('namaProduk', 'like', $keyword)
-                  ->orWhereHas('kategori', fn($k) => $k->where('jenisKategori', 'like', $keyword)
-                      ->orWhere('mutu', 'like', $keyword)
-                      ->orWhere('karung', 'like', $keyword));
+                    ->orWhereHas('kategori', fn ($k) => $k->where('jenisKategori', 'like', $keyword)
+                        ->orWhere('mutu', 'like', $keyword)
+                        ->orWhere('karung', 'like', $keyword));
             });
         }
 
         if ($request->jenis) {
-            $query->whereHas('kategori', fn($q) => $q->where('jenisKategori', $request->jenis));
+            $query->whereHas('kategori', fn ($q) => $q->where('jenisKategori', $request->jenis));
         }
 
         if ($request->mutu) {
-            $query->whereHas('kategori', fn($q) => $q->where('mutu', $request->mutu));
+            $query->whereHas('kategori', fn ($q) => $q->where('mutu', $request->mutu));
         }
 
         if ($request->karung) {
-            $query->whereHas('kategori', fn($q) => $q->where('karung', $request->karung));
+            $query->whereHas('kategori', fn ($q) => $q->where('karung', $request->karung));
         }
 
         $produks = $query->latest()->paginate(12)->withQueryString();
@@ -54,6 +54,7 @@ class c_produk extends Controller
     public function show(string $id)
     {
         $item = Produk::withTrashed()->with('kategori')->findOrFail($id);
+
         return view('admin.produk.show', compact('item'));
     }
 
@@ -62,23 +63,23 @@ class c_produk extends Controller
         $query = Produk::with('kategori');
 
         if ($request->search) {
-            $keyword = '%' . $request->search . '%';
+            $keyword = '%'.$request->search.'%';
             $query->where(function ($q) use ($keyword) {
                 $q->where('namaProduk', 'like', $keyword)
-                  ->orWhereHas('kategori', fn($k) => $k->where('jenisKategori', 'like', $keyword)
-                      ->orWhere('mutu', 'like', $keyword)
-                      ->orWhere('karung', 'like', $keyword));
+                    ->orWhereHas('kategori', fn ($k) => $k->where('jenisKategori', 'like', $keyword)
+                        ->orWhere('mutu', 'like', $keyword)
+                        ->orWhere('karung', 'like', $keyword));
             });
         }
 
         if ($request->jenis) {
-            $query->whereHas('kategori', fn($q) => $q->where('jenisKategori', $request->jenis));
+            $query->whereHas('kategori', fn ($q) => $q->where('jenisKategori', $request->jenis));
         }
         if ($request->mutu) {
-            $query->whereHas('kategori', fn($q) => $q->where('mutu', $request->mutu));
+            $query->whereHas('kategori', fn ($q) => $q->where('mutu', $request->mutu));
         }
         if ($request->karung) {
-            $query->whereHas('kategori', fn($q) => $q->where('karung', $request->karung));
+            $query->whereHas('kategori', fn ($q) => $q->where('karung', $request->karung));
         }
 
         $produks = $query->latest()->paginate(12)->withQueryString();
@@ -93,6 +94,7 @@ class c_produk extends Controller
     public function create()
     {
         $kategoris = KategoriProduk::all();
+
         return view('admin.produk.create', compact('kategoris'));
     }
 
@@ -100,23 +102,26 @@ class c_produk extends Controller
     {
         $request->validate([
             'namaProduk' => 'required|string|max:150',
-            'jenis'      => 'required',
-            'mutu'       => 'required',
-            'karung'     => 'required|numeric|min:0',
-            'stok'       => 'required|integer|min:0',
-            'harga'      => 'required|numeric|min:0',
-            'fotoProduk' => 'nullable|image|mimes:jpeg,png,jpg|max:10048',
-            'deskripsi'  => 'nullable|string',
-        ],[
-            'required'  => 'Data harus diisi!',
-            'numeric'   => 'Data harus berupa angka!'
+            'jenis' => 'required',
+            'mutu' => 'required',
+            'karung' => 'required|numeric|min:0',
+            'stok' => 'required|integer|min:0',
+            'harga' => 'required|numeric|min:0',
+            'fotoProduk' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:1024',
+            'deskripsi' => 'nullable|string',
+        ], [
+            'required' => 'Data harus diisi!',
+            'numeric' => 'Data harus berupa angka!',
+            'fotoProduk.max' => 'Ukuran foto produk maksimal 1MB.',
+            'fotoProduk.image' => 'File harus berupa gambar.',
+            'fotoProduk.mimes' => 'Format gambar harus JPEG, PNG, JPG, atau WEBP.',
         ]);
 
         try {
             $kategori = KategoriProduk::firstOrCreate([
                 'jenisKategori' => $request->jenis,
-                'mutu'          => $request->mutu,
-                'karung'        => $request->karung,
+                'mutu' => $request->mutu,
+                'karung' => $request->karung,
             ]);
 
             $data = $request->only(['namaProduk', 'stok', 'harga', 'deskripsi']);
@@ -131,7 +136,7 @@ class c_produk extends Controller
 
             return redirect()->route('admin.produk.index')->with('success', 'Produk berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('error', 'Gagal: '.$e->getMessage())->withInput();
         }
     }
 
@@ -139,6 +144,7 @@ class c_produk extends Controller
     {
         $produk = Produk::withTrashed()->findOrFail($id);
         $kategoris = KategoriProduk::all();
+
         return view('admin.produk.edit', compact('produk', 'kategoris'));
     }
 
@@ -148,23 +154,26 @@ class c_produk extends Controller
 
         $request->validate([
             'namaProduk' => 'required|string|max:150',
-            'jenis'      => 'required',
-            'mutu'       => 'required',
-            'karung'     => 'required|numeric|min:0',
-            'stok'       => 'required|integer|min:0',
-            'harga'      => 'required|numeric|min:0',
-            'fotoProduk' => 'nullable|image|mimes:jpeg,png,jpg|max:10048',
-            'deskripsi'  => 'nullable|string',
-        ],[
-            'required'  => 'Data wajib diisi!',
-            'numeric'   => 'Data harus berupa angka!'
+            'jenis' => 'required',
+            'mutu' => 'required',
+            'karung' => 'required|numeric|min:0',
+            'stok' => 'required|integer|min:0',
+            'harga' => 'required|numeric|min:0',
+            'fotoProduk' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:1024',
+            'deskripsi' => 'nullable|string',
+        ], [
+            'required' => 'Data wajib diisi!',
+            'numeric' => 'Data harus berupa angka!',
+            'fotoProduk.max' => 'Ukuran foto produk maksimal 1MB.',
+            'fotoProduk.image' => 'File harus berupa gambar.',
+            'fotoProduk.mimes' => 'Format gambar harus JPEG, PNG, JPG, atau WEBP.',
         ]);
 
         try {
             $kategori = KategoriProduk::firstOrCreate([
                 'jenisKategori' => $request->jenis,
-                'mutu'          => $request->mutu,
-                'karung'        => $request->karung,
+                'mutu' => $request->mutu,
+                'karung' => $request->karung,
             ]);
 
             $data = $request->only(['namaProduk', 'stok', 'harga', 'deskripsi']);
@@ -195,12 +204,14 @@ class c_produk extends Controller
         $produk = Produk::findOrFail($id);
         $produk->update(['stok' => 0]);
         $produk->delete();
+
         return redirect()->route('admin.produk.index')->with('success', 'Produk berhasil dihapus.');
     }
 
     public function trash()
     {
         $produks = Produk::onlyTrashed()->with('kategori')->latest()->get();
+
         return view('admin.produk.trash', compact('produks'));
     }
 
@@ -208,6 +219,7 @@ class c_produk extends Controller
     {
         $produk = Produk::onlyTrashed()->findOrFail($id);
         $produk->restore();
+
         return redirect()->route('admin.produk.index')->with('success', 'Produk diaktifkan kembali.');
     }
 
@@ -220,6 +232,7 @@ class c_produk extends Controller
         }
 
         $produk->forceDelete();
+
         return redirect()->back()->with('success', 'Produk dihapus permanen.');
     }
 }

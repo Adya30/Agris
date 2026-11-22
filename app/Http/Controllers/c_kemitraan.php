@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\KemitraanUpdated;
 use App\Models\Kemitraan;
 use App\Models\User;
-use App\Events\KemitraanUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,9 +15,11 @@ class c_kemitraan extends Controller
         $user = Auth::user();
         if ($user->isAdmin) {
             $kemitraans = Kemitraan::with(['user.desa.kecamatan.kabupaten.provinsi'])->latest()->get();
+
             return view('admin.kemitraan.index', compact('kemitraans'));
         }
         $kemitraan = Kemitraan::userId($user->id)->first();
+
         return view('agen.kemitraan.index', compact('kemitraan'));
     }
 
@@ -28,15 +30,22 @@ class c_kemitraan extends Controller
             return redirect()->route('admin.profile')->with('modalIncomplete', true);
         }
         $kemitraan = Kemitraan::userId($user->id)->first();
-        if ($kemitraan && !in_array($kemitraan->statusPengajuan, ['Ditolak', 'Menunggu Upload MOU'])) {
+        if ($kemitraan && ! in_array($kemitraan->statusPengajuan, ['Ditolak', 'Menunggu Upload MOU'])) {
             return redirect()->route('kemitraan.index');
         }
+
         return view('agen.kemitraan.create', compact('user', 'kemitraan'));
     }
 
     public function store(Request $request)
     {
-        $request->validate(['fileKemitraan' => 'required|mimes:pdf|max:10240']);
+        $request->validate([
+            'fileKemitraan' => 'required|file|mimes:pdf|max:1024',
+        ], [
+            'fileKemitraan.required' => 'Dokumen MOU wajib diunggah.',
+            'fileKemitraan.mimes' => 'Format dokumen harus berupa file PDF.',
+            'fileKemitraan.max' => 'Ukuran dokumen MOU maksimal 1MB.',
+        ]);
         $user = Auth::user();
         $file = $request->file('fileKemitraan');
         $base64 = base64_encode(file_get_contents($file->getRealPath()));
@@ -61,7 +70,9 @@ class c_kemitraan extends Controller
             $status = 'Menunggu Upload MOU';
         } elseif ($request->action === 'tolak' || $request->action === 'hentikan') {
             $status = 'Ditolak';
-            if ($request->action === 'hentikan') User::whereId($kemitraan->userId)->update(['isActive' => 0]);
+            if ($request->action === 'hentikan') {
+                User::whereId($kemitraan->userId)->update(['isActive' => 0]);
+            }
         }
 
         $kemitraan->update(['statusPengajuan' => $status]);
@@ -72,7 +83,13 @@ class c_kemitraan extends Controller
 
     public function uploadMou(Request $request, string $id)
     {
-        $request->validate(['fileKemitraan' => 'required|mimes:pdf|max:10240']);
+        $request->validate([
+            'fileKemitraan' => 'required|file|mimes:pdf|max:1024',
+        ], [
+            'fileKemitraan.required' => 'Dokumen MOU wajib diunggah.',
+            'fileKemitraan.mimes' => 'Format dokumen harus berupa file PDF.',
+            'fileKemitraan.max' => 'Ukuran dokumen MOU maksimal 1MB.',
+        ]);
         /** @var Kemitraan $kemitraan */
         $kemitraan = Kemitraan::whereId($id)->userId(Auth::id())->firstOrFail();
         $file = $request->file('fileKemitraan');
@@ -106,6 +123,23 @@ class c_kemitraan extends Controller
     public function show(string $id)
     {
         $kemitraan = Kemitraan::with(['user.desa.kecamatan.kabupaten.provinsi'])->findOrFail($id);
+
         return view('admin.kemitraan.show', compact('kemitraan'));
+    }
+
+    public function previewMou(string $id)
+    {
+        $kemitraan = Kemitraan::findOrFail($id);
+        if (! $kemitraan->fileKemitraan) {
+            abort(404, 'File MOU tidak ditemukan.');
+        }
+
+        $pdfBinary = base64_decode($kemitraan->fileKemitraan);
+
+        return response($pdfBinary, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="MOU-Kemitraan-'.$kemitraan->id.'.pdf"',
+            'Cache-Control' => 'private, no-cache, no-store, must-revalidate',
+        ]);
     }
 }

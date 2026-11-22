@@ -52,7 +52,7 @@
                 <ul class="space-y-3 text-xs text-gray-500">
                     <li class="flex gap-2">
                         <i class="fa-solid fa-circle-check text-green-500 mt-0.5"></i>
-                        <span>File wajib PDF (Maks. 10MB).</span>
+                        <span>File wajib PDF (Maks. 1MB).</span>
                     </li>
                     <li class="flex gap-2">
                         <i class="fa-solid fa-circle-check text-green-500 mt-0.5"></i>
@@ -140,6 +140,12 @@
 
                 if (file.type !== 'application/pdf') {
                     errorMessage.classList.remove('hidden');
+                    this.value = '';
+                    return;
+                }
+
+                if (file.size > 1024 * 1024) {
+                    alert('Ukuran file dokumen MOU maksimal 1MB.');
                     this.value = '';
                     return;
                 }

@@ -30,7 +30,7 @@
                         <input type="file" name="fotoProfil" id="fotoProfil" class="hidden" accept="image/*">
                         <label for="fotoProfil" id="btnPilihFoto" class="hidden mt-3 px-4 py-1.5 border bg-[#58CC02] text-white rounded-lg text-xs font-bold cursor-pointer transition">Edit Foto</label>
                         <p id="infoFoto" class="hidden text-center pt-2 text-[10px] text-blue-500 leading-tight">
-                            Maks 10mb (.PNG, .JPG, .JPEG)
+                            Maks 1MB (.PNG, .JPG, .JPEG, .WEBP)
                         </p>
                     </div>
 
@@ -225,6 +225,11 @@
 
         document.getElementById('fotoProfil').addEventListener('change', function() {
             if (this.files && this.files[0]) {
+                if (this.files[0].size > 1024 * 1024) {
+                    alert('Ukuran foto profil maksimal 1MB.');
+                    this.value = '';
+                    return;
+                }
                 const reader = new FileReader();
                 reader.onload = (e) => document.getElementById('previewFoto').src = e.target.result;
                 reader.readAsDataURL(this.files[0]);

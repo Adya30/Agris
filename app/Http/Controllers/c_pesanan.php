@@ -105,25 +105,6 @@ class c_pesanan extends Controller
             ->userId(Auth::id())
             ->findOrFail($id);
 
-        if (request('status') === 'success' && $pesanan->status_pesanan === 'pending') {
-            DB::transaction(function () use ($pesanan) {
-                if ($pesanan->pembayaran) {
-                    Pembayaran::whereId($pesanan->pembayaran->id)->update([
-                        'statusPembayaran' => 'berhasil',
-                        'waktuDibayar' => now(),
-                    ]);
-                }
-                Pesanan::whereId($pesanan->id)->update(['status_pesanan' => 'diproses']);
-
-                foreach ($pesanan->detailPesanans as $detail) {
-                    Keranjang::userId($pesanan->userId)
-                        ->produkId($detail->produkId)
-                        ->delete();
-                }
-            });
-            $pesanan->refresh();
-        }
-
         $trackingData = $this->getBiteshipTracking($pesanan->deskripsi);
         if ($trackingData) {
             $biteshipStatus = $trackingData['status'] ?? null;
@@ -154,6 +135,15 @@ class c_pesanan extends Controller
 
     public function checkoutForm(Request $request)
     {
+        $existingOrder = Pesanan::where('userId', Auth::id())
+            ->where('status_pesanan', '!=', 'dibatalkan')
+            ->first();
+
+        if ($existingOrder) {
+            return redirect()->route('agen.pesanan.show', $existingOrder->id)
+                ->with('error', 'Transaksi online dibatasi hanya 1 kali tiap user. Anda sudah memiliki transaksi sebelumnya.');
+        }
+
         if (! $request->filled('items')) {
             return redirect()->route('agen.keranjang.index')->with('error', 'Silakan pilih produk yang ingin dicheckout.');
         }
@@ -207,6 +197,14 @@ class c_pesanan extends Controller
 
     public function cekOngkir(Request $request)
     {
+        $hasExistingOrder = Pesanan::where('userId', Auth::id())
+            ->where('status_pesanan', '!=', 'dibatalkan')
+            ->exists();
+
+        if ($hasExistingOrder) {
+            return response()->json(['success' => false, 'message' => 'Transaksi online dibatasi hanya 1 kali tiap user.'], 403);
+        }
+
         $request->validate([
             'origin_area_id' => 'required|string',
             'destination_area_id' => 'required|string',
@@ -275,6 +273,17 @@ class c_pesanan extends Controller
 
     public function checkoutStore(Request $request)
     {
+        $hasExistingOrder = Pesanan::where('userId', Auth::id())
+            ->where('status_pesanan', '!=', 'dibatalkan')
+            ->exists();
+
+        if ($hasExistingOrder) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaksi online dibatasi hanya 1 kali tiap user. Anda sudah memiliki transaksi sebelumnya.',
+            ], 422);
+        }
+
         $request->validate([
             'items' => 'required|string',
             'delivery_type' => 'required|in:kirim,ambil',
@@ -568,7 +577,7 @@ class c_pesanan extends Controller
                                 ]);
 
                             Log::info('Midtrans Refund Response for order '.$pesanan->id.': '.$refundResponse->body());
-                        } else if (in_array($transactionStatus, ['capture', 'pending', 'challenge'])) {
+                        } elseif (in_array($transactionStatus, ['capture', 'pending', 'challenge'])) {
                             $cancelUrl = $isProduction
                                 ? "https://api.midtrans.com/v2/{$pesanan->id}/cancel"
                                 : "https://api.sandbox.midtrans.com/v2/{$pesanan->id}/cancel";
@@ -581,7 +590,7 @@ class c_pesanan extends Controller
 
                             Log::info('Midtrans Cancel Response for order '.$pesanan->id.': '.$cancelResponse->body());
                         } else {
-                            Log::warning('Midtrans transaction status is ' . ($transactionStatus ?? 'null') . ', skipping refund/cancel call.');
+                            Log::warning('Midtrans transaction status is '.($transactionStatus ?? 'null').', skipping refund/cancel call.');
                         }
                     } catch (\Exception $me) {
                         Log::error('Midtrans Refund/Cancel Exception for order '.$pesanan->id.': '.$me->getMessage());
@@ -926,7 +935,7 @@ class c_pesanan extends Controller
                                     ]);
 
                                 Log::info('Midtrans Refund Response for admin cancel order '.$pesanan->id.': '.$refundResponse->body());
-                            } else if (in_array($transactionStatus, ['capture', 'pending', 'challenge'])) {
+                            } elseif (in_array($transactionStatus, ['capture', 'pending', 'challenge'])) {
                                 $cancelUrl = $isProduction
                                     ? "https://api.midtrans.com/v2/{$pesanan->id}/cancel"
                                     : "https://api.sandbox.midtrans.com/v2/{$pesanan->id}/cancel";
@@ -939,7 +948,7 @@ class c_pesanan extends Controller
 
                                 Log::info('Midtrans Cancel Response for admin cancel order '.$pesanan->id.': '.$cancelResponse->body());
                             } else {
-                                Log::warning('Midtrans transaction status is ' . ($transactionStatus ?? 'null') . ', skipping refund/cancel call.');
+                                Log::warning('Midtrans transaction status is '.($transactionStatus ?? 'null').', skipping refund/cancel call.');
                             }
                         } catch (\Exception $me) {
                             Log::error('Midtrans Refund/Cancel Exception for admin cancel order '.$pesanan->id.': '.$me->getMessage());
@@ -1161,6 +1170,35 @@ class c_pesanan extends Controller
     public function biteshipWebhook(Request $request)
     {
         Log::info('Biteship Webhook Received: '.$request->getContent());
+
+        $webhookSecret = config('services.biteship.webhook_secret');
+        if (! empty($webhookSecret)) {
+            $signature = $request->header('X-Biteship-Signature')
+                ?? $request->header('biteship-signature')
+                ?? $request->header('X-Biteship-Token')
+                ?? $request->header('Authorization');
+
+            if (empty($signature)) {
+                Log::warning('Biteship Webhook rejected: Missing signature header.');
+
+                return response()->json(['message' => 'Unauthorized: Missing signature'], 401);
+            }
+
+            if (str_starts_with($signature, 'Bearer ')) {
+                $signature = substr($signature, 7);
+            }
+
+            $expectedHmac = hash_hmac('sha256', $request->getContent(), $webhookSecret);
+            if (! hash_equals($expectedHmac, (string) $signature) && ! hash_equals($webhookSecret, (string) $signature)) {
+                Log::warning('Biteship Webhook rejected: Signature mismatch.');
+
+                return response()->json(['message' => 'Unauthorized: Invalid signature'], 401);
+            }
+        } elseif (app()->isProduction()) {
+            Log::error('Biteship Webhook rejected: BITESHIP_WEBHOOK_SECRET is not configured in production.');
+
+            return response()->json(['message' => 'Webhook secret not configured'], 500);
+        }
 
         $event = $request->input('event');
         if ($event === 'order.status') {

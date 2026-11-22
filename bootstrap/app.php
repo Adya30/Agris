@@ -1,9 +1,10 @@
 <?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsUser;
+use App\Http\Middleware\SecurityHeaders;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 
@@ -15,9 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: '*');
+
+        $middleware->append(SecurityHeaders::class);
+
         $middleware->alias([
             'isAdmin' => IsAdmin::class,
-            'isUser'  => IsUser::class,
+            'isUser' => IsUser::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [
@@ -31,6 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($request->user() && $request->user()->isAdmin) {
                     return route('admin.produk.index');
                 }
+
                 return route('agen.profile');
             }
         );

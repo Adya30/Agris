@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pesanan;
-use App\Models\Pembayaran;
 use App\Models\DetailPesanan;
 use App\Models\Keranjang;
+use App\Models\Pembayaran;
+use App\Models\Pesanan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class c_pembayaran extends Controller
@@ -23,10 +23,11 @@ class c_pembayaran extends Controller
         $orderId = $request->order_id;
         $signatureKey = $request->signature_key;
 
-        $hashed = hash("sha512", $orderId . $statusCode . $grossAmount . $serverKey);
+        $hashed = hash('sha512', $orderId.$statusCode.$grossAmount.$serverKey);
 
         if ($hashed !== $signatureKey) {
-            Log::warning("Midtrans Webhook: Signature verification failed for order " . $orderId);
+            Log::warning('Midtrans Webhook: Signature verification failed for order '.$orderId);
+
             return response()->json(['message' => 'Invalid signature'], 403);
         }
 
@@ -47,13 +48,13 @@ class c_pembayaran extends Controller
     {
         /** @var Pesanan|null $pesanan */
         $pesanan = Pesanan::query()->find($orderId);
-        if (!$pesanan) {
+        if (! $pesanan) {
             return false;
         }
 
         /** @var Pembayaran|null $pembayaran */
         $pembayaran = Pembayaran::pesananId($orderId)->first();
-        if (!$pembayaran) {
+        if (! $pembayaran) {
             return false;
         }
 
@@ -68,13 +69,13 @@ class c_pembayaran extends Controller
                 $statusPesanan = 'diproses';
                 $pembayaran->waktuDibayar = now();
             }
-        } else if ($transactionStatus == 'settlement') {
+        } elseif ($transactionStatus == 'settlement') {
             $statusPembayaran = 'berhasil';
             $statusPesanan = 'diproses';
             $pembayaran->waktuDibayar = now();
-        } else if ($transactionStatus == 'pending') {
+        } elseif ($transactionStatus == 'pending') {
             $statusPembayaran = 'pending';
-        } else if (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+        } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
             $statusPembayaran = 'gagal';
             $statusPesanan = 'dibatalkan';
 
@@ -113,7 +114,7 @@ class c_pembayaran extends Controller
         $pesanan = Pesanan::userId(Auth::id())->findOrFail($id);
         $pembayaran = Pembayaran::pesananId($id)->first();
 
-        if (!$pembayaran) {
+        if (! $pembayaran) {
             return redirect()->back()->with('error', 'Data pembayaran tidak ditemukan.');
         }
 
@@ -150,17 +151,19 @@ class c_pembayaran extends Controller
                     $pembayaran->refresh();
 
                     if ($pembayaran->statusPembayaran === 'berhasil') {
-                        return redirect()->back()->with('success', 'Pembayaran berhasil terverifikasi! Status pesanan kini: ' . strtoupper($pesanan->status_pesanan));
+                        return redirect()->back()->with('success', 'Pembayaran berhasil terverifikasi! Status pesanan kini: '.strtoupper($pesanan->status_pesanan));
                     } else {
-                        return redirect()->back()->with('info', 'Status pembayaran di Midtrans: ' . strtoupper($transactionStatus));
+                        return redirect()->back()->with('info', 'Status pembayaran di Midtrans: '.strtoupper($transactionStatus));
                     }
                 }
             } else {
-                Log::error("Midtrans Status Check Failed: " . $response->body());
-                return redirect()->back()->with('error', 'Gagal memeriksa status ke Midtrans: ' . ($response->json()['status_message'] ?? 'Unknown Error'));
+                Log::error('Midtrans Status Check Failed: '.$response->body());
+
+                return redirect()->back()->with('error', 'Gagal memeriksa status ke Midtrans: '.($response->json()['status_message'] ?? 'Unknown Error'));
             }
         } catch (\Exception $e) {
-            Log::error("Midtrans Status Check Exception: " . $e->getMessage());
+            Log::error('Midtrans Status Check Exception: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menghubungi server Midtrans.');
         }
 
@@ -169,24 +172,21 @@ class c_pembayaran extends Controller
 
     public function bayarSimulasi(string $id)
     {
+        if (app()->isProduction() || config('services.midtrans.is_production')) {
+            abort(403, 'Fitur simulasi pembayaran dinonaktifkan di lingkungan produksi.');
+        }
+
         $pesanan = Pesanan::userId(Auth::id())->findOrFail($id);
 
         $pembayaran = Pembayaran::pesananId($id)->first();
-        if (!$pembayaran) {
+        if (! $pembayaran) {
             return response()->json(['success' => false, 'message' => 'Data pembayaran tidak ditemukan.'], 404);
         }
 
         DB::beginTransaction();
         try {
-            Pembayaran::whereId($pembayaran->id)->update([
-                'statusPembayaran' => 'berhasil',
-                'waktuDibayar' => now(),
-                'paymentType' => 'simulasi_midtrans',
-                'transactionId' => 'SIM-' . strtoupper(Str::random(12)),
-            ]);
-
-            Pesanan::whereId($pesanan->id)->update([
-                'status_pesanan' => 'diproses',
+            $this->updatePaymentAndOrderStatus($id, 'settlement', 'simulasi_midtrans', 'SIM-'.strtoupper(Str::random(12)), [
+                'simulation' => true,
             ]);
 
             DB::commit();
@@ -194,7 +194,8 @@ class c_pembayaran extends Controller
             return response()->json(['success' => true, 'message' => 'Simulasi pembayaran berhasil diproses.']);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("Simulasi Pembayaran Gagal: " . $e->getMessage());
+            Log::error('Simulasi Pembayaran Gagal: '.$e->getMessage());
+
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan sistem saat memproses simulasi pembayaran.'], 500);
         }
     }
@@ -225,10 +226,12 @@ class c_pembayaran extends Controller
             Pesanan::whereId($pesanan->id)->delete();
 
             DB::commit();
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("Batal Checkout Gagal: " . $e->getMessage());
+            Log::error('Batal Checkout Gagal: '.$e->getMessage());
+
             return response()->json(['success' => false, 'message' => 'Gagal membatalkan transaksi.'], 500);
         }
     }

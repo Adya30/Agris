@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Desa;
-use App\Models\Kecamatan;
 use App\Models\Kabupaten;
+use App\Models\Kecamatan;
 use App\Models\Provinsi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class c_profile extends Controller
@@ -23,12 +23,13 @@ class c_profile extends Controller
     {
         $user = Auth::user();
 
-        if ($user->desaId && !$user->biteship_location_id) {
+        if ($user->desaId && ! $user->biteship_location_id) {
             $this->syncBiteshipLocation($user);
             $user->refresh();
         }
 
         $view = $user->isAdmin ? 'admin.profile' : 'agen.profile';
+
         return view($view, compact('user'));
     }
 
@@ -37,28 +38,28 @@ class c_profile extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'noTelp'           => 'required|numeric|digits_between:4,15|unique:users,noTelp,' . $user->id,
-            'namaLengkap'      => $user->isAdmin ? 'nullable|string|max:255' : 'required|string|max:255',
-            'email'            => 'required|email|unique:users,email,' . $user->id,
-            'detailAlamat'     => 'nullable|string',
-            'fotoProfil'       => 'nullable|image|mimes:jpeg,png,jpg|max:10048',
+            'noTelp' => 'required|numeric|digits_between:4,15|unique:users,noTelp,'.$user->id,
+            'namaLengkap' => $user->isAdmin ? 'nullable|string|max:255' : 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'detailAlamat' => 'nullable|string',
+            'fotoProfil' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:1024',
             'current_password' => 'required_with:password',
-            'password'         => 'nullable|min:8',
-            'desaId'           => 'nullable',
+            'password' => 'nullable|min:8',
+            'desaId' => 'nullable',
         ], [
-            'required'                       => 'Data wajib diisi!',
-            'noTelp.numeric'                 => 'Nomor telepon harus berupa angka.',
-            'noTelp.unique'                  => 'Nomor Telpon sudah digunakan.',
-            'noTelp.digits_between'          => 'Nomor telepon harus antara 4 sampai 15 digit.',
-            'password.min'                   => 'Password baru minimal 8 karakter.',
+            'required' => 'Data wajib diisi!',
+            'noTelp.numeric' => 'Nomor telepon harus berupa angka.',
+            'noTelp.unique' => 'Nomor Telpon sudah digunakan.',
+            'noTelp.digits_between' => 'Nomor telepon harus antara 4 sampai 15 digit.',
+            'password.min' => 'Password baru minimal 8 karakter.',
             'current_password.required_with' => 'Konfirmasi password lama wajib diisi.',
-            'fotoProfil.image'               => 'File harus berupa gambar.',
-            'fotoProfil.mimes'               => 'Format gambar harus jpeg, png, atau jpg.',
-            'fotoProfil.max'                 => 'Ukuran gambar maksimal 10MB.'
+            'fotoProfil.image' => 'File harus berupa gambar.',
+            'fotoProfil.mimes' => 'Format gambar harus jpeg, png, jpg, atau webp.',
+            'fotoProfil.max' => 'Ukuran gambar maksimal 1MB.',
         ]);
 
         if ($request->filled('password')) {
-            if (!Hash::check($request->current_password, $user->password)) {
+            if (! Hash::check($request->current_password, $user->password)) {
                 return redirect()->back()->withErrors(['current_password' => 'Password lama salah.'])->withInput();
             }
             $user->password = Hash::make($request->password);
@@ -70,7 +71,7 @@ class c_profile extends Controller
             }
 
             $path = $request->file('fotoProfil')->store('profile_photos', 'public');
-            $user->fotoProfil = 'storage/' . $path;
+            $user->fotoProfil = 'storage/'.$path;
         }
 
         if ($request->filled('desaId')) {
@@ -82,7 +83,7 @@ class c_profile extends Controller
         $user->detailAlamat = $request->detailAlamat;
         $user->noTelp = $request->noTelp;
 
-        if (!$user->isAdmin && $request->has('namaLengkap')) {
+        if (! $user->isAdmin && $request->has('namaLengkap')) {
             $user->namaLengkap = $request->namaLengkap;
         }
 
@@ -97,13 +98,15 @@ class c_profile extends Controller
     {
         try {
             $parts = explode('.', $desaId);
-            if (count($parts) !== 4) return;
+            if (count($parts) !== 4) {
+                return;
+            }
 
             $provId = $parts[0];
-            $kabId = $parts[0] . '.' . $parts[1];
-            $kecId = $parts[0] . '.' . $parts[1] . '.' . $parts[2];
+            $kabId = $parts[0].'.'.$parts[1];
+            $kecId = $parts[0].'.'.$parts[1].'.'.$parts[2];
 
-            $resProv = Http::get("https://wilayah.id/api/provinces.json")->json()['data'] ?? [];
+            $resProv = Http::get('https://wilayah.id/api/provinces.json')->json()['data'] ?? [];
             $provName = collect($resProv)->firstWhere('code', $provId)['name'] ?? '';
 
             $resKab = Http::get("https://wilayah.id/api/regencies/{$provId}.json")->json()['data'] ?? [];
@@ -125,7 +128,7 @@ class c_profile extends Controller
             }
 
         } catch (\Exception $e) {
-            Log::error("Sync Wilayah Gagal: " . $e->getMessage());
+            Log::error('Sync Wilayah Gagal: '.$e->getMessage());
         }
     }
 
@@ -136,19 +139,21 @@ class c_profile extends Controller
             $baseUrl = $this->getBiteshipBaseUrl();
 
             $exists = DB::table('biteship_areas')->where('desaId', $desaId)->exists();
-            if ($exists) return;
+            if ($exists) {
+                return;
+            }
 
             $response = Http::withToken($apiKey)
                 ->timeout(5)
                 ->get("$baseUrl/maps/areas", [
                     'countries' => 'ID',
                     'input' => $kecamatanName,
-                    'type' => 'single'
+                    'type' => 'single',
                 ]);
 
             if ($response->successful()) {
                 $areas = $response->json()['areas'] ?? [];
-                if (!empty($areas)) {
+                if (! empty($areas)) {
                     $area = $areas[0];
                     DB::table('biteship_areas')->updateOrInsert(
                         ['desaId' => $desaId],
@@ -162,13 +167,13 @@ class c_profile extends Controller
                 }
             }
         } catch (\Exception $e) {
-            Log::error("Sync Biteship Area Gagal: " . $e->getMessage());
+            Log::error('Sync Biteship Area Gagal: '.$e->getMessage());
         }
     }
 
     public function syncBiteshipLocation(User $user)
     {
-        if (!$user->desaId || !$user->detailAlamat) {
+        if (! $user->desaId || ! $user->detailAlamat) {
             return;
         }
 
@@ -176,7 +181,8 @@ class c_profile extends Controller
         $baseUrl = $this->getBiteshipBaseUrl();
 
         if (empty($apiKey)) {
-            Log::warning("Biteship API Key is empty. Skipping location sync.");
+            Log::warning('Biteship API Key is empty. Skipping location sync.');
+
             return;
         }
 
@@ -189,17 +195,17 @@ class c_profile extends Controller
                 ->get("$baseUrl/maps/areas", [
                     'countries' => 'ID',
                     'input' => $kecName,
-                    'type' => 'single'
+                    'type' => 'single',
                 ]);
 
             if ($response->successful()) {
                 $areas = $response->json()['areas'] ?? [];
-                if (!empty($areas)) {
+                if (! empty($areas)) {
                     $postalCode = $areas[0]['postal_code'] ?? '68111';
                 }
             }
         } catch (\Exception $e) {
-            Log::warning("Failed to fetch postal code from Biteship: " . $e->getMessage());
+            Log::warning('Failed to fetch postal code from Biteship: '.$e->getMessage());
         }
 
         $lat = -8.1724;
@@ -209,18 +215,18 @@ class c_profile extends Controller
             $fullAddress = $user->alamatLengkap;
             $geocodeQuery = urlencode($fullAddress);
             $geoResponse = Http::withHeaders([
-                'User-Agent' => 'AgrisApp/1.0 (agrisagroindustri@gmail.com)'
+                'User-Agent' => 'AgrisApp/1.0 (agrisagroindustri@gmail.com)',
             ])->timeout(5)->get("https://nominatim.openstreetmap.org/search?q={$geocodeQuery}&format=json&limit=1");
 
             if ($geoResponse->successful()) {
                 $geoData = $geoResponse->json();
-                if (!empty($geoData)) {
+                if (! empty($geoData)) {
                     $lat = floatval($geoData[0]['lat']);
                     $lng = floatval($geoData[0]['lon']);
                 }
             }
         } catch (\Exception $e) {
-            Log::warning("Geocoding failed, using fallback coordinates: " . $e->getMessage());
+            Log::warning('Geocoding failed, using fallback coordinates: '.$e->getMessage());
         }
 
         $type = $user->isAdmin ? 'origin' : 'destination';
@@ -232,9 +238,9 @@ class c_profile extends Controller
             'contact_phone' => $user->noTelp,
             'address' => $user->alamatLengkap,
             'postal_code' => strval($postalCode),
-            'latitude' => (double) $lat,
-            'longitude' => (double) $lng,
-            'type' => $type
+            'latitude' => (float) $lat,
+            'longitude' => (float) $lng,
+            'type' => $type,
         ];
 
         try {
@@ -245,11 +251,12 @@ class c_profile extends Controller
                     ->patch("$baseUrl/locations/{$user->biteship_location_id}", $payload);
 
                 if ($response->successful()) {
-                    Log::info("Biteship Location Updated successfully: " . $user->biteship_location_id);
+                    Log::info('Biteship Location Updated successfully: '.$user->biteship_location_id);
+
                     return;
                 } else {
                     $status = $response->status();
-                    Log::warning("Biteship Location Update failed with status {$status}. Retrying as new location. Response: " . $response->body());
+                    Log::warning("Biteship Location Update failed with status {$status}. Retrying as new location. Response: ".$response->body());
                 }
             }
 
@@ -263,13 +270,13 @@ class c_profile extends Controller
                 if ($locationId) {
                     $user->fill(['biteship_location_id' => $locationId]);
                     $user->save();
-                    Log::info("Biteship Location Created successfully: " . $locationId);
+                    Log::info('Biteship Location Created successfully: '.$locationId);
                 }
             } else {
-                Log::error("Biteship Location Creation failed: " . $response->body());
+                Log::error('Biteship Location Creation failed: '.$response->body());
             }
         } catch (\Exception $e) {
-            Log::error("Biteship Location Sync Exception: " . $e->getMessage());
+            Log::error('Biteship Location Sync Exception: '.$e->getMessage());
         }
     }
 

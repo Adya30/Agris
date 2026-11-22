@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
 
 class c_wilayah extends Controller
 {
@@ -11,53 +11,69 @@ class c_wilayah extends Controller
 
     public function getProvinsi()
     {
-        $res = Http::get("{$this->baseUrl}/provinces.json");
-        $data = $res->json()['data'] ?? [];
-        $transformed = collect($data)->map(function ($item) {
-            return [
-                'id' => $item['code'],
-                'name' => $item['name']
-            ];
+        $transformed = Cache::remember('wilayah_provinces', 86400 * 7, function () {
+            $res = Http::timeout(10)->get("{$this->baseUrl}/provinces.json");
+            $data = $res->json()['data'] ?? [];
+
+            return collect($data)->map(function ($item) {
+                return [
+                    'id' => $item['code'],
+                    'name' => $item['name'],
+                ];
+            })->all();
         });
+
         return response()->json($transformed);
     }
 
     public function getKabupaten(string $id)
     {
-        $res = Http::get("{$this->baseUrl}/regencies/{$id}.json");
-        $data = $res->json()['data'] ?? [];
-        $transformed = collect($data)->map(function ($item) {
-            return [
-                'id' => $item['code'],
-                'name' => $item['name']
-            ];
+        $transformed = Cache::remember('wilayah_regencies_'.$id, 86400 * 7, function () use ($id) {
+            $res = Http::timeout(10)->get("{$this->baseUrl}/regencies/{$id}.json");
+            $data = $res->json()['data'] ?? [];
+
+            return collect($data)->map(function ($item) {
+                return [
+                    'id' => $item['code'],
+                    'name' => $item['name'],
+                ];
+            })->all();
         });
+
         return response()->json($transformed);
     }
 
     public function getKecamatan(string $id)
     {
-        $res = Http::get("{$this->baseUrl}/districts/{$id}.json");
-        $data = $res->json()['data'] ?? [];
-        $transformed = collect($data)->map(function ($item) {
-            return [
-                'id' => $item['code'],
-                'name' => $item['name']
-            ];
+        $transformed = Cache::remember('wilayah_districts_'.$id, 86400 * 7, function () use ($id) {
+            $res = Http::timeout(10)->get("{$this->baseUrl}/districts/{$id}.json");
+            $data = $res->json()['data'] ?? [];
+
+            return collect($data)->map(function ($item) {
+                return [
+                    'id' => $item['code'],
+                    'name' => $item['name'],
+                ];
+            })->all();
         });
+
         return response()->json($transformed);
     }
 
     public function getDesa(string $id)
     {
-        $res = Http::get("{$this->baseUrl}/villages/{$id}.json");
-        $data = $res->json()['data'] ?? [];
-        $transformed = collect($data)->map(function ($item) {
-            return [
-                'id' => $item['code'],
-                'name' => $item['name']
-            ];
+        $transformed = Cache::remember('wilayah_villages_'.$id, 86400 * 7, function () use ($id) {
+            $res = Http::timeout(10)->get("{$this->baseUrl}/villages/{$id}.json");
+            $data = $res->json()['data'] ?? [];
+
+            return collect($data)->map(function ($item) {
+                return [
+                    'id' => $item['code'],
+                    'name' => $item['name'],
+                ];
+            })->all();
         });
+
         return response()->json($transformed);
     }
 }

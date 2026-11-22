@@ -46,7 +46,7 @@
                         @error('fotoProduk')
                             <p class="text-[10px] text-red-500 mt-2 font-bold">{{ $message }}</p>
                         @enderror
-                        <p class="text-[10px] text-gray-400 mt-2 font-medium text-center">Format: JPG, JPEG, PNG (Maks. 10MB)</p>
+                        <p class="text-[10px] text-gray-400 mt-2 font-medium text-center">Format: JPG, JPEG, PNG, WEBP (Maks. 1MB)</p>
                     </div>
                 </div>
 
@@ -189,6 +189,11 @@
 
     function previewImage(input) {
         if (input.files && input.files[0]) {
+            if (input.files[0].size > 1024 * 1024) {
+                alert('Ukuran foto produk maksimal 1MB.');
+                input.value = '';
+                return;
+            }
             const reader = new FileReader();
             reader.onload = e => {
                 const preview = document.getElementById('previewImg');

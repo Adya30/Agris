@@ -31,6 +31,7 @@ return [
     'biteship' => [
         'key' => env('BITESHIP_API_KEY'),
         'url' => env('BITESHIP_URL', 'https://api.biteship.com/v1'),
+        'webhook_secret' => env('BITESHIP_WEBHOOK_SECRET'),
     ],
 
     'slack' => [

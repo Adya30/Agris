@@ -97,17 +97,27 @@
                 </div>
 
                 <div class="p-4 bg-white border-t border-slate-200">
+                    <div v-if="errorMessage" class="mb-3 px-4 py-2 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-circle-exclamation text-red-500"></i>
+                            <span>@{{ errorMessage }}</span>
+                        </div>
+                        <button @click="errorMessage = ''" class="text-red-400 hover:text-red-600 font-bold ml-2">&times;</button>
+                    </div>
                     <div v-if="imagePreview" class="mb-4 p-3 bg-green-50 rounded-2xl flex justify-between items-center">
                         <span class="text-xs font-bold text-green-800">@{{ selectedFile?.name }}</span>
                         <button @click="cancelImage" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <div class="flex items-center gap-3 bg-slate-100 p-2 rounded-4xl">
-                        <label class="w-10 h-10 flex items-center justify-center text-slate-400 cursor-pointer hover:text-green-600">
+                    <div class="flex items-center gap-3 bg-slate-100 p-2 rounded-4xl border border-transparent focus-within:border-green-500 transition-colors">
+                        <label class="w-10 h-10 flex items-center justify-center text-slate-400 cursor-pointer hover:text-green-600 shrink-0">
                             <i class="fa-solid fa-image"></i>
-                            <input type="file" @change="handleFileUpload" class="hidden" id="file-input-field">
+                            <input type="file" @change="handleFileUpload" class="hidden" id="file-input-field" accept="image/*" :disabled="isSending">
                         </label>
-                        <input type="text" v-model="newMessage" @keyup.enter="sendChat" placeholder="Tulis pesan..." class="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm">
-                        <button @click="sendChat" class="bg-green-600 text-white w-10 h-10 rounded-full flex items-center justify-center shrink-0 active:scale-95 transition-transform"><i class="fa-solid fa-paper-plane"></i></button>
+                        <input type="text" v-model="newMessage" @keyup.enter="sendChat" placeholder="Tulis pesan..." maxlength="1000" class="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm text-slate-700" :disabled="isSending">
+                        <button @click="sendChat" :disabled="isSending || (!newMessage.trim() && !selectedFile)" :class="{'opacity-50 cursor-not-allowed': isSending || (!newMessage.trim() && !selectedFile)}" class="bg-green-600 text-white w-10 h-10 rounded-full flex items-center justify-center shrink-0 active:scale-95 transition-all shadow-sm">
+                            <i v-if="isSending" class="fa-solid fa-circle-notch fa-spin text-sm"></i>
+                            <i v-else class="fa-solid fa-paper-plane text-sm"></i>
+                        </button>
                     </div>
                 </div>
             </template>
@@ -149,6 +159,8 @@
             const activeMenu = ref(null);
             const searchQuery = ref('');
             const unreadUsers = ref([]);
+            const isSending = ref(false);
+            const errorMessage = ref('');
 
             const parseDate = (t) => {
                 if (!t) return new Date();
@@ -199,24 +211,52 @@
             const openGlobalChat = () => loadChat('GLOBAL', 'Pusat Informasi (Broadcast)', 'https://ui-avatars.com/api/?name=B&background=fbbf24&color=fff');
 
             const sendChat = () => {
-                if (!newMessage.value && !selectedFile.value) return;
+                const msg = newMessage.value.trim();
+                if ((!msg && !selectedFile.value) || isSending.value) return;
+
+                isSending.value = true;
+                errorMessage.value = '';
+
                 const formData = new FormData();
                 formData.append('id_penerima', activeTarget.value);
-                formData.append('pesan', newMessage.value || '');
+                formData.append('pesan', msg);
                 if (selectedFile.value) formData.append('foto_chat', selectedFile.value);
+
+                const currentMsg = msg;
                 newMessage.value = '';
                 cancelImage();
-                axios.post('/chat', formData).then(res => {
-                    if (!chats.value.some(c => c.id === res.data.id)) {
-                        chats.value.push(res.data);
-                        scrollToBottom();
-                    }
-                });
+
+                axios.post('/chat', formData)
+                    .then(res => {
+                        if (!chats.value.some(c => c.id === res.data.id)) {
+                            chats.value.push(res.data);
+                            scrollToBottom();
+                        }
+                    })
+                    .catch(err => {
+                        const errMsg = err.response?.data?.error || err.response?.data?.message || 'Gagal mengirim pesan.';
+                        errorMessage.value = errMsg;
+                        newMessage.value = currentMsg;
+                        setTimeout(() => { errorMessage.value = ''; }, 5000);
+                    })
+                    .finally(() => {
+                        setTimeout(() => {
+                            isSending.value = false;
+                        }, 500);
+                    });
             };
 
             const handleFileUpload = (e) => {
                 const file = e.target.files[0];
-                if (file) { selectedFile.value = file; imagePreview.value = true; }
+                if (file) {
+                    if (file.size > 1024 * 1024) {
+                        alert('Ukuran gambar chat maksimal 1MB.');
+                        e.target.value = '';
+                        return;
+                    }
+                    selectedFile.value = file;
+                    imagePreview.value = true;
+                }
             };
 
             const cancelImage = () => {
@@ -274,7 +314,7 @@
                 }, 500);
             });
 
-            return { users, filteredUsers, unreadUsers, searchQuery, chats, groupedChats, activeTarget, activeTargetName, activeTargetPhoto, newMessage, imagePreview, selectedFile, activeMenu, loadChat, openGlobalChat, sendChat, handleFileUpload, cancelImage, deleteChat, formatTime, toggleMenu };
+            return { users, filteredUsers, unreadUsers, searchQuery, chats, groupedChats, activeTarget, activeTargetName, activeTargetPhoto, newMessage, imagePreview, selectedFile, activeMenu, isSending, errorMessage, loadChat, openGlobalChat, sendChat, handleFileUpload, cancelImage, deleteChat, formatTime, toggleMenu };
         }
     }).mount('#chat-app');
 </script>
