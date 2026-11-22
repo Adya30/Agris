@@ -160,11 +160,6 @@ Follow these steps to set up the AGRIS application locally:
    ```bash
    php artisan db:seed
    ```
-   > [!NOTE]
-   > **Default Admin Account**:
-   > - **Email**: `agrisagroindustri@gmail.com`
-   > - **Password**: `admin123`
-
 5. **Start the Development Servers**
    To spin up the web server, queue listener, Vite asset bundler, and Reverb WebSocket server simultaneously, execute:
    ```bash
