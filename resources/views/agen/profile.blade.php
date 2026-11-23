@@ -32,6 +32,9 @@
                         <p id="infoFoto" class="hidden text-center pt-2 text-[10px] text-blue-500 leading-tight">
                             Maks 1MB (.PNG, .JPG, .JPEG, .WEBP)
                         </p>
+                        @error('fotoProfil')
+                            <p class="text-red-500 text-xs mt-1 text-center font-semibold">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="w-full lg:w-3/4 space-y-4">

@@ -40,6 +40,10 @@ class AppServiceProvider extends ServiceProvider
 
                 $targetDisk = $disk ?: config('filesystems.default', 'public');
 
+                if ($targetDisk === 'public') {
+                    return asset('storage/'.$cleanPath);
+                }
+
                 try {
                     return Storage::disk($targetDisk)->url($cleanPath);
                 } catch (\Throwable $e) {

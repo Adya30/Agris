@@ -12,6 +12,7 @@ use App\Http\Controllers\c_produk;
 use App\Http\Controllers\c_profile;
 use App\Http\Controllers\c_wilayah;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return view('guest.landing');
@@ -140,3 +141,24 @@ Route::prefix('wilayah')->middleware('throttle:60,1')->group(function () {
 
 Route::post('/midtrans/callback', [c_pembayaran::class, 'paymentCallback'])->middleware('throttle:60,1')->name('midtrans.callback');
 Route::post('/biteship/webhook', [c_pesanan::class, 'biteshipWebhook'])->middleware('throttle:60,1')->name('biteship.webhook');
+
+// Fallback route untuk storage di cPanel jika symlink public/storage belum dibuat / tidak didukung hosting
+Route::get('/storage/{path}', function (string $path) {
+    if (str_contains($path, '..') || str_contains($path, "\0")) {
+        abort(403);
+    }
+
+    $cleanPath = ltrim($path, '/');
+    $disk = config('filesystems.default', 'public');
+
+    if (! Storage::disk($disk)->exists($cleanPath)) {
+        abort(404);
+    }
+
+    $mime = Storage::disk($disk)->mimeType($cleanPath) ?: 'application/octet-stream';
+
+    return Storage::disk($disk)->response($cleanPath, null, [
+        'Content-Type' => $mime,
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->where('path', '.*')->name('storage.fallback');

@@ -26,6 +26,10 @@ if (! function_exists('storage_url')) {
 
         $targetDisk = $disk ?: config('filesystems.default', 'public');
 
+        if ($targetDisk === 'public') {
+            return asset('storage/'.$cleanPath);
+        }
+
         try {
             return Storage::disk($targetDisk)->url($cleanPath);
         } catch (Throwable $e) {
