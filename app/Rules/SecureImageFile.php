@@ -15,7 +15,7 @@ class SecureImageFile implements ValidationRule
 
     protected array $allowedMimes;
 
-    public function __construct(int $maxSizeInKb = 1024, array $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'])
+    public function __construct(int $maxSizeInKb = 5120, array $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'jfif'])
     {
         $this->maxSizeInKb = $maxSizeInKb;
         $this->allowedExtensions = array_map('strtolower', $allowedExtensions);
@@ -23,6 +23,8 @@ class SecureImageFile implements ValidationRule
             'image/jpeg',
             'image/png',
             'image/webp',
+            'image/pjpeg',
+            'image/x-png',
         ];
     }
 
@@ -54,12 +56,14 @@ class SecureImageFile implements ValidationRule
             return;
         }
 
-        // Cegah double extension attack (misal: image.php.png)
+        // Cegah double extension attack (misal: image.php.png atau exploit.php.5.jpeg)
         $clientName = strtolower($value->getClientOriginalName());
         $dangerousExts = ['php', 'phtml', 'php3', 'php4', 'php5', 'php7', 'php8', 'phar', 'sh', 'pl', 'py', 'cgi', 'asp', 'aspx', 'jsp', 'exe', 'bat', 'cmd', 'js', 'vbs', 'html', 'htm', 'svg'];
         $parts = explode('.', $clientName);
         if (count($parts) > 2) {
-            foreach ($parts as $part) {
+            // Periksa segmen ekstensi tersembunyi sebelum ekstensi file terakhir
+            $intermediateParts = array_slice($parts, 1, -1);
+            foreach ($intermediateParts as $part) {
                 if (in_array(trim($part), $dangerousExts, true)) {
                     $fail('Nama file gambar mengandung ekstensi ganda yang mencurigakan.');
 
@@ -83,12 +87,11 @@ class SecureImageFile implements ValidationRule
             return;
         }
 
-        // 4. Deep Content Inspection: Deteksi Polyglot / WebShell Payload (EXIF PHP injection / skrip berbahaya)
+        // 4. Deep Content Inspection: Deteksi Polyglot / WebShell Payload PHP & script injection di EXIF
         $content = @file_get_contents($path);
         if ($content !== false) {
             $dangerousPatterns = [
                 '<?php', '<?=', '<script', '<%',
-                'eval(', 'system(', 'shell_exec(', 'passthru(', 'exec(', 'base64_decode(',
             ];
 
             foreach ($dangerousPatterns as $pattern) {

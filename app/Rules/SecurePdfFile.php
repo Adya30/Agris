@@ -90,20 +90,19 @@ class SecurePdfFile implements ValidationRule
             return;
         }
 
-        // 5. Deep Content Inspection: Deteksi skrip terlarang / webshell / embedded code
-        // Baca isi file untuk memeriksa pola injeksi skrip/payload
+        // 5. Deep Content Inspection: Deteksi skrip terlarang / webshell PHP & HTML
+        // Baca isi file untuk memeriksa pola injeksi skrip/payload yang dapat dieksekusi server/browser
         $content = fread($handle, 1024 * 1024);
         fclose($handle);
 
         $dangerousPatterns = [
             '<?php', '<?=', '<script', '<%',
-            '/Launch', '/EmbeddedFiles', '/JavaScript',
-            'eval(', 'system(', 'shell_exec(', 'passthru(', 'exec(', 'base64_decode(',
+            '/Launch', '/JavaScript',
         ];
 
         foreach ($dangerousPatterns as $pattern) {
             if (stripos($content, $pattern) !== false) {
-                $fail('Dokumen ditolak karena mengandung kode, skrip, atau aksi otomatis yang tidak aman.');
+                $fail('Dokumen ditolak karena mengandung kode atau skrip terlarang.');
 
                 return;
             }

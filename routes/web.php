@@ -132,7 +132,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-Route::prefix('wilayah')->middleware('throttle:60,1')->group(function () {
+Route::prefix('wilayah')->group(function () {
     Route::get('/provinsi', [c_wilayah::class, 'getProvinsi'])->name('wilayah.provinsi');
     Route::get('/kabupaten/{id}', [c_wilayah::class, 'getKabupaten'])->name('wilayah.kabupaten');
     Route::get('/kecamatan/{id}', [c_wilayah::class, 'getKecamatan'])->name('wilayah.kecamatan');

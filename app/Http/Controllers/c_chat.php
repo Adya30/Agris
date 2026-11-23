@@ -92,7 +92,7 @@ class c_chat extends Controller
         $request->validate([
             'id_penerima' => 'required',
             'pesan' => 'required_without:foto_chat|nullable|string|max:1000',
-            'foto_chat' => ['nullable', new SecureImageFile(1024)],
+            'foto_chat' => ['nullable', new SecureImageFile(5120)],
         ], [
             'pesan.max' => 'Pesan maksimal 1.000 karakter.',
         ]);

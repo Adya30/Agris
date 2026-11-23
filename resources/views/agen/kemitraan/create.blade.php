@@ -68,10 +68,24 @@
         </div>
 
         <div class="md:col-span-2" data-aos="fade-left" data-aos-delay="150">
+            @if ($errors->any())
+                <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-sm">
+                    <div class="flex items-center gap-2 font-bold mb-1">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span>Gagal mengunggah dokumen:</span>
+                    </div>
+                    <ul class="list-disc list-inside text-xs space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form id="formUploadMou" action="{{ route('kemitraan.store') }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
                 @csrf
                 <div id="dropzone" class="border-2 border-dashed border-gray-200 rounded-3xl p-10 text-center hover:border-[#58CC02] transition-all group relative">
-                    <input type="file" name="fileKemitraan" id="fileKemitraan" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" accept="application/pdf" required>
+                    <input type="file" name="fileKemitraan" id="fileKemitraan" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" accept=".pdf,application/pdf" required>
 
                     <div id="uploadPlaceholder" class="relative z-10 pointer-events-none">
                         <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-50 transition-colors">
@@ -104,7 +118,7 @@
 
                 <div id="errorMessage" class="hidden mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl items-center gap-3 text-red-600 text-sm">
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>Format file tidak didukung. Mohon unggah file dalam format PDF.</span>
+                    <span id="errorText">Format file tidak didukung. Mohon unggah file dalam format PDF (Maks. 1MB).</span>
                 </div>
 
                 <div id="actionContainer" class="hidden mt-8">
@@ -126,6 +140,7 @@
         const previewContainer = document.getElementById('previewContainer');
         const actionContainer = document.getElementById('actionContainer');
         const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
         const previewName = document.getElementById('previewName');
         const previewSize = document.getElementById('previewSize');
         const btnViewPdf = document.getElementById('btnViewPdf');
@@ -137,15 +152,18 @@
         fileInput.addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const file = this.files[0];
+                const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 
-                if (file.type !== 'application/pdf') {
+                if (!isPdf) {
+                    if (errorText) errorText.innerText = 'Format file tidak didukung. Mohon unggah file dalam format PDF.';
                     errorMessage.classList.remove('hidden');
                     this.value = '';
                     return;
                 }
 
                 if (file.size > 1024 * 1024) {
-                    alert('Ukuran file dokumen MOU maksimal 1MB.');
+                    if (errorText) errorText.innerText = 'Ukuran file dokumen MOU terlalu besar! Maksimal 1MB.';
+                    errorMessage.classList.remove('hidden');
                     this.value = '';
                     return;
                 }
@@ -160,7 +178,10 @@
                 uploadPlaceholder.classList.add('hidden');
                 previewContainer.classList.remove('hidden');
                 actionContainer.classList.remove('hidden');
-                fileInput.classList.add('hidden');
+
+                // JANGAN gunakan class .hidden pada fileInput agar HTML5 validation tidak membatalkan submit
+                fileInput.classList.remove('z-20');
+                fileInput.classList.add('pointer-events-none', '-z-10');
             }
         });
 
@@ -180,11 +201,12 @@
             uploadPlaceholder.classList.remove('hidden');
             previewContainer.classList.add('hidden');
             actionContainer.classList.add('hidden');
-            fileInput.classList.remove('hidden');
+
+            fileInput.classList.remove('pointer-events-none', '-z-10');
+            fileInput.classList.add('z-20');
         });
 
         document.getElementById('btnFinalSubmit').addEventListener('click', function() {
-            this.disabled = true;
             form.submit();
         });
 

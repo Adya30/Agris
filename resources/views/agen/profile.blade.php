@@ -27,10 +27,10 @@
                                 <i class="fas fa-camera text-white text-2xl"></i>
                             </label>
                         </div>
-                        <input type="file" name="fotoProfil" id="fotoProfil" class="hidden" accept="image/*">
+                        <input type="file" name="fotoProfil" id="fotoProfil" class="hidden" accept="image/*,.jpg,.jpeg,.png,.webp,.jfif">
                         <label for="fotoProfil" id="btnPilihFoto" class="hidden mt-3 px-4 py-1.5 border bg-[#58CC02] text-white rounded-lg text-xs font-bold cursor-pointer transition">Edit Foto</label>
                         <p id="infoFoto" class="hidden text-center pt-2 text-[10px] text-blue-500 leading-tight">
-                            Maks 1MB (.PNG, .JPG, .JPEG, .WEBP)
+                            Maks 5MB (.PNG, .JPG, .JPEG, .WEBP, .JFIF)
                         </p>
                         @error('fotoProfil')
                             <p class="text-red-500 text-xs mt-1 text-center font-semibold">{{ $message }}</p>
@@ -66,7 +66,7 @@
                                     <div id="provinsiView" class="py-2 px-3 text-sm rounded-xl border border-gray-200 bg-gray-50/50 font-medium text-black">
                                         {{ $user->desa->kecamatan->kabupaten->provinsi->namaProvinsi ?? '-' }}
                                     </div>
-                                    <select id="provinsi" name="provinsiId" data-old="{{ $user->desa->kecamatan->kabupaten->provinsi->id ?? '' }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
+                                    <select id="provinsi" name="provinsiId" data-old="{{ old('provinsiId', $user->desa?->kecamatan?->kabupaten?->provinsi?->id ?? '') }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
                                         <option value="">Pilih Provinsi</option>
                                     </select>
                                 </div>
@@ -75,7 +75,7 @@
                                     <div id="kabupatenView" class="py-2 px-3 text-sm rounded-xl border border-gray-200 bg-gray-50/50 font-medium text-black">
                                         {{ $user->desa->kecamatan->kabupaten->namaKabupaten ?? '-' }}
                                     </div>
-                                    <select id="kabupaten" name="kabupatenId" data-old="{{ $user->desa->kecamatan->kabupaten->id ?? '' }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
+                                    <select id="kabupaten" name="kabupatenId" data-old="{{ old('kabupatenId', $user->desa?->kecamatan?->kabupaten?->id ?? '') }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
                                         <option value="">Pilih Kabupaten</option>
                                     </select>
                                 </div>
@@ -84,7 +84,7 @@
                                     <div id="kecamatanView" class="py-2 px-3 text-sm rounded-xl border border-gray-200 bg-gray-50/50 font-medium text-black">
                                         {{ $user->desa->kecamatan->namaKecamatan ?? '-' }}
                                     </div>
-                                    <select id="kecamatan" name="kecamatanId" data-old="{{ $user->desa->kecamatan->id ?? '' }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
+                                    <select id="kecamatan" name="kecamatanId" data-old="{{ old('kecamatanId', $user->desa?->kecamatan?->id ?? '') }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
                                         <option value="">Pilih Kecamatan</option>
                                     </select>
                                 </div>
@@ -93,8 +93,8 @@
                                     <div id="desaView" class="py-2 px-3 text-sm rounded-xl border border-gray-200 bg-gray-50/50 font-medium text-black">
                                         {{ $user->desa->namaDesa ?? '-' }}
                                     </div>
-                                    <select id="desa" name="desaId" data-old="{{ $user->desaId ?? '' }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
-                                        <option value="{{ $user->desaId ?? '' }}">{{ $user->desa->namaDesa ?? 'Pilih Desa' }}</option>
+                                    <select id="desa" name="desaId" data-old="{{ old('desaId', $user->desaId ?? '') }}" class="hidden form-input editable w-full rounded-xl border-[#58CC02] bg-white py-2 px-3 text-sm focus:ring-0">
+                                        <option value="{{ old('desaId', $user->desaId ?? '') }}">{{ $user->desa->namaDesa ?? 'Pilih Desa' }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -228,8 +228,8 @@
 
         document.getElementById('fotoProfil').addEventListener('change', function() {
             if (this.files && this.files[0]) {
-                if (this.files[0].size > 1024 * 1024) {
-                    alert('Ukuran foto profil maksimal 1MB.');
+                if (this.files[0].size > 5 * 1024 * 1024) {
+                    alert('Ukuran foto profil maksimal 5MB.');
                     this.value = '';
                     return;
                 }

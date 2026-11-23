@@ -39,14 +39,14 @@
                                     </div>
                                 @endif
                             </div>
-                            <input type="file" name="fotoProduk" id="fotoInput" accept=".jpg,.jpeg,.png"
+                            <input type="file" name="fotoProduk" id="fotoInput" accept="image/*,.jpg,.jpeg,.png,.webp,.jfif"
                                 class="absolute inset-0 opacity-0 cursor-pointer"
                                 onchange="previewImage(this)">
                         </div>
                         @error('fotoProduk')
                             <p class="text-[10px] text-red-500 mt-2 font-bold">{{ $message }}</p>
                         @enderror
-                        <p class="text-[10px] text-gray-400 mt-2 font-medium text-center">Format: JPG, JPEG, PNG, WEBP (Maks. 1MB)</p>
+                        <p class="text-[10px] text-gray-400 mt-2 font-medium text-center">Format: JPG, JPEG, PNG, WEBP, JFIF (Maks. 5MB)</p>
                     </div>
                 </div>
 
@@ -189,8 +189,8 @@
 
     function previewImage(input) {
         if (input.files && input.files[0]) {
-            if (input.files[0].size > 1024 * 1024) {
-                alert('Ukuran foto produk maksimal 1MB.');
+            if (input.files[0].size > 5 * 1024 * 1024) {
+                alert('Ukuran foto produk maksimal 5MB.');
                 input.value = '';
                 return;
             }

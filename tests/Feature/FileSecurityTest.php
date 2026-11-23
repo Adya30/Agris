@@ -100,3 +100,21 @@ test('SecureImageFile rejects double extension attack', function () {
     expect($validator->fails())->toBeTrue();
     expect($validator->errors()->first('image'))->toContain('ekstensi ganda');
 });
+
+test('SecureImageFile accepts WhatsApp downloaded images with dots in timestamp and jfif extension', function () {
+    $validImage = UploadedFile::fake()->image('WhatsApp Image 2026-11-23 at 10.30.15.jpeg', 100, 100);
+
+    $validator = Validator::make(['image' => $validImage], [
+        'image' => [new SecureImageFile(5120)],
+    ]);
+
+    expect($validator->passes())->toBeTrue();
+
+    $jfifImage = UploadedFile::fake()->image('WhatsApp Image 2026-11-23 at 12.15.00.jfif', 100, 100);
+
+    $jfifValidator = Validator::make(['image' => $jfifImage], [
+        'image' => [new SecureImageFile(5120)],
+    ]);
+
+    expect($jfifValidator->passes())->toBeTrue();
+});

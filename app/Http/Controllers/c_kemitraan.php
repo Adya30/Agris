@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Rules\SecurePdfFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class c_kemitraan extends Controller
@@ -29,7 +30,7 @@ class c_kemitraan extends Controller
     {
         $user = Auth::user();
         if (empty($user->namaLengkap) || empty($user->noTelp) || empty($user->desaId) || empty($user->detailAlamat)) {
-            return redirect()->route('admin.profile')->with('modalIncomplete', true);
+            return redirect()->route($user->isAdmin ? 'admin.profile' : 'agen.profile')->with('modalIncomplete', true);
         }
         $kemitraan = Kemitraan::userId($user->id)->first();
         if ($kemitraan && ! in_array($kemitraan->statusPengajuan, ['Ditolak', 'Menunggu Upload MOU'])) {
@@ -56,7 +57,11 @@ class c_kemitraan extends Controller
             ['tanggalPengajuan' => now(), 'statusPengajuan' => 'Menunggu Verifikasi MOU', 'fileKemitraan' => $path]
         );
 
-        broadcast(new KemitraanUpdated($kemitraan->id, 'Menunggu Verifikasi MOU'));
+        try {
+            broadcast(new KemitraanUpdated($kemitraan->id, 'Menunggu Verifikasi MOU'));
+        } catch (\Throwable $e) {
+            Log::info('Broadcast KemitraanUpdated skipped: '.$e->getMessage());
+        }
 
         return redirect()->route('kemitraan.index')->with('success', 'File MOU berhasil diunggah.');
     }
@@ -77,7 +82,11 @@ class c_kemitraan extends Controller
         }
 
         $kemitraan->update(['statusPengajuan' => $status]);
-        broadcast(new KemitraanUpdated($id, $status));
+        try {
+            broadcast(new KemitraanUpdated($id, $status));
+        } catch (\Throwable $e) {
+            Log::info('Broadcast KemitraanUpdated skipped: '.$e->getMessage());
+        }
 
         return redirect()->route('admin.kemitraan.show', $id)->with('success', 'Perubahan berhasil disimpan');
     }
@@ -101,7 +110,11 @@ class c_kemitraan extends Controller
         $kemitraan->fill(['fileKemitraan' => $path, 'statusPengajuan' => 'Menunggu Verifikasi MOU']);
         $kemitraan->save();
 
-        broadcast(new KemitraanUpdated($id, 'Menunggu Verifikasi MOU'));
+        try {
+            broadcast(new KemitraanUpdated($id, 'Menunggu Verifikasi MOU'));
+        } catch (\Throwable $e) {
+            Log::info('Broadcast KemitraanUpdated skipped: '.$e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'File MOU berhasil di upload.');
     }
@@ -122,7 +135,11 @@ class c_kemitraan extends Controller
             User::whereId($kemitraan->userId)->update(['isActive' => 1]);
         }
 
-        broadcast(new KemitraanUpdated($id, $request->status));
+        try {
+            broadcast(new KemitraanUpdated($id, $request->status));
+        } catch (\Throwable $e) {
+            Log::info('Broadcast KemitraanUpdated skipped: '.$e->getMessage());
+        }
 
         return redirect()->route('admin.kemitraan.show', $id);
     }
