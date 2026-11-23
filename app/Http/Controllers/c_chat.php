@@ -9,6 +9,7 @@ use App\Rules\SecureImageFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class c_chat extends Controller
@@ -41,7 +42,11 @@ class c_chat extends Controller
         $updated = Chat::whereIdPengirim($admin->id)->whereIdPenerima($user->id)->whereStatus('terkirim')->update(['status' => 'dibaca']);
 
         if ($updated > 0) {
-            broadcast(new MessageSent(['id_penerima' => $admin->id, 'id_pengirim' => $user->id, 'status' => 'dibaca'], false, true))->toOthers();
+            try {
+                broadcast(new MessageSent(['id_penerima' => $admin->id, 'id_pengirim' => $user->id, 'status' => 'dibaca'], false, true))->toOthers();
+            } catch (\Throwable $e) {
+                Log::warning('Broadcast MessageSent skipped: '.$e->getMessage());
+            }
         }
 
         return view('agen.chat.index', compact('chats', 'admin'));
@@ -73,7 +78,11 @@ class c_chat extends Controller
         $updated = Chat::whereIdPengirim($targetUser->id)->whereIdPenerima($user->id)->whereStatus('terkirim')->update(['status' => 'dibaca']);
 
         if ($updated > 0) {
-            broadcast(new MessageSent(['id_penerima' => $targetUser->id, 'id_pengirim' => $user->id, 'status' => 'dibaca'], false, true))->toOthers();
+            try {
+                broadcast(new MessageSent(['id_penerima' => $targetUser->id, 'id_pengirim' => $user->id, 'status' => 'dibaca'], false, true))->toOthers();
+            } catch (\Throwable $e) {
+                Log::warning('Broadcast MessageSent skipped: '.$e->getMessage());
+            }
         }
 
         $targetSummary = [
@@ -171,7 +180,11 @@ class c_chat extends Controller
             $broadcastData = $chat->toArray();
             $broadcastData['foto_chat'] = storage_url($chat->foto_chat);
 
-            broadcast(new MessageSent($broadcastData, false))->toOthers();
+            try {
+                broadcast(new MessageSent($broadcastData, false))->toOthers();
+            } catch (\Throwable $e) {
+                Log::warning('Broadcast MessageSent skipped: '.$e->getMessage());
+            }
 
             return response()->json($broadcastData);
         } catch (\Exception $e) {
@@ -183,7 +196,11 @@ class c_chat extends Controller
     {
         try {
             $chat = Chat::whereId($id)->whereIdPengirim(Auth::id())->firstOrFail();
-            broadcast(new MessageSent(['id' => $chat->id, 'id_penerima' => $chat->id_penerima, 'id_pengirim' => $chat->id_pengirim], true))->toOthers();
+            try {
+                broadcast(new MessageSent(['id' => $chat->id, 'id_penerima' => $chat->id_penerima, 'id_pengirim' => $chat->id_pengirim], true))->toOthers();
+            } catch (\Throwable $e) {
+                Log::warning('Broadcast MessageSent skipped: '.$e->getMessage());
+            }
             $disk = config('filesystems.default', 'public');
             if ($chat->foto_chat && Storage::disk($disk)->exists($chat->foto_chat)) {
                 Storage::disk($disk)->delete($chat->foto_chat);
