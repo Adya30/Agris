@@ -12,7 +12,6 @@
         z-index: 300 !important;
     }
 
-    /* Lock overlay styling: only the disabled comment column replica */
     .chatbase-quota-lock-overlay {
         position: absolute !important;
         bottom: 0 !important;
@@ -136,7 +135,6 @@
         }
     }
 
-    // Chatbase initial stub
     if (!window.chatbase || window.chatbase("getState") !== "initialized") {
         window.chatbase = (...args) => {
             if (!window.chatbase.q) { window.chatbase.q = []; }

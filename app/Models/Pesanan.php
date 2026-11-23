@@ -25,19 +25,11 @@ class Pesanan extends Model
         'tanggal_pesanan' => 'date',
     ];
 
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
     public function scopeUserId(Builder $query, string $value): Builder
     {
         return $query->where('userId', $value);
     }
 
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
     public function scopeStatusPesanan(Builder $query, string $value): Builder
     {
         return $query->where('status_pesanan', $value);

@@ -61,7 +61,6 @@
         const progressContainer = document.getElementById('progressBarContainer');
         const progressBar = document.getElementById('progressBar');
 
-        // forms progress bar
         forms.forEach(form => {
             if (form.id !== 'logoutFormReal') {
                 form.addEventListener('submit', function () {

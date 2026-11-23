@@ -68,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const progressContainer = document.getElementById('progressBarContainer');
     const progressBar = document.getElementById('progressBar');
 
-    // forms progress bar
     forms.forEach(form => {
         if (form.id !== 'logoutFormReal') {
             form.addEventListener('submit', function () {
@@ -103,6 +102,48 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => { alert.remove(); }, 500);
         }, 4000);
     });
+});
+
+window.cleanupMidtrans = function() {
+    const snapSelectors = [
+        '#snap-midtrans',
+        '#snap-container',
+        '[id^="snap-"]',
+        'iframe[src*="midtrans"]',
+        '.snap-modal',
+        '.snap-backdrop',
+        'div[style*="z-index: 999"]',
+        'div[style*="z-index: 9999"]'
+    ];
+    document.querySelectorAll(snapSelectors.join(',')).forEach(el => {
+        try {
+            el.remove();
+        } catch (e) {
+            el.style.display = 'none';
+        }
+    });
+    document.body.style.overflow = '';
+    document.body.style.pointerEvents = '';
+    document.body.classList.remove('modal-open');
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.pointerEvents = '';
+    const nav = document.querySelector('nav');
+    if (nav) nav.style.pointerEvents = 'auto';
+};
+
+document.addEventListener('click', function(e) {
+    if (e.target.closest('nav') || e.target.closest('#hamburger') || e.target.closest('#dropdownBtn')) {
+        const snapFrame = document.querySelector('iframe[src*="midtrans"]');
+        if (!snapFrame || snapFrame.style.display === 'none') {
+            window.cleanupMidtrans();
+        }
+    }
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        setTimeout(window.cleanupMidtrans, 300);
+    }
 });
 </script>
 </body>

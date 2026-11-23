@@ -95,7 +95,6 @@ class c_kemitraan extends Controller
         ], [
             'fileKemitraan.required' => 'Dokumen MOU wajib diunggah.',
         ]);
-        /** @var Kemitraan $kemitraan */
         $kemitraan = Kemitraan::whereId($id)->userId(Auth::id())->firstOrFail();
         $disk = config('filesystems.default', 'public');
         if ($kemitraan->fileKemitraan && Storage::disk($disk)->exists($kemitraan->fileKemitraan)) {

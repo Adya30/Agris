@@ -19,19 +19,11 @@ class Keranjang extends Model
         'jumlah',
     ];
 
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
     public function scopeUserId(Builder $query, string $value): Builder
     {
         return $query->where('userId', $value);
     }
 
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
     public function scopeProdukId(Builder $query, string $value): Builder
     {
         return $query->where('produkId', $value);

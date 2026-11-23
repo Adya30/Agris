@@ -198,7 +198,6 @@ class AuthController extends Controller
             try {
                 $googleUser = Socialite::driver('google')->user();
             } catch (InvalidStateException $e) {
-                // Fallback untuk toleransi localhost vs 127.0.0.1 hanya di environment lokal
                 if (config('app.env') === 'local') {
                     $googleUser = Socialite::driver('google')->stateless()->user();
                 } else {
@@ -232,7 +231,6 @@ class AuthController extends Controller
                 ]
             );
         } catch (QueryException $e) {
-            // Fallback toleransi jika migrasi nullable belum dijalankan di cPanel
             $user = User::firstOrCreate(
                 ['email' => $email],
                 [

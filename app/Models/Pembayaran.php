@@ -30,19 +30,11 @@ class Pembayaran extends Model
         'waktuDibayar' => 'datetime',
     ];
 
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
     public function scopePesananId(Builder $query, string $value): Builder
     {
         return $query->where('pesananId', $value);
     }
 
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
     public function scopeStatusPembayaran(Builder $query, string $value): Builder
     {
         return $query->where('statusPembayaran', $value);

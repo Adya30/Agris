@@ -454,17 +454,21 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
             window.snap.pay(savedSnapToken, {
                 onSuccess: function(result) {
+                    if (window.cleanupMidtrans) window.cleanupMidtrans();
                     window.location.href = `/agen/pesanan/${savedOrderId}?status=success`;
                 },
                 onPending: function(result) {
-                    setButtonState(true);
+                    if (window.cleanupMidtrans) window.cleanupMidtrans();
+                    window.location.href = `/agen/pesanan/${savedOrderId}`;
                 },
                 onError: function(result) {
+                    if (window.cleanupMidtrans) window.cleanupMidtrans();
                     showGeneralError(result.status_message || 'Pembayaran gagal.');
                     setButtonState(true);
                 },
                 onClose: function() {
-                    setButtonState(true);
+                    if (window.cleanupMidtrans) window.cleanupMidtrans();
+                    window.location.href = `/agen/pesanan/${savedOrderId}`;
                 }
             });
             return;
@@ -502,17 +506,21 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                 window.snap.pay(savedSnapToken, {
                     onSuccess: function(result) {
+                        if (window.cleanupMidtrans) window.cleanupMidtrans();
                         window.location.href = `/agen/pesanan/${savedOrderId}?status=success`;
                     },
                     onPending: function(result) {
-                        setButtonState(true);
+                        if (window.cleanupMidtrans) window.cleanupMidtrans();
+                        window.location.href = `/agen/pesanan/${savedOrderId}`;
                     },
                     onError: function(result) {
+                        if (window.cleanupMidtrans) window.cleanupMidtrans();
                         showGeneralError(result.status_message || 'Pembayaran gagal.');
                         setButtonState(true);
                     },
                     onClose: function() {
-                        setButtonState(true);
+                        if (window.cleanupMidtrans) window.cleanupMidtrans();
+                        window.location.href = `/agen/pesanan/${savedOrderId}`;
                     }
                 });
             } else {

@@ -96,19 +96,11 @@ class User extends Authenticatable
         return collect($parts)->filter()->implode(', ');
     }
 
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
     public function scopeIsAdmin(Builder $query, bool $value): Builder
     {
         return $query->where('isAdmin', $value);
     }
 
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
     public function scopeIsActive(Builder $query, bool $value): Builder
     {
         return $query->where('isActive', $value);

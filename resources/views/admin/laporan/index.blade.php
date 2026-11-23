@@ -18,7 +18,6 @@
     @endphp
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
 
-        {{-- Total Pemasukan --}}
         <div class="bg-white rounded-3xl border border-green-100 shadow-sm p-6 relative overflow-hidden" data-aos="zoom-in">
             <div class="absolute top-0 right-0 w-24 h-24 bg-linear-to-bl from-green-50 to-transparent rounded-bl-full pointer-events-none"></div>
             <div class="flex items-center justify-between mb-3">
@@ -33,7 +32,6 @@
             <span class="text-[10px] text-gray-400 font-semibold mt-1 block">Seluruh pembayaran berhasil</span>
         </div>
 
-        {{-- Total Pengeluaran --}}
         <div class="bg-white rounded-3xl border border-red-100 shadow-sm p-6 relative overflow-hidden" data-aos="zoom-in" data-aos-delay="100">
             <div class="absolute top-0 right-0 w-24 h-24 bg-linear-to-bl from-red-50 to-transparent rounded-bl-full pointer-events-none"></div>
             <div class="flex items-center justify-between mb-3">
@@ -48,7 +46,6 @@
             <span class="text-[10px] text-gray-400 font-semibold mt-1 block">Pembatalan</span>
         </div>
 
-        {{-- Saldo Neto --}}
         <div class="bg-white rounded-3xl border {{ $isProfit ? 'border-blue-100' : 'border-red-200' }} shadow-sm p-6 relative overflow-hidden" data-aos="zoom-in" data-aos-delay="200">
             <div class="absolute top-0 right-0 w-24 h-24 bg-linear-to-bl {{ $isProfit ? 'from-blue-50' : 'from-red-50' }} to-transparent rounded-bl-full pointer-events-none"></div>
             <div class="flex items-center justify-between mb-3">

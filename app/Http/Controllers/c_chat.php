@@ -99,7 +99,6 @@ class c_chat extends Controller
 
         $user = Auth::user();
 
-        // 1. Anti-spam cooldown (minimal jeda 2 detik antar pesan untuk non-admin)
         if (! $user->isAdmin) {
             $cooldownKey = 'chat_cooldown_'.$user->id;
             if (Cache::has($cooldownKey)) {
@@ -120,13 +119,11 @@ class c_chat extends Controller
             }
         }
 
-        // 2. Sanitasi konten teks (strip tags untuk mencegah injeksi script/HTML)
         $pesan = $request->pesan ? trim(strip_tags($request->pesan)) : null;
         if (empty($pesan) && ! $request->hasFile('foto_chat')) {
             return response()->json(['error' => 'Pesan tidak boleh kosong.'], 422);
         }
 
-        // 3. Anti-duplicate spam (mencegah pesan identik dikirim berulang dalam 15 detik)
         if (! $user->isAdmin && ! empty($pesan)) {
             $dupKey = 'chat_dup_'.$user->id.'_'.md5($request->id_penerima.'_'.$pesan);
             if (Cache::has($dupKey)) {
@@ -136,7 +133,6 @@ class c_chat extends Controller
             }
         }
 
-        // 4. Pembatasan kuota pesan harian non-admin untuk melindungi kuota Pusher dari bot
         if (! $user->isAdmin) {
             $dailyCountKey = 'chat_daily_count_'.$user->id.'_'.now()->toDateString();
             $dailyCount = (int) Cache::get($dailyCountKey, 0);
@@ -163,7 +159,6 @@ class c_chat extends Controller
                 'waktu_chat' => now(),
             ]);
 
-            // Set rate limit & anti-spam markers
             if (! $user->isAdmin) {
                 Cache::put('chat_cooldown_'.$user->id, true, 2);
                 if (! empty($pesan)) {
@@ -187,7 +182,6 @@ class c_chat extends Controller
     public function destroy(string $id)
     {
         try {
-            /** @var Chat $chat */
             $chat = Chat::whereId($id)->whereIdPengirim(Auth::id())->firstOrFail();
             broadcast(new MessageSent(['id' => $chat->id, 'id_penerima' => $chat->id_penerima, 'id_pengirim' => $chat->id_pengirim], true))->toOthers();
             $disk = config('filesystems.default', 'public');

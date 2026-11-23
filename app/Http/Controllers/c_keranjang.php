@@ -44,7 +44,6 @@ class c_keranjang extends Controller
             return response()->json(['message' => 'Stok produk habis.'], 422);
         }
 
-        /** @var Keranjang $keranjang */
         $keranjang = Keranjang::userId(Auth::id())
             ->produkId($request->produkId)
             ->first();
@@ -77,7 +76,6 @@ class c_keranjang extends Controller
 
     public function tambahJumlah(Request $request, string $id)
     {
-        /** @var Keranjang $keranjang */
         $keranjang = Keranjang::whereId($id)
             ->userId(Auth::id())
             ->firstOrFail();
@@ -104,7 +102,6 @@ class c_keranjang extends Controller
 
     public function kurang(Request $request, string $id)
     {
-        /** @var Keranjang $keranjang */
         $keranjang = Keranjang::whereId($id)->userId(Auth::id())->firstOrFail();
 
         $produk = $keranjang->produk;
@@ -127,7 +124,6 @@ class c_keranjang extends Controller
             'jumlah' => 'required|integer|min:1',
         ]);
 
-        /** @var Keranjang $keranjang */
         $keranjang = Keranjang::whereId($id)
             ->userId(Auth::id())
             ->firstOrFail();
@@ -155,7 +151,6 @@ class c_keranjang extends Controller
 
     public function destroy(string $id)
     {
-        /** @var Keranjang $keranjang */
         $keranjang = Keranjang::whereId($id)->userId(Auth::id())->firstOrFail();
 
         Keranjang::whereId($keranjang->id)->delete();

@@ -154,7 +154,6 @@
 
                 if ($pesanan->status_pesanan !== 'dibatalkan') {
                     if ($isPickup) {
-                        // Local Pickup Flow (Ambal di Tempat)
                         if ($pesanan->status_pesanan === 'diproses') {
                             $stage1Status = 'active';
                         } elseif ($pesanan->status_pesanan === 'dikirim') {
@@ -166,7 +165,6 @@
                             $stage3Status = 'completed';
                         }
                     } else {
-                        // Courier Shipping Flow (Biteship or fallback)
                         if ($pesanan->status_pesanan === 'diproses') {
                             $stage1Status = 'active';
                         } elseif ($pesanan->status_pesanan === 'dikirim') {
@@ -244,7 +242,6 @@
                 </div>
 
                 <div class="relative pl-8 space-y-8 border-l-2 border-gray-100 ml-4 py-2">
-                    <!-- Step 1: Penjemputan / Dikemas -->
                     <div class="relative">
                         <span class="absolute -left-12 top-0.5 flex h-8 w-8 items-center justify-center rounded-full {{ $stage1Status === 'completed' ? 'bg-[#0f8629] text-white ring-4 ring-green-100' : ($stage1Status === 'active' ? 'bg-blue-600 text-white ring-4 ring-blue-100 animate-pulse' : 'bg-gray-100 text-gray-400 ring-4 ring-gray-50') }} shadow-sm">
                             @if($stage1Status === 'completed')
@@ -293,7 +290,6 @@
                         </div>
                     </div>
 
-                    <!-- Step 2: Dalam Pengiriman / Siap Diambil -->
                     <div class="relative">
                         <span class="absolute -left-12 top-0.5 flex h-8 w-8 items-center justify-center rounded-full {{ $stage2Status === 'completed' ? 'bg-[#0f8629] text-white ring-4 ring-green-100' : ($stage2Status === 'active' ? 'bg-blue-600 text-white ring-4 ring-blue-100 animate-pulse' : 'bg-gray-100 text-gray-400 ring-4 ring-gray-50') }} shadow-sm">
                             @if($stage2Status === 'completed')
@@ -342,7 +338,6 @@
                         </div>
                     </div>
 
-                    <!-- Step 3: Diterima / Selesai Diambil -->
                     <div class="relative">
                         <span class="absolute -left-12 top-0.5 flex h-8 w-8 items-center justify-center rounded-full {{ $stage3Status === 'completed' ? 'bg-[#0f8629] text-white ring-4 ring-green-100' : 'bg-gray-100 text-gray-400 ring-4 ring-gray-50' }} shadow-sm">
                             @if($stage3Status === 'completed')
@@ -607,7 +602,7 @@
         if (window.Echo) {
             window.Echo.channel('order.{{ $pesanan->id }}')
                 .listen('.OrderStatusUpdated', (e) => {
-                    console.log('Order status updated via Reverb:', e);
+                    console.log('Order status updated via Pusher:', e);
                     updateOrderContent();
                 });
         }

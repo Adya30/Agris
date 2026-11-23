@@ -46,13 +46,11 @@ class c_pembayaran extends Controller
 
     private function updatePaymentAndOrderStatus(string $orderId, string $transactionStatus, ?string $paymentType, ?string $transactionId, array $rawData): bool
     {
-        /** @var Pesanan|null $pesanan */
         $pesanan = Pesanan::query()->find($orderId);
         if (! $pesanan) {
             return false;
         }
 
-        /** @var Pembayaran|null $pembayaran */
         $pembayaran = Pembayaran::pesananId($orderId)->first();
         if (! $pembayaran) {
             return false;

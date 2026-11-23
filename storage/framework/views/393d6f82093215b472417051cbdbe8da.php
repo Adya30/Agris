@@ -57,7 +57,7 @@
         <div id="product-card-<?php echo e($item->id); ?>" class="group bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col h-full relative" data-aos="fade-up" data-aos-delay="<?php echo e(($loop->iteration - 1) * 50); ?>">
             <a href="<?php echo e(route('agen.produk.show', $item->id)); ?>" class="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                 <?php if($item->fotoProduk): ?>
-                    <img src="<?php echo e(asset('storage/' . $item->fotoProduk)); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="<?php echo e($item->namaProduk); ?>">
+                    <img src="<?php echo e(storage_url($item->fotoProduk)); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="<?php echo e($item->namaProduk); ?>">
                 <?php else: ?>
                     <div class="flex items-center justify-center h-full text-gray-200">
                         <i class="fa-solid fa-image text-4xl"></i>

@@ -7,5 +7,5 @@ Broadcast::channel('chat.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('admin.kemitraan', function ($user) {
-    return $user->role === 'admin';
+    return (bool) $user->isAdmin;
 });

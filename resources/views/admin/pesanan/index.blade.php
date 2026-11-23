@@ -261,9 +261,8 @@
             activeOrderIds.forEach(orderId => {
                 window.Echo.channel('order.' + orderId)
                     .listen('.OrderStatusUpdated', (e) => {
-                        console.log('Order status updated via Reverb on admin index page for order #' + orderId, e);
+                        console.log('Order status updated via Pusher on admin index page for order #' + orderId, e);
 
-                        // Fetch the current page content and update the list without refreshing the page
                         fetch(window.location.href)
                             .then(response => response.text())
                             .then(html => {

@@ -166,7 +166,6 @@
             }
         }
 
-        // Dukungan Drag and Drop
         ['dragenter', 'dragover'].forEach(eventName => {
             dropzone.addEventListener(eventName, (e) => {
                 e.preventDefault();

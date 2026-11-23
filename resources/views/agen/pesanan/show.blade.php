@@ -122,7 +122,6 @@
 
                 if ($pesanan->status_pesanan !== 'dibatalkan') {
                     if ($isPickup) {
-                        // Local Pickup Flow (Ambil di Tempat)
                         if ($pesanan->status_pesanan === 'diproses') {
                             $stage1Status = 'active';
                         } elseif ($pesanan->status_pesanan === 'dikirim') {
@@ -134,7 +133,6 @@
                             $stage3Status = 'completed';
                         }
                     } else {
-                        // Courier Shipping Flow (Biteship or fallback)
                         if ($pesanan->status_pesanan === 'diproses') {
                             $stage1Status = 'active';
                         } elseif ($pesanan->status_pesanan === 'dikirim') {
@@ -192,7 +190,6 @@
                 }
             @endphp
 
-            <!-- Status Tracking Pengiriman (Vertical Timeline) -->
             <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-6" data-aos="fade-up" data-aos-delay="100">
                 <div class="flex items-center justify-between pb-3 border-b border-gray-50">
                     <div class="flex items-center gap-3">
@@ -207,7 +204,6 @@
                 </div>
 
                 <div class="relative pl-8 space-y-8 border-l-2 border-gray-100 ml-4 py-2">
-                    <!-- Step 1: Penjemputan / Dikemas -->
                     <div class="relative">
                         <span class="absolute -left-12 top-0.5 flex h-8 w-8 items-center justify-center rounded-full {{ $stage1Status === 'completed' ? 'bg-[#58CC02] text-white ring-4 ring-[#58CC02]/20' : ($stage1Status === 'active' ? 'bg-blue-600 text-white ring-4 ring-blue-100 animate-pulse' : 'bg-gray-100 text-gray-400 ring-4 ring-gray-50') }} shadow-sm">
                             @if($stage1Status === 'completed')
@@ -256,7 +252,6 @@
                         </div>
                     </div>
 
-                    <!-- Step 2: Dalam Pengiriman / Siap Diambil -->
                     <div class="relative">
                         <span class="absolute -left-12 top-0.5 flex h-8 w-8 items-center justify-center rounded-full {{ $stage2Status === 'completed' ? 'bg-[#58CC02] text-white ring-4 ring-[#58CC02]/20' : ($stage2Status === 'active' ? 'bg-blue-600 text-white ring-4 ring-blue-100 animate-pulse' : 'bg-gray-100 text-gray-400 ring-4 ring-gray-50') }} shadow-sm">
                             @if($stage2Status === 'completed')
@@ -305,7 +300,6 @@
                         </div>
                     </div>
 
-                    <!-- Step 3: Diterima / Selesai Diambil -->
                     <div class="relative">
                         <span class="absolute -left-12 top-0.5 flex h-8 w-8 items-center justify-center rounded-full {{ $stage3Status === 'completed' ? 'bg-[#58CC02] text-white ring-4 ring-[#58CC02]/20' : 'bg-gray-100 text-gray-400 ring-4 ring-gray-50' }} shadow-sm">
                             @if($stage3Status === 'completed')
@@ -606,24 +600,24 @@
 
                 window.snap.pay('{{ $pembayaran->snapToken }}', {
                     onSuccess: function(result) {
+                        if (window.cleanupMidtrans) window.cleanupMidtrans();
                         window.location.href = `/agen/pesanan/{{ $pesanan->id }}?status=success`;
                     },
                     onPending: function(result) {
-                        window.location.href = `/agen/pesanan/{{ $pesanan->id }}`;
+                        if (window.cleanupMidtrans) window.cleanupMidtrans();
+                        window.location.reload();
                     },
                     onError: function(result) {
-
+                        if (window.cleanupMidtrans) window.cleanupMidtrans();
                         btnPay.disabled = false;
                         btnPay.innerHTML = '<i class="fa-solid fa-credit-card"></i> Bayar Sekarang';
                         btnPay.className = "w-full bg-[#58CC02] hover:bg-[#46a302] text-white py-3 rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-sm transition duration-200 cursor-pointer";
-                        window.location.href = `/agen/pesanan/{{ $pesanan->id }}`;
                     },
                     onClose: function() {
-
+                        if (window.cleanupMidtrans) window.cleanupMidtrans();
                         btnPay.disabled = false;
                         btnPay.innerHTML = '<i class="fa-solid fa-credit-card"></i> Bayar Sekarang';
                         btnPay.className = "w-full bg-[#58CC02] hover:bg-[#46a302] text-white py-3 rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-sm transition duration-200 cursor-pointer";
-                        window.location.href = `/agen/pesanan/{{ $pesanan->id }}`;
                     }
                 });
             });
@@ -730,7 +724,7 @@ function copyResiSidebar(btn, resi) {
     if (window.Echo) {
         window.Echo.channel('order.{{ $pesanan->id }}')
             .listen('.OrderStatusUpdated', (e) => {
-                console.log('Order status updated via Reverb:', e);
+                console.log('Order status updated via Pusher:', e);
                 updateOrderContent();
             });
     }
@@ -742,7 +736,7 @@ function copyResiSidebar(btn, resi) {
                 clearInterval(pollInterval);
             }
         });
-    }, 30000); // Poll every 30 seconds as fallback
+    }, 30000);
     @endif
 
     function updateOrderContent(callback) {

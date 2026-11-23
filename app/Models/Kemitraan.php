@@ -23,10 +23,6 @@ class Kemitraan extends Model
         'tanggalPengajuan' => 'date',
     ];
 
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
     public function scopeUserId(Builder $query, string $value): Builder
     {
         return $query->where('userId', $value);
