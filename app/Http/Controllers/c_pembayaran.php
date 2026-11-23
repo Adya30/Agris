@@ -45,7 +45,7 @@ class c_pembayaran extends Controller
         return response()->json(['message' => 'Order/Payment not found'], 404);
     }
 
-    private function updatePaymentAndOrderStatus(string $orderId, string $transactionStatus, ?string $paymentType, ?string $transactionId, array $rawData): bool
+    public function updatePaymentAndOrderStatus(string $orderId, string $transactionStatus, ?string $paymentType, ?string $transactionId, array $rawData): bool
     {
         $pesanan = Pesanan::query()->find($orderId);
         if (! $pesanan) {
@@ -103,11 +103,17 @@ class c_pembayaran extends Controller
             'statusPembayaran' => $statusPembayaran,
             'transactionId' => $transactionId,
             'paymentType' => $paymentType,
+            'waktuDibayar' => $pembayaran->waktuDibayar,
         ]);
 
         Pesanan::whereId($pesanan->id)->update([
             'status_pesanan' => $statusPesanan,
         ]);
+
+        try {
+            event(new OrderStatusUpdated($pesanan->fresh()));
+        } catch (\Throwable $e) {
+        }
 
         return true;
     }

@@ -110,6 +110,40 @@ class c_pesanan extends Controller
             ->userId(Auth::id())
             ->findOrFail($id);
 
+        $pembayaran = $pesanan->pembayaran;
+        if ($pesanan->status_pesanan === 'pending' && $pembayaran && $pembayaran->statusPembayaran === 'pending') {
+            $serverKey = config('services.midtrans.server_key');
+            if (! empty($serverKey) && $pembayaran->snapToken && ! str_starts_with($pembayaran->snapToken, 'MOCK-SNAP-TOKEN-')) {
+                $isProduction = config('services.midtrans.is_production', false);
+                $statusUrl = $isProduction
+                    ? "https://api.midtrans.com/v2/{$pesanan->id}/status"
+                    : "https://api.sandbox.midtrans.com/v2/{$pesanan->id}/status";
+
+                try {
+                    $statusResponse = Http::withBasicAuth($serverKey, '')
+                        ->timeout(5)
+                        ->get($statusUrl);
+
+                    if ($statusResponse->successful()) {
+                        $data = $statusResponse->json();
+                        $txStatus = $data['transaction_status'] ?? null;
+                        if ($txStatus && in_array($txStatus, ['settlement', 'capture', 'deny', 'expire', 'cancel'])) {
+                            app(c_pembayaran::class)->updatePaymentAndOrderStatus(
+                                $pesanan->id,
+                                $txStatus,
+                                $data['payment_type'] ?? null,
+                                $data['transaction_id'] ?? null,
+                                $data
+                            );
+                            $pesanan->refresh();
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning('Auto Midtrans check skipped: '.$e->getMessage());
+                }
+            }
+        }
+
         $trackingData = $this->getBiteshipTracking($pesanan->deskripsi);
         if ($trackingData) {
             $biteshipStatus = $trackingData['status'] ?? null;

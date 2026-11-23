@@ -575,6 +575,12 @@
                             <button id="btnPayNow" class="w-full bg-[#58CC02] hover:bg-[#46a302] text-white py-3 rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-sm transition duration-200 cursor-pointer">
                                 <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
                             </button>
+                            <form action="{{ route('agen.pesanan.cek-status', $pesanan->id) }}" method="POST" class="pt-1">
+                                @csrf
+                                <button type="submit" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition duration-200 cursor-pointer border border-slate-200">
+                                    <i class="fa-solid fa-arrows-rotate"></i> Cek Status Pembayaran
+                                </button>
+                            </form>
                         @endif
                     @else
                         <div class="p-3 bg-red-50 text-red-600 rounded-2xl text-[11px] font-bold text-center">
