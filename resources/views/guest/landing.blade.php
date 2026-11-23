@@ -168,14 +168,14 @@
 
         <div class="w-full lg:w-2/3 space-y-4" data-aos="fade-up">
             @foreach($faqs as $faq)
-            <div class="faq-item group">
-                <button class="faq-btn w-full flex items-center justify-between p-6 bg-gray-50 rounded-2xl border border-gray-200 hover:border-green-500 hover:border-opacity-30 transition-all duration-300 text-left">
-                    <span class="font-bold text-slate-900 text-sm md:text-base">{{ $faq['q'] }}</span>
-                    <div class="shrink-0 w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-900 group-hover:bg-green-600 group-hover:text-white transition-all">
+            <div class="faq-item bg-white rounded-2xl border border-gray-200/90 shadow-xs hover:border-green-300 hover:shadow-md transition-all duration-300 overflow-hidden">
+                <button type="button" class="faq-btn w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer transition-colors duration-200 select-none group focus:outline-none">
+                    <span class="faq-question font-bold text-slate-800 text-sm md:text-base group-hover:text-green-700 transition-colors duration-200 pr-4 leading-snug">{{ $faq['q'] }}</span>
+                    <div class="faq-icon-wrapper shrink-0 w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-slate-600 group-hover:bg-green-50 group-hover:text-green-600 transition-all duration-300">
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300"></i>
                     </div>
                 </button>
-                <div class="faq-content hidden px-7 py-5 text-gray-500 text-sm leading-relaxed bg-gray-50 bg-opacity-50 rounded-b-2xl border-x border-b border-gray-100">
+                <div class="faq-content hidden px-5 md:px-6 pb-6 pt-2 text-slate-600 text-sm md:text-base leading-relaxed border-t border-gray-100/90 bg-slate-50/50">
                     {{ $faq['a'] }}
                 </div>
             </div>
@@ -192,17 +192,47 @@
 <script>
     document.querySelectorAll(".faq-btn").forEach(btn => {
         btn.addEventListener("click", () => {
-            const content = btn.nextElementSibling;
+            const item = btn.closest('.faq-item');
+            const content = item.querySelector('.faq-content');
             const icon = btn.querySelector('.fa-chevron-down');
+            const iconWrapper = btn.querySelector('.faq-icon-wrapper');
+            const question = btn.querySelector('.faq-question');
 
-            const isHidden = content.classList.toggle("hidden");
+            const isCurrentlyHidden = content.classList.contains("hidden");
 
-            if(!isHidden) {
+            // Close all other FAQ items for a clean accordion experience
+            document.querySelectorAll(".faq-item").forEach(otherItem => {
+                if (otherItem !== item) {
+                    const otherContent = otherItem.querySelector('.faq-content');
+                    const otherIcon = otherItem.querySelector('.fa-chevron-down');
+                    const otherWrapper = otherItem.querySelector('.faq-icon-wrapper');
+                    const otherQ = otherItem.querySelector('.faq-question');
+
+                    otherContent.classList.add("hidden");
+                    if (otherIcon) otherIcon.style.transform = "rotate(0deg)";
+                    if (otherWrapper) {
+                        otherWrapper.classList.remove('bg-green-600', 'text-white');
+                        otherWrapper.classList.add('bg-gray-100', 'text-slate-600');
+                    }
+                    if (otherQ) otherQ.classList.remove('text-green-700');
+                    otherItem.classList.remove('border-green-500', 'ring-2', 'ring-green-500/15', 'shadow-md');
+                }
+            });
+
+            if (isCurrentlyHidden) {
+                content.classList.remove("hidden");
                 icon.style.transform = "rotate(180deg)";
-                btn.classList.add('shadow-lg', 'bg-white');
+                iconWrapper.classList.remove('bg-gray-100', 'text-slate-600');
+                iconWrapper.classList.add('bg-green-600', 'text-white');
+                question.classList.add('text-green-700');
+                item.classList.add('border-green-500', 'ring-2', 'ring-green-500/15', 'shadow-md');
             } else {
+                content.classList.add("hidden");
                 icon.style.transform = "rotate(0deg)";
-                btn.classList.remove('shadow-lg', 'bg-white');
+                iconWrapper.classList.remove('bg-green-600', 'text-white');
+                iconWrapper.classList.add('bg-gray-100', 'text-slate-600');
+                question.classList.remove('text-green-700');
+                item.classList.remove('border-green-500', 'ring-2', 'ring-green-500/15', 'shadow-md');
             }
         });
     });

@@ -12,7 +12,7 @@
     $lowerId = strtolower($id);
     $lowerTitle = strtolower($title);
     $isDanger = str_contains($lowerId, 'hapus') || str_contains($lowerId, 'delete') || str_contains($lowerId, 'batal') || str_contains($lowerId, 'hentikan') || str_contains($lowerId, 'tolak') || str_contains($lowerId, 'error') || str_contains($lowerId, 'logout') || str_contains($lowerTitle, 'hapus') || str_contains($lowerTitle, 'batal') || str_contains($lowerTitle, 'keluar');
-    $isWarning = str_contains($lowerId, 'stok') || str_contains($lowerId, 'berat') || str_contains($lowerId, 'kurang') || str_contains($lowerId, 'mitra') || str_contains($lowerTitle, 'stok') || str_contains($lowerTitle, 'kurang') || str_contains($lowerTitle, 'perhatian') || str_contains($lowerTitle, 'belum');
+    $isWarning = str_contains($lowerId, 'stok') || str_contains($lowerId, 'berat') || str_contains($lowerId, 'kurang') || str_contains($lowerId, 'mitra') || str_contains($lowerId, 'file') || str_contains($lowerId, 'ukuran') || str_contains($lowerTitle, 'stok') || str_contains($lowerTitle, 'kurang') || str_contains($lowerTitle, 'perhatian') || str_contains($lowerTitle, 'belum') || str_contains($lowerTitle, 'ukuran') || str_contains($lowerTitle, 'batas');
     $isSuccess = str_contains($lowerId, 'diterima') || str_contains($lowerId, 'sukses') || str_contains($lowerId, 'berhasil') || str_contains($lowerId, 'aktif') || str_contains($lowerTitle, 'diterima') || str_contains($lowerTitle, 'berhasil');
 
     if ($isDanger) {

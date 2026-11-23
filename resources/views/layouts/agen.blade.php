@@ -149,5 +149,51 @@ document.addEventListener('keydown', function(e) {
     }
 });
 </script>
+
+<x-modal 
+    id="modalFileExceeded" 
+    title="Batas Ukuran File" 
+    message="Ukuran file atau foto yang Anda pilih melebihi batas maksimal 1MB (1.024 KB). Harap kompres atau pilih file yang lebih kecil." 
+    confirmText="Mengerti" 
+    cancelText="Tutup" 
+    confirmId="btnDismissFileSize" 
+    cancelId="btnDismissFileSize2" 
+/>
+
+<script>
+    window.showFileSizeModal = function(customMessage) {
+        const modal = document.getElementById('modalFileExceeded');
+        if (modal) {
+            if (customMessage) {
+                const msgEl = modal.querySelector('p');
+                if (msgEl) msgEl.textContent = customMessage;
+            }
+            if (typeof window.openModal === 'function') {
+                window.openModal('modalFileExceeded');
+            } else {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        } else {
+            alert(customMessage || 'Ukuran file tidak boleh lebih dari 1MB.');
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        ['btnDismissFileSize', 'btnDismissFileSize2'].forEach(function(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (typeof window.closeModal === 'function') {
+                        window.closeModal('modalFileExceeded');
+                    } else {
+                        document.getElementById('modalFileExceeded')?.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>

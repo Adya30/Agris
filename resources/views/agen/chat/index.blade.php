@@ -173,7 +173,11 @@
                 const file = e.target.files[0];
                 if (file) {
                     if (file.size > 1024 * 1024) {
-                        alert('Ukuran gambar chat maksimal 1MB.');
+                        if (window.showFileSizeModal) {
+                            window.showFileSizeModal('Ukuran gambar chat tidak boleh lebih dari 1MB.');
+                        } else {
+                            alert('Ukuran gambar chat tidak boleh lebih dari 1MB.');
+                        }
                         e.target.value = '';
                         return;
                     }

@@ -211,6 +211,9 @@
                 if (errorText) errorText.innerText = 'Ukuran file dokumen MOU terlalu besar! Maksimal 1MB.';
                 errorMessage.classList.remove('hidden');
                 errorMessage.classList.add('flex');
+                if (window.showFileSizeModal) {
+                    window.showFileSizeModal('Ukuran file dokumen MOU tidak boleh lebih dari 1MB.');
+                }
                 resetPreview();
                 return;
             }

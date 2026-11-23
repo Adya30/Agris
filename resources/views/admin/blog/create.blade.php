@@ -98,6 +98,9 @@
             if (file.size > 1024 * 1024) {
                 errorDiv.textContent = "Ukuran file terlalu besar! Maksimal 1MB.";
                 errorDiv.classList.remove('hidden');
+                if (window.showFileSizeModal) {
+                    window.showFileSizeModal('Ukuran foto blog tidak boleh lebih dari 1MB.');
+                }
                 input.value = "";
                 return;
             }

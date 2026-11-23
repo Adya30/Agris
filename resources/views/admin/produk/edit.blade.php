@@ -190,7 +190,11 @@
     function previewImage(input) {
         if (input.files && input.files[0]) {
             if (input.files[0].size > 1024 * 1024) {
-                alert('Ukuran foto produk maksimal 1MB.');
+                if (window.showFileSizeModal) {
+                    window.showFileSizeModal('Ukuran foto produk tidak boleh lebih dari 1MB.');
+                } else {
+                    alert('Ukuran foto produk tidak boleh lebih dari 1MB.');
+                }
                 input.value = '';
                 return;
             }

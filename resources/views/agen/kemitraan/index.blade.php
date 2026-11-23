@@ -115,7 +115,7 @@
 <x-modal id="modalLengkapiProfil" title="Profil Belum Lengkap" message="Harap lengkapi profil dulu sebelum pengajuan" confirmText="Lengkapi" cancelText="Nanti Saja" confirmId="btnLengkapiSekarang" cancelId="btnTutupModalProfil" />
 <form id="upload-form" action="{{ $kemitraan ? route('kemitraan.uploadMou', $kemitraan->id) : route('kemitraan.store') }}" method="POST" enctype="multipart/form-data" class="hidden">
     @csrf
-    <input type="file" name="fileKemitraan" id="inputManualFile" accept=".pdf" onchange="if(this.files[0] && this.files[0].size > 1024 * 1024){ alert('Ukuran file dokumen MOU maksimal 1MB.'); this.value=''; return; } this.form.submit()">
+    <input type="file" name="fileKemitraan" id="inputManualFile" accept=".pdf" onchange="if(this.files[0] && this.files[0].size > 1024 * 1024){ if(window.showFileSizeModal){ window.showFileSizeModal('Ukuran file dokumen MOU tidak boleh lebih dari 1MB.'); } else { alert('Ukuran file dokumen MOU tidak boleh lebih dari 1MB.'); } this.value=''; return; } this.form.submit()">
 </form>
 
 <script>

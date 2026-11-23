@@ -230,7 +230,11 @@
         document.getElementById('fotoProfil').addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 if (this.files[0].size > 1024 * 1024) {
-                    alert('Ukuran foto profil maksimal 1MB.');
+                    if (window.showFileSizeModal) {
+                        window.showFileSizeModal('Ukuran foto profil tidak boleh lebih dari 1MB.');
+                    } else {
+                        alert('Ukuran foto profil tidak boleh lebih dari 1MB.');
+                    }
                     this.value = '';
                     return;
                 }
