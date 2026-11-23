@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
 
 class SocialAuthController extends Controller
 {
@@ -20,14 +19,14 @@ class SocialAuthController extends Controller
             $googleUser = Socialite::driver('google')->user();
         } catch (\Exception $e) {
 
-            return redirect('/login')->with('error', 'Login gagal: ' . $e->getMessage());
+            return redirect('/login')->with('error', 'Login gagal: '.$e->getMessage());
         }
 
         $user = User::firstOrCreate(
             ['email' => $googleUser->email],
             [
                 'name' => $googleUser->name,
-                'noTelp' => '-'
+                'noTelp' => '-',
             ]
         );
 

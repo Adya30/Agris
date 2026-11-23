@@ -4,20 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Keranjang;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Midtrans\Config;
 use Midtrans\Snap;
-use Illuminate\Support\Facades\Log;
 
 class c_checkout extends Controller
 {
     public function index(Request $request)
     {
         $selectedIds = $request->input('selected_ids', []);
-        if (empty($selectedIds)) return redirect()->route('agen.keranjang.index');
+        if (empty($selectedIds)) {
+            return redirect()->route('agen.keranjang.index');
+        }
 
         $items = Keranjang::with('produk.kategori')->whereIn('id', $selectedIds)->userId(Auth::id())->get();
         $totalHarga = 0;
@@ -46,22 +48,22 @@ class c_checkout extends Controller
             $originAreaId = $this->getOrSyncBiteshipArea($originKecId);
             $destAreaId = $this->getOrSyncBiteshipArea($destKecId);
 
-            if (!$originAreaId) {
+            if (! $originAreaId) {
                 return response()->json(['error' => 'ID Area Biteship Gudang tidak ditemukan'], 422);
             }
-            if (!$destAreaId) {
+            if (! $destAreaId) {
                 return response()->json(['error' => 'ID Area Biteship Tujuan tidak ditemukan. Cek kembali alamat profil Anda.'], 422);
             }
 
             $response = Http::withHeaders([
                 'authorization' => config('services.biteship.key'),
-                'content-type' => 'application/json'
-            ])->post(rtrim(config('services.biteship.url'), '/') . '/rates/couriers', [
-                    'origin_area_id' => $originAreaId,
-                    'destination_area_id' => $destAreaId,
-                    'couriers' => 'jne,sicepat,tiki,anteraja,jnt',
-                    'items' => $request->items
-                ]);
+                'content-type' => 'application/json',
+            ])->post(rtrim(config('services.biteship.url'), '/').'/rates/couriers', [
+                'origin_area_id' => $originAreaId,
+                'destination_area_id' => $destAreaId,
+                'couriers' => 'jne,sicepat,tiki,anteraja,jnt',
+                'items' => $request->items,
+            ]);
 
             $data = $response->json();
 
@@ -95,14 +97,18 @@ class c_checkout extends Controller
         }
     }
 
-    private function getOrSyncBiteshipArea(int|null $kecamatanId): ?string
+    private function getOrSyncBiteshipArea(?int $kecamatanId): ?string
     {
-        if (!$kecamatanId) return null;
+        if (! $kecamatanId) {
+            return null;
+        }
 
         $kec = DB::table('kecamatans')->where('id', $kecamatanId)->first();
-        if (!$kec) return null;
+        if (! $kec) {
+            return null;
+        }
 
-        if (!empty($kec->biteship_area_id)) {
+        if (! empty($kec->biteship_area_id)) {
             return $kec->biteship_area_id;
         }
 
@@ -118,14 +124,14 @@ class c_checkout extends Controller
             $attempts = [
                 ['input' => $searchString, 'type' => 'district'],
                 ['input' => $searchString],
-                ['input' => $cleanKec, 'type' => 'district']
+                ['input' => $cleanKec, 'type' => 'district'],
             ];
 
             foreach ($attempts as $params) {
                 $res = Http::withHeaders($headers)->get($url, array_merge(['countries' => 'ID'], $params));
                 if ($res->successful()) {
                     $areas = $res->json()['areas'] ?? [];
-                    if (!empty($areas)) {
+                    if (! empty($areas)) {
                         $foundId = null;
                         foreach ($areas as $a) {
                             if (isset($a['id']) && ($a['type'] ?? '') === 'district') {
@@ -136,13 +142,14 @@ class c_checkout extends Controller
                         $foundId = $foundId ?? ($areas[0]['id'] ?? null);
                         if ($foundId) {
                             DB::table('kecamatans')->where('id', $kecamatanId)->update(['biteship_area_id' => $foundId]);
+
                             return $foundId;
                         }
                     }
                 }
             }
         } catch (\Exception $e) {
-            Log::error("Gagal sinkronisasi otomatis Biteship ID: " . $e->getMessage());
+            Log::error('Gagal sinkronisasi otomatis Biteship ID: '.$e->getMessage());
         }
 
         return null;
@@ -158,7 +165,7 @@ class c_checkout extends Controller
         $user = Auth::user();
 
         $params = [
-            'transaction_details' => ['order_id' => 'AGR-' . time(), 'gross_amount' => (int) $request->total_bayar],
+            'transaction_details' => ['order_id' => 'AGR-'.time(), 'gross_amount' => (int) $request->total_bayar],
             'customer_details' => [
                 'first_name' => $user->namaLengkap ?? $user->username,
                 'email' => $user->email,

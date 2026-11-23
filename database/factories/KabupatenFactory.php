@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Kabupaten;
+use App\Models\Provinsi;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,7 @@ class KabupatenFactory extends Factory
     {
         return [
             'id' => fake()->unique()->numerify('##.##'),
-            'provinsiId' => \App\Models\Provinsi::factory(),
+            'provinsiId' => Provinsi::factory(),
             'namaKabupaten' => fake()->word(),
         ];
     }

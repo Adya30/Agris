@@ -15,7 +15,7 @@ class IsAdmin
             return $next($request);
         }
 
-        if (Auth::check() && !Auth::user()->isAdmin) {
+        if (Auth::check() && ! Auth::user()->isAdmin) {
             return redirect()->route('agen.profile')->with('error', 'Akses ditolak');
         }
 

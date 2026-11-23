@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\KategoriProduk;
 use App\Models\Produk;
+use App\Rules\SecureImageFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -107,14 +108,11 @@ class c_produk extends Controller
             'karung' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
             'harga' => 'required|numeric|min:0',
-            'fotoProduk' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:1024',
+            'fotoProduk' => ['nullable', new SecureImageFile(1024)],
             'deskripsi' => 'nullable|string',
         ], [
             'required' => 'Data harus diisi!',
             'numeric' => 'Data harus berupa angka!',
-            'fotoProduk.max' => 'Ukuran foto produk maksimal 1MB.',
-            'fotoProduk.image' => 'File harus berupa gambar.',
-            'fotoProduk.mimes' => 'Format gambar harus JPEG, PNG, JPG, atau WEBP.',
         ]);
 
         try {
@@ -127,8 +125,10 @@ class c_produk extends Controller
             $data = $request->only(['namaProduk', 'stok', 'harga', 'deskripsi']);
             $data['kategoriId'] = $kategori->id;
 
+            $disk = config('filesystems.default', 'public');
+
             if ($request->hasFile('fotoProduk')) {
-                $path = $request->file('fotoProduk')->store('produk', 'public');
+                $path = $request->file('fotoProduk')->store('produk', $disk);
                 $data['fotoProduk'] = $path;
             }
 
@@ -159,14 +159,11 @@ class c_produk extends Controller
             'karung' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
             'harga' => 'required|numeric|min:0',
-            'fotoProduk' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:1024',
+            'fotoProduk' => ['nullable', new SecureImageFile(1024)],
             'deskripsi' => 'nullable|string',
         ], [
             'required' => 'Data wajib diisi!',
             'numeric' => 'Data harus berupa angka!',
-            'fotoProduk.max' => 'Ukuran foto produk maksimal 1MB.',
-            'fotoProduk.image' => 'File harus berupa gambar.',
-            'fotoProduk.mimes' => 'Format gambar harus JPEG, PNG, JPG, atau WEBP.',
         ]);
 
         try {
@@ -180,10 +177,11 @@ class c_produk extends Controller
             $data['kategoriId'] = $kategori->id;
 
             if ($request->hasFile('fotoProduk')) {
-                if ($produk->fotoProduk && Storage::disk('public')->exists($produk->fotoProduk)) {
-                    Storage::disk('public')->delete($produk->fotoProduk);
+                $disk = config('filesystems.default', 'public');
+                if ($produk->fotoProduk && Storage::disk($disk)->exists($produk->fotoProduk)) {
+                    Storage::disk($disk)->delete($produk->fotoProduk);
                 }
-                $path = $request->file('fotoProduk')->store('produk', 'public');
+                $path = $request->file('fotoProduk')->store('produk', $disk);
                 $data['fotoProduk'] = $path;
             }
 
@@ -227,8 +225,10 @@ class c_produk extends Controller
     {
         $produk = Produk::onlyTrashed()->findOrFail($id);
 
-        if ($produk->fotoProduk && Storage::disk('public')->exists($produk->fotoProduk)) {
-            Storage::disk('public')->delete($produk->fotoProduk);
+        $disk = config('filesystems.default', 'public');
+
+        if ($produk->fotoProduk && Storage::disk($disk)->exists($produk->fotoProduk)) {
+            Storage::disk($disk)->delete($produk->fotoProduk);
         }
 
         $produk->forceDelete();

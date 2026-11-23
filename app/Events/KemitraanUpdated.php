@@ -13,6 +13,7 @@ class KemitraanUpdated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $id;
+
     public $status;
 
     public function __construct($id, $status)

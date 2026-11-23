@@ -35,7 +35,7 @@ class KategoriSeeder extends Seeder
                 [
                     'jenisKategori' => $item['jenisKategori'],
                     'mutu' => $item['mutu'],
-                    'karung' => $item['karung']
+                    'karung' => $item['karung'],
                 ],
                 $item
             );

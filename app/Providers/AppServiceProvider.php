@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Chat;
 use App\Models\Kemitraan;
 use App\Models\User;
-use App\Models\Chat;
-use Illuminate\Database\Eloquent\Builder;
 use App\Observers\KemitraanObserver;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with([
                 'admin' => $admin,
-                'unread_messages_count' => $unreadCount
+                'unread_messages_count' => $unreadCount,
             ]);
         });
     }

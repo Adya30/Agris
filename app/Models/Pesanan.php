@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Model;
 
 class Pesanan extends Model
 {
@@ -26,7 +26,7 @@ class Pesanan extends Model
     ];
 
     /**
-     * @param Builder<static> $query
+     * @param  Builder<static>  $query
      * @return Builder<static>
      */
     public function scopeUserId(Builder $query, string $value): Builder
@@ -35,7 +35,7 @@ class Pesanan extends Model
     }
 
     /**
-     * @param Builder<static> $query
+     * @param  Builder<static>  $query
      * @return Builder<static>
      */
     public function scopeStatusPesanan(Builder $query, string $value): Builder
@@ -73,6 +73,7 @@ class Pesanan extends Model
         if ($this->pembayaran) {
             return $this->pembayaran->totalPembayaran;
         }
+
         return $this->detailPesanan->sum('subtotal');
     }
 

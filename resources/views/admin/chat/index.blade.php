@@ -141,12 +141,11 @@
     createApp({
         setup() {
             const users = ref(@js($users).map(u => {
-                let cleanedPath = u.fotoProfil ? '/' + u.fotoProfil.replace(/^\/?(storage\/)?/, 'storage/') : '';
                 return {
                     id: u.id,
                     namaLengkap: u.namaLengkap || 'Agen',
                     isActive: u.isActive,
-                    fotoProfil: u.fotoProfil ? cleanedPath : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.namaLengkap || 'U')}&background=dcfce7&color=15803d`
+                    fotoProfil: u.fotoProfil || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.namaLengkap || 'U')}&background=dcfce7&color=15803d`
                 };
             }));
             const chats = ref([]);

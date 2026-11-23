@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Rules\SecureImageFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -40,12 +41,9 @@ class c_blog extends Controller
         $request->validate([
             'judulBlog' => 'required|max:200',
             'isiBlog' => 'required',
-            'fotoBlog' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
+            'fotoBlog' => ['nullable', new SecureImageFile(1024)],
         ], [
             'required' => 'Data harus diisi!',
-            'fotoBlog.max' => 'Ukuran foto blog maksimal 1MB.',
-            'fotoBlog.image' => 'File harus berupa gambar.',
-            'fotoBlog.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau WEBP.',
         ]);
 
         $blog = new Blog;
@@ -55,7 +53,8 @@ class c_blog extends Controller
         $blog->tanggalBlog = now();
 
         if ($request->hasFile('fotoBlog')) {
-            $path = $request->file('fotoBlog')->store('blog', 'public');
+            $disk = config('filesystems.default', 'public');
+            $path = $request->file('fotoBlog')->store('blog', $disk);
             $blog->fotoBlog = $path;
         }
 
@@ -97,12 +96,9 @@ class c_blog extends Controller
         $request->validate([
             'judulBlog' => 'required|max:200',
             'isiBlog' => 'required',
-            'fotoBlog' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
+            'fotoBlog' => ['nullable', new SecureImageFile(1024)],
         ], [
             'required' => 'Data harus diisi!',
-            'fotoBlog.max' => 'Ukuran foto blog maksimal 1MB.',
-            'fotoBlog.image' => 'File harus berupa gambar.',
-            'fotoBlog.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau WEBP.',
         ]);
 
         $blog = Blog::findOrFail($id);
@@ -110,10 +106,11 @@ class c_blog extends Controller
         $blog->isiBlog = $request->isiBlog;
 
         if ($request->hasFile('fotoBlog')) {
-            if ($blog->fotoBlog && Storage::disk('public')->exists($blog->fotoBlog)) {
-                Storage::disk('public')->delete($blog->fotoBlog);
+            $disk = config('filesystems.default', 'public');
+            if ($blog->fotoBlog && Storage::disk($disk)->exists($blog->fotoBlog)) {
+                Storage::disk($disk)->delete($blog->fotoBlog);
             }
-            $path = $request->file('fotoBlog')->store('blog', 'public');
+            $path = $request->file('fotoBlog')->store('blog', $disk);
             $blog->fotoBlog = $path;
         }
 
@@ -126,8 +123,10 @@ class c_blog extends Controller
     {
         $blog = Blog::findOrFail($id);
 
-        if ($blog->fotoBlog && Storage::disk('public')->exists($blog->fotoBlog)) {
-            Storage::disk('public')->delete($blog->fotoBlog);
+        $disk = config('filesystems.default', 'public');
+
+        if ($blog->fotoBlog && Storage::disk($disk)->exists($blog->fotoBlog)) {
+            Storage::disk($disk)->delete($blog->fotoBlog);
         }
 
         $blog->delete();

@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Events\KemitraanUpdated;
 use App\Models\Kemitraan;
 use App\Models\User;
+use App\Rules\SecurePdfFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class c_kemitraan extends Controller
 {
@@ -40,19 +42,18 @@ class c_kemitraan extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'fileKemitraan' => 'required|file|mimes:pdf|max:1024',
+            'fileKemitraan' => ['required', new SecurePdfFile(1024)],
         ], [
             'fileKemitraan.required' => 'Dokumen MOU wajib diunggah.',
-            'fileKemitraan.mimes' => 'Format dokumen harus berupa file PDF.',
-            'fileKemitraan.max' => 'Ukuran dokumen MOU maksimal 1MB.',
         ]);
         $user = Auth::user();
         $file = $request->file('fileKemitraan');
-        $base64 = base64_encode(file_get_contents($file->getRealPath()));
+        $disk = config('filesystems.default', 'public');
+        $path = $file->store('mou', $disk);
 
         $kemitraan = Kemitraan::updateOrCreate(
             ['userId' => $user->id],
-            ['tanggalPengajuan' => now(), 'statusPengajuan' => 'Menunggu Verifikasi MOU', 'fileKemitraan' => $base64]
+            ['tanggalPengajuan' => now(), 'statusPengajuan' => 'Menunggu Verifikasi MOU', 'fileKemitraan' => $path]
         );
 
         broadcast(new KemitraanUpdated($kemitraan->id, 'Menunggu Verifikasi MOU'));
@@ -84,18 +85,20 @@ class c_kemitraan extends Controller
     public function uploadMou(Request $request, string $id)
     {
         $request->validate([
-            'fileKemitraan' => 'required|file|mimes:pdf|max:1024',
+            'fileKemitraan' => ['required', new SecurePdfFile(1024)],
         ], [
             'fileKemitraan.required' => 'Dokumen MOU wajib diunggah.',
-            'fileKemitraan.mimes' => 'Format dokumen harus berupa file PDF.',
-            'fileKemitraan.max' => 'Ukuran dokumen MOU maksimal 1MB.',
         ]);
         /** @var Kemitraan $kemitraan */
         $kemitraan = Kemitraan::whereId($id)->userId(Auth::id())->firstOrFail();
+        $disk = config('filesystems.default', 'public');
+        if ($kemitraan->fileKemitraan && Storage::disk($disk)->exists($kemitraan->fileKemitraan)) {
+            Storage::disk($disk)->delete($kemitraan->fileKemitraan);
+        }
         $file = $request->file('fileKemitraan');
-        $base64 = base64_encode(file_get_contents($file->getRealPath()));
+        $path = $file->store('mou', $disk);
 
-        $kemitraan->fill(['fileKemitraan' => $base64, 'statusPengajuan' => 'Menunggu Verifikasi MOU']);
+        $kemitraan->fill(['fileKemitraan' => $path, 'statusPengajuan' => 'Menunggu Verifikasi MOU']);
         $kemitraan->save();
 
         broadcast(new KemitraanUpdated($id, 'Menunggu Verifikasi MOU'));
@@ -109,6 +112,10 @@ class c_kemitraan extends Controller
         $kemitraan = Kemitraan::findOrFail($id);
 
         if ($request->status === 'Ditolak') {
+            $disk = config('filesystems.default', 'public');
+            if ($kemitraan->fileKemitraan && Storage::disk($disk)->exists($kemitraan->fileKemitraan)) {
+                Storage::disk($disk)->delete($kemitraan->fileKemitraan);
+            }
             $kemitraan->update(['statusPengajuan' => 'Ditolak', 'fileKemitraan' => null]);
         } else {
             $kemitraan->update(['statusPengajuan' => 'Aktif']);
@@ -132,6 +139,14 @@ class c_kemitraan extends Controller
         $kemitraan = Kemitraan::findOrFail($id);
         if (! $kemitraan->fileKemitraan) {
             abort(404, 'File MOU tidak ditemukan.');
+        }
+
+        $disk = config('filesystems.default', 'public');
+        if (Storage::disk($disk)->exists($kemitraan->fileKemitraan)) {
+            return Storage::disk($disk)->response($kemitraan->fileKemitraan, 'MOU-Kemitraan-'.$kemitraan->id.'.pdf', [
+                'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'private, no-cache, no-store, must-revalidate',
+            ]);
         }
 
         $pdfBinary = base64_decode($kemitraan->fileKemitraan);

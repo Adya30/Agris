@@ -2,12 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Desa;
-use App\Models\Kecamatan;
 use App\Models\Kabupaten;
+use App\Models\Kecamatan;
 use App\Models\Provinsi;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 
@@ -35,7 +36,7 @@ class AdminSeeder extends Seeder
 
         $biteshipAreaId = $this->getBiteshipAreaId('PATRANG');
         if ($biteshipAreaId) {
-            \Illuminate\Support\Facades\DB::table('biteship_areas')->updateOrInsert(
+            DB::table('biteship_areas')->updateOrInsert(
                 ['desaId' => $desaId],
                 [
                     'biteship_area_id' => $biteshipAreaId,
@@ -48,13 +49,13 @@ class AdminSeeder extends Seeder
 
         User::create([
             'namaLengkap' => 'Admin Utama',
-            'email'       => 'agrisagroindustri@gmail.com',
-            'password'    => Hash::make('admin123'),
-            'noTelp'      => '08123456789',
-            'isActive'    => true,
-            'isAdmin'     => true,
-            'detailAlamat'=> 'Jl. Manyar Gg. Kelapa, Puring',
-            'desaId'      => $desaId,
+            'email' => 'agrisagroindustri@gmail.com',
+            'password' => Hash::make('admin123'),
+            'noTelp' => '08123456789',
+            'isActive' => true,
+            'isAdmin' => true,
+            'detailAlamat' => 'Jl. Manyar Gg. Kelapa, Puring',
+            'desaId' => $desaId,
         ]);
     }
 
@@ -64,17 +65,17 @@ class AdminSeeder extends Seeder
         $apiKey = config('services.biteship.key');
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
+            $response = Http::withToken($apiKey)
                 ->timeout(5)
                 ->get("$baseUrl/maps/areas", [
                     'countries' => 'ID',
                     'input' => $namaKecamatan,
-                    'type' => 'single'
+                    'type' => 'single',
                 ]);
 
             if ($response->successful()) {
                 $areas = $response->json()['areas'] ?? [];
-                if (!empty($areas)) {
+                if (! empty($areas)) {
                     return $areas[0]['id'];
                 }
             }
@@ -82,12 +83,12 @@ class AdminSeeder extends Seeder
         }
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
+            $response = Http::withToken($apiKey)
                 ->timeout(5)
                 ->get("$baseUrl/areas", [
                     'country' => 'ID',
                     'type' => 'district',
-                    'query' => $namaKecamatan
+                    'query' => $namaKecamatan,
                 ]);
 
             if ($response->successful()) {

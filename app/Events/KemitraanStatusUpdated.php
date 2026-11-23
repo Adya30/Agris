@@ -23,8 +23,8 @@ class KemitraanStatusUpdated implements ShouldBroadcast
     {
         // Broadcast ke channel khusus user tersebut
         return [
-            new PrivateChannel('kemitraan.' . $this->kemitraan->userId),
-            new PrivateChannel('admin.kemitraan') 
+            new PrivateChannel('kemitraan.'.$this->kemitraan->userId),
+            new PrivateChannel('admin.kemitraan'),
         ];
     }
 }

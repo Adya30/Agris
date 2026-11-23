@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
         disable: typeof window !== 'undefined' && typeof window.isAdmin !== 'undefined',
         duration: 800,
         easing: 'ease-out-cubic',
-        once: false,
-        mirror: true,
+        once: true,
+        mirror: false,
         offset: 50,
     });
 

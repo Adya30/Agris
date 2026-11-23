@@ -2,14 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Provinsi;
-use App\Models\Kabupaten;
-use App\Models\Kecamatan;
-use App\Models\Desa;
-use App\Models\User;
-use App\Models\Produk;
 use App\Models\KategoriProduk;
+use App\Models\Produk;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {

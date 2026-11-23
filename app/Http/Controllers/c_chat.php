@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\MessageSent;
 use App\Models\Chat;
 use App\Models\User;
+use App\Rules\SecureImageFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -16,7 +17,14 @@ class c_chat extends Controller
     {
         $user = Auth::user();
         if ($user->isAdmin) {
-            $users = User::isAdmin(false)->get();
+            $users = User::isAdmin(false)->get()->map(function ($u) {
+                return [
+                    'id' => $u->id,
+                    'namaLengkap' => $u->namaLengkap,
+                    'isActive' => $u->isActive,
+                    'fotoProfil' => storage_url($u->fotoProfil),
+                ];
+            });
 
             return view('admin.chat.index', compact('users'));
         }
@@ -71,7 +79,7 @@ class c_chat extends Controller
         $targetSummary = [
             'id' => $targetUser->id,
             'namaLengkap' => $targetUser->namaLengkap,
-            'fotoProfil' => $targetUser->fotoProfil ? asset('storage/'.ltrim($targetUser->fotoProfil, '/')) : null,
+            'fotoProfil' => storage_url($targetUser->fotoProfil),
             'isActive' => $targetUser->isActive,
             'isAdmin' => $targetUser->isAdmin,
         ];
@@ -84,12 +92,9 @@ class c_chat extends Controller
         $request->validate([
             'id_penerima' => 'required',
             'pesan' => 'required_without:foto_chat|nullable|string|max:1000',
-            'foto_chat' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
+            'foto_chat' => ['nullable', new SecureImageFile(1024)],
         ], [
             'pesan.max' => 'Pesan maksimal 1.000 karakter.',
-            'foto_chat.max' => 'Ukuran gambar chat maksimal 1MB.',
-            'foto_chat.image' => 'File harus berupa gambar.',
-            'foto_chat.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau WEBP.',
         ]);
 
         $user = Auth::user();
@@ -144,8 +149,9 @@ class c_chat extends Controller
 
         try {
             $path = null;
+            $disk = config('filesystems.default', 'public');
             if ($request->hasFile('foto_chat')) {
-                $path = $request->file('foto_chat')->store('chats', 'public');
+                $path = $request->file('foto_chat')->store('chats', $disk);
             }
 
             $chat = Chat::create([
@@ -168,7 +174,7 @@ class c_chat extends Controller
             }
 
             $broadcastData = $chat->toArray();
-            $broadcastData['foto_chat'] = $chat->foto_chat ? asset('storage/'.$chat->foto_chat) : null;
+            $broadcastData['foto_chat'] = storage_url($chat->foto_chat);
 
             broadcast(new MessageSent($broadcastData, false))->toOthers();
 
@@ -184,8 +190,9 @@ class c_chat extends Controller
             /** @var Chat $chat */
             $chat = Chat::whereId($id)->whereIdPengirim(Auth::id())->firstOrFail();
             broadcast(new MessageSent(['id' => $chat->id, 'id_penerima' => $chat->id_penerima, 'id_pengirim' => $chat->id_pengirim], true))->toOthers();
-            if ($chat->foto_chat) {
-                Storage::disk('public')->delete($chat->foto_chat);
+            $disk = config('filesystems.default', 'public');
+            if ($chat->foto_chat && Storage::disk($disk)->exists($chat->foto_chat)) {
+                Storage::disk($disk)->delete($chat->foto_chat);
             }
             Chat::whereId($chat->id)->delete();
 

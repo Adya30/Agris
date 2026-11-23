@@ -12,11 +12,14 @@ class Kecamatan extends Model
     use HasFactory;
 
     protected $table = 'kecamatans';
+
     protected $primaryKey = 'id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
-    protected $fillable = [ 'id', 'kode', 'kabupatenId', 'namaKecamatan', 'biteship_area_id'];
+    protected $fillable = ['id', 'kode', 'kabupatenId', 'namaKecamatan', 'biteship_area_id'];
 
     public function kabupaten(): BelongsTo
     {

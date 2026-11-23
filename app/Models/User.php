@@ -54,6 +54,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function getFotoProfilUrlAttribute(): ?string
+    {
+        return storage_url($this->fotoProfil);
+    }
+
     public function desa(): BelongsTo
     {
         return $this->belongsTo(Desa::class, 'desaId', 'id');

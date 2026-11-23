@@ -14,7 +14,9 @@ class MessageSent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $chat;
+
     public $isDelete;
+
     public $isReadUpdate;
 
     public function __construct($chat, $isDelete = false, $isReadUpdate = false)
@@ -27,8 +29,11 @@ class MessageSent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         $penerima = is_array($this->chat) ? $this->chat['id_penerima'] : $this->chat->id_penerima;
-        if ($penerima === 'GLOBAL') return [new Channel('chat.global')];
-        return [new PrivateChannel('chat.' . $penerima)];
+        if ($penerima === 'GLOBAL') {
+            return [new Channel('chat.global')];
+        }
+
+        return [new PrivateChannel('chat.'.$penerima)];
     }
 
     public function broadcastAs(): string
@@ -41,7 +46,7 @@ class MessageSent implements ShouldBroadcast
         return [
             'chat' => $this->chat,
             'is_delete' => $this->isDelete,
-            'is_read_update' => $this->isReadUpdate
+            'is_read_update' => $this->isReadUpdate,
         ];
     }
 }

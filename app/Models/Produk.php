@@ -2,37 +2,43 @@
 
 namespace App\Models;
 
+use App\Events\ProdukUpdated;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Produk extends Model
 {
-    use HasUlids, SoftDeletes, HasFactory;
+    use HasFactory, HasUlids, SoftDeletes;
 
     protected $table = 'produks';
 
-    protected $fillable = [ 'kategoriId', 'namaProduk', 'fotoProduk', 'stok', 'harga', 'deskripsi', ];
+    protected $fillable = ['kategoriId', 'namaProduk', 'fotoProduk', 'stok', 'harga', 'deskripsi'];
+
     protected $casts = [
         'harga' => 'decimal:2',
-        'stok'  => 'integer',
+        'stok' => 'integer',
     ];
 
     protected static function booted()
     {
         static::saved(function ($produk) {
-            broadcast(new \App\Events\ProdukUpdated($produk));
+            broadcast(new ProdukUpdated($produk));
         });
 
         static::deleted(function ($produk) {
-            broadcast(new \App\Events\ProdukUpdated($produk));
+            broadcast(new ProdukUpdated($produk));
         });
 
         static::restored(function ($produk) {
-            broadcast(new \App\Events\ProdukUpdated($produk));
+            broadcast(new ProdukUpdated($produk));
         });
+    }
+
+    public function getFotoUrlAttribute(): ?string
+    {
+        return storage_url($this->fotoProduk);
     }
 
     public function kategori()

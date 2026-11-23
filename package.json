@@ -5,8 +5,8 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "lint": "pint --test",
-        "lint:fix": "pint"
+        "lint": "php vendor/bin/pint --test",
+        "lint:fix": "php vendor/bin/pint"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

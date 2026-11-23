@@ -32,14 +32,14 @@ class c_laporan extends Controller
         }
 
         foreach ($pengeluaranList as $item) {
-                $riwayat[] = [
-                    'id' => $item->id,
-                    'pesananId' => $item->pesananId,
-                    'tanggal' => $item->updated_at,
-                    'tipe' => 'pengeluaran',
-                    'deskripsi' => 'Refund Dana Pesanan #'.substr($item->pesananId, 0, 8).' (Pelanggan: '.($item->pesanan->user->namaLengkap ?? 'User').')',
-                    'nominal' => $item->totalPembayaran,
-                ];
+            $riwayat[] = [
+                'id' => $item->id,
+                'pesananId' => $item->pesananId,
+                'tanggal' => $item->updated_at,
+                'tipe' => 'pengeluaran',
+                'deskripsi' => 'Refund Dana Pesanan #'.substr($item->pesananId, 0, 8).' (Pelanggan: '.($item->pesanan->user->namaLengkap ?? 'User').')',
+                'nominal' => $item->totalPembayaran,
+            ];
         }
 
         usort($riwayat, function ($a, $b) {

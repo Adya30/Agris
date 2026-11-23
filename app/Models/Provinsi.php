@@ -11,11 +11,14 @@ class Provinsi extends Model
     use HasFactory;
 
     protected $table = 'provinsis';
+
     protected $primaryKey = 'id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
-    protected $fillable = [ 'id', 'kode', 'namaProvinsi'];
+    protected $fillable = ['id', 'kode', 'namaProvinsi'];
 
     public function kabupatens(): HasMany
     {

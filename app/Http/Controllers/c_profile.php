@@ -7,6 +7,7 @@ use App\Models\Kabupaten;
 use App\Models\Kecamatan;
 use App\Models\Provinsi;
 use App\Models\User;
+use App\Rules\SecureImageFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +43,7 @@ class c_profile extends Controller
             'namaLengkap' => $user->isAdmin ? 'nullable|string|max:255' : 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
             'detailAlamat' => 'nullable|string',
-            'fotoProfil' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:1024',
+            'fotoProfil' => ['nullable', new SecureImageFile(1024)],
             'current_password' => 'required_with:password',
             'password' => 'nullable|min:8',
             'desaId' => 'nullable',
@@ -53,9 +54,6 @@ class c_profile extends Controller
             'noTelp.digits_between' => 'Nomor telepon harus antara 4 sampai 15 digit.',
             'password.min' => 'Password baru minimal 8 karakter.',
             'current_password.required_with' => 'Konfirmasi password lama wajib diisi.',
-            'fotoProfil.image' => 'File harus berupa gambar.',
-            'fotoProfil.mimes' => 'Format gambar harus jpeg, png, jpg, atau webp.',
-            'fotoProfil.max' => 'Ukuran gambar maksimal 1MB.',
         ]);
 
         if ($request->filled('password')) {
@@ -66,12 +64,14 @@ class c_profile extends Controller
         }
 
         if ($request->hasFile('fotoProfil')) {
-            if ($user->fotoProfil && Storage::disk('public')->exists(str_replace('storage/', '', $user->fotoProfil))) {
-                Storage::disk('public')->delete(str_replace('storage/', '', $user->fotoProfil));
+            $disk = config('filesystems.default', 'public');
+            $oldPath = str_replace('storage/', '', ltrim($user->fotoProfil ?? '', '/'));
+            if ($oldPath && Storage::disk($disk)->exists($oldPath)) {
+                Storage::disk($disk)->delete($oldPath);
             }
 
-            $path = $request->file('fotoProfil')->store('profile_photos', 'public');
-            $user->fotoProfil = 'storage/'.$path;
+            $path = $request->file('fotoProfil')->store('profile_photos', $disk);
+            $user->fotoProfil = $path;
         }
 
         if ($request->filled('desaId')) {

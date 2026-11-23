@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
 
 class Chat extends Model
 {
@@ -17,12 +17,17 @@ class Chat extends Model
         'pesan',
         'foto_chat',
         'status',
-        'waktu_chat'
+        'waktu_chat',
     ];
 
     protected $casts = [
         'waktu_chat' => 'datetime',
     ];
+
+    public function getFotoChatUrlAttribute(): ?string
+    {
+        return storage_url($this->foto_chat);
+    }
 
     public function pengirim(): BelongsTo
     {
@@ -34,11 +39,6 @@ class Chat extends Model
         return $this->belongsTo(User::class, 'id_penerima');
     }
 
-    /**
-     * @param Builder $query
-     * @param string $status
-     * @return Builder
-     */
     public function scopeStatus(Builder $query, string $status): Builder
     {
         return $query->where('status', $status);

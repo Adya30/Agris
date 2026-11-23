@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Desa;
+use App\Models\Kecamatan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,7 @@ class DesaFactory extends Factory
     {
         return [
             'id' => fake()->unique()->numerify('##.##.##.####'),
-            'kecamatanId' => \App\Models\Kecamatan::factory(),
+            'kecamatanId' => Kecamatan::factory(),
             'namaDesa' => fake()->word(),
         ];
     }

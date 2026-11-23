@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Kabupaten;
 use App\Models\Kecamatan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,7 +20,7 @@ class KecamatanFactory extends Factory
     {
         return [
             'id' => fake()->unique()->numerify('##.##.##'),
-            'kabupatenId' => \App\Models\Kabupaten::factory(),
+            'kabupatenId' => Kabupaten::factory(),
             'namaKecamatan' => fake()->word(),
         ];
     }

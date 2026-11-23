@@ -35,7 +35,7 @@ class c_keranjang extends Controller
 
         $request->validate([
             'produkId' => 'required|exists:produks,id',
-            'jumlah'   => 'required|integer|min:1',
+            'jumlah' => 'required|integer|min:1',
         ]);
 
         $produk = Produk::findOrFail($request->produkId);
@@ -63,14 +63,14 @@ class c_keranjang extends Controller
             }
 
             Keranjang::create([
-                'userId'   => Auth::id(),
+                'userId' => Auth::id(),
                 'produkId' => $request->produkId,
-                'jumlah'   => $request->jumlah,
+                'jumlah' => $request->jumlah,
             ]);
         }
 
         return response()->json([
-            'message'   => 'Produk berhasil ditambahkan ke keranjang.',
+            'message' => 'Produk berhasil ditambahkan ke keranjang.',
             'cartCount' => $this->cartCount(),
         ]);
     }
@@ -86,8 +86,8 @@ class c_keranjang extends Controller
 
         if ($keranjang->jumlah >= $produk->stok) {
             return response()->json([
-                'message'  => 'Jumlah sudah mencapai batas stok.',
-                'jumlah'   => $keranjang->jumlah,
+                'message' => 'Jumlah sudah mencapai batas stok.',
+                'jumlah' => $keranjang->jumlah,
                 'subtotal' => $keranjang->jumlah * $produk->harga,
             ], 422);
         }
@@ -95,9 +95,9 @@ class c_keranjang extends Controller
         Keranjang::whereId($keranjang->id)->increment('jumlah');
 
         return response()->json([
-            'message'   => 'Jumlah berhasil ditambah.',
-            'jumlah'    => $keranjang->jumlah,
-            'subtotal'  => $keranjang->jumlah * $produk->harga,
+            'message' => 'Jumlah berhasil ditambah.',
+            'jumlah' => $keranjang->jumlah,
+            'subtotal' => $keranjang->jumlah * $produk->harga,
             'cartCount' => $this->cartCount(),
         ]);
     }
@@ -114,9 +114,9 @@ class c_keranjang extends Controller
         }
 
         return response()->json([
-            'message'   => 'Jumlah berhasil dikurangi.',
-            'jumlah'    => $keranjang->jumlah,
-            'subtotal'  => $keranjang->jumlah * $produk->harga,
+            'message' => 'Jumlah berhasil dikurangi.',
+            'jumlah' => $keranjang->jumlah,
+            'subtotal' => $keranjang->jumlah * $produk->harga,
             'cartCount' => $this->cartCount(),
         ]);
     }
@@ -137,7 +137,7 @@ class c_keranjang extends Controller
         $jumlah = $request->jumlah;
         if ($jumlah > $produk->stok) {
             return response()->json([
-                'message' => 'Jumlah melebihi stok yang tersedia (' . $produk->stok . ').',
+                'message' => 'Jumlah melebihi stok yang tersedia ('.$produk->stok.').',
                 'jumlah' => $keranjang->jumlah,
                 'subtotal' => $keranjang->jumlah * $produk->harga,
             ], 422);
@@ -161,7 +161,7 @@ class c_keranjang extends Controller
         Keranjang::whereId($keranjang->id)->delete();
 
         return response()->json([
-            'message'   => 'Produk berhasil dihapus dari keranjang.',
+            'message' => 'Produk berhasil dihapus dari keranjang.',
             'cartCount' => $this->cartCount(),
         ]);
     }

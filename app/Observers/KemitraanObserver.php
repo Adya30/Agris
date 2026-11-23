@@ -11,14 +11,14 @@ class KemitraanObserver
         // Jika status berubah menjadi disetujui
         if ($kemitraan->statusPengajuan === 'disetujui') {
             $kemitraan->user->update([
-                'isActive' => true
+                'isActive' => true,
             ]);
         }
 
         // Jika ditolak, pastikan tetap tidak aktif
         if ($kemitraan->statusPengajuan === 'ditolak') {
             $kemitraan->user->update([
-                'isActive' => false
+                'isActive' => false,
             ]);
         }
     }
