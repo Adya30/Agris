@@ -8,6 +8,11 @@
     <title><?php echo $__env->yieldContent('title', 'Agris'); ?></title>
     <link rel="icon" type="image/png" href="<?php echo e(asset('images/icon.svg')); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        window.pusherKey = "<?php echo e(config('broadcasting.connections.pusher.key')); ?>";
+        window.pusherCluster = "<?php echo e(config('broadcasting.connections.pusher.options.cluster', 'ap1')); ?>";
+        window.pusherScheme = "<?php echo e(config('broadcasting.connections.pusher.options.scheme', 'https')); ?>";
+    </script>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 </head>
 <body class="bg-gray-700 text-gray-800 scroll-smooth font-sans antialiased">

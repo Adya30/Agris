@@ -143,7 +143,7 @@
         if (window.Echo) {
             window.Echo.channel('kemitraan-status')
                 .listen('.KemitraanUpdated', (e) => {
-                    if (e.id == "{{ $kemitraan->id ?? '' }}") {
+                    if (e.id == "{{ $kemitraan->id ?? '' }}" || (e.userId && e.userId == "{{ Auth::id() }}")) {
                         window.location.reload();
                     }
                 });

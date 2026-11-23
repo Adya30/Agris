@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProdukUpdated;
 use App\Models\DetailPesanan;
 use App\Models\Keranjang;
 use App\Models\Pembayaran;
@@ -81,6 +82,10 @@ class c_pembayaran extends Controller
             foreach ($detailPesanans as $detail) {
                 if ($detail->produk) {
                     $detail->produk->increment('stok', $detail->jumlahPesanan);
+                    try {
+                        broadcast(new ProdukUpdated($detail->produk->fresh()));
+                    } catch (\Throwable $e) {
+                    }
                 }
             }
         }
@@ -208,6 +213,10 @@ class c_pembayaran extends Controller
 
                 if ($detail->produk) {
                     $detail->produk->increment('stok', $detail->jumlahPesanan);
+                    try {
+                        broadcast(new ProdukUpdated($detail->produk->fresh()));
+                    } catch (\Throwable $e) {
+                    }
                 }
 
                 Keranjang::create([

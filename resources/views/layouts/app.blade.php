@@ -8,6 +8,11 @@
     <title>@yield('title', 'Agris')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/icon.svg') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        window.pusherKey = "{{ config('broadcasting.connections.pusher.key') }}";
+        window.pusherCluster = "{{ config('broadcasting.connections.pusher.options.cluster', 'ap1') }}";
+        window.pusherScheme = "{{ config('broadcasting.connections.pusher.options.scheme', 'https') }}";
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-700 text-gray-800 scroll-smooth font-sans antialiased">

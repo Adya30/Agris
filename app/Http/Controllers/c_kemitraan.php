@@ -55,7 +55,7 @@ class c_kemitraan extends Controller
         );
 
         try {
-            broadcast(new KemitraanUpdated($kemitraan->id, 'Menunggu Verifikasi MOU'));
+            broadcast(new KemitraanUpdated($kemitraan->id, 'Menunggu Verifikasi MOU', $user->id));
         } catch (\Throwable $e) {
             Log::info('Broadcast KemitraanUpdated skipped: '.$e->getMessage());
         }
@@ -80,7 +80,7 @@ class c_kemitraan extends Controller
 
         $kemitraan->update(['statusPengajuan' => $status]);
         try {
-            broadcast(new KemitraanUpdated($id, $status));
+            broadcast(new KemitraanUpdated($id, $status, $kemitraan->userId));
         } catch (\Throwable $e) {
             Log::info('Broadcast KemitraanUpdated skipped: '.$e->getMessage());
         }
@@ -107,7 +107,7 @@ class c_kemitraan extends Controller
         $kemitraan->save();
 
         try {
-            broadcast(new KemitraanUpdated($id, 'Menunggu Verifikasi MOU'));
+            broadcast(new KemitraanUpdated($id, 'Menunggu Verifikasi MOU', Auth::id()));
         } catch (\Throwable $e) {
             Log::info('Broadcast KemitraanUpdated skipped: '.$e->getMessage());
         }
@@ -132,7 +132,7 @@ class c_kemitraan extends Controller
         }
 
         try {
-            broadcast(new KemitraanUpdated($id, $request->status));
+            broadcast(new KemitraanUpdated($id, $request->status, $kemitraan->userId));
         } catch (\Throwable $e) {
             Log::info('Broadcast KemitraanUpdated skipped: '.$e->getMessage());
         }

@@ -112,7 +112,7 @@
                                 </div>
                                 <span class="truncate font-medium text-gray-500">Tersedia</span>
                             </div>
-                            <span class="text-[10px] font-bold {{ $item->stok > 5 ? 'text-gray-500' : 'text-orange-500' }} uppercase tracking-tight shrink-0">
+                            <span id="product-stock-{{ $item->id }}" class="text-[10px] font-bold {{ $item->stok > 5 ? 'text-gray-500' : 'text-orange-500' }} uppercase tracking-tight shrink-0">
                                 Stok: {{ $item->stok }}
                             </span>
                         </div>
@@ -132,4 +132,22 @@
         {{ $produks->links() }}
     </div>
 </div>
+
+<script>
+    if (window.Echo) {
+        window.Echo.channel('produk-channel')
+            .listen('.ProdukUpdated', (e) => {
+                const prod = e.produk;
+                const stockEl = document.getElementById(`product-stock-${prod.id}`);
+                if (stockEl) {
+                    stockEl.textContent = `Stok: ${prod.stok}`;
+                    if (prod.stok > 5) {
+                        stockEl.className = "text-[10px] font-bold text-gray-500 uppercase tracking-tight shrink-0";
+                    } else {
+                        stockEl.className = "text-[10px] font-bold text-orange-500 uppercase tracking-tight shrink-0";
+                    }
+                }
+            });
+    }
+</script>
 @endsection

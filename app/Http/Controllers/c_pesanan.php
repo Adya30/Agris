@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\OrderStatusUpdated;
+use App\Events\ProdukUpdated;
 use App\Models\Desa;
 use App\Models\DetailPesanan;
 use App\Models\Keranjang;
@@ -44,6 +45,10 @@ class c_pesanan extends Controller
                 foreach ($pesanan->detailPesanans as $detail) {
                     if ($detail->produk) {
                         $detail->produk->increment('stok', $detail->jumlahPesanan);
+                        try {
+                            broadcast(new ProdukUpdated($detail->produk->fresh()));
+                        } catch (\Throwable $e) {
+                        }
                     }
                 }
             });
@@ -394,6 +399,10 @@ class c_pesanan extends Controller
                 ]);
 
                 $item->produk->decrement('stok', $item->jumlah);
+                try {
+                    broadcast(new ProdukUpdated($item->produk->fresh()));
+                } catch (\Throwable $e) {
+                }
             }
 
             $grossAmount = $totalItemPrice + $shippingCost;
@@ -610,6 +619,10 @@ class c_pesanan extends Controller
             foreach ($pesanan->detailPesanans as $detail) {
                 if ($detail->produk) {
                     $detail->produk->increment('stok', $detail->jumlahPesanan);
+                    try {
+                        broadcast(new ProdukUpdated($detail->produk->fresh()));
+                    } catch (\Throwable $e) {
+                    }
                 }
             }
 
@@ -966,6 +979,10 @@ class c_pesanan extends Controller
                 foreach ($pesanan->detailPesanans as $detail) {
                     if ($detail->produk) {
                         $detail->produk->increment('stok', $detail->jumlahPesanan);
+                        try {
+                            broadcast(new ProdukUpdated($detail->produk->fresh()));
+                        } catch (\Throwable $e) {
+                        }
                     }
                 }
                 $msg = 'Pesanan berhasil dibatalkan dan stok produk telah dikembalikan.';

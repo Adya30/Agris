@@ -13,18 +13,26 @@ window.Pusher = Pusher;
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: import.meta.env.VITE_PUSHER_APP_KEY,
-    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'ap1',
-    forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
-    ...(import.meta.env.VITE_PUSHER_HOST ? {
-        wsHost: import.meta.env.VITE_PUSHER_HOST,
-        wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
-        wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
-        enabledTransports: ['ws', 'wss'],
-    } : {}),
-});
+const pusherKey = window.pusherKey || import.meta.env.VITE_PUSHER_APP_KEY;
+const pusherCluster = window.pusherCluster || import.meta.env.VITE_PUSHER_APP_CLUSTER || 'ap1';
+const pusherScheme = window.pusherScheme || import.meta.env.VITE_PUSHER_SCHEME || 'https';
+
+if (pusherKey) {
+    window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: pusherKey,
+        cluster: pusherCluster,
+        forceTLS: pusherScheme === 'https',
+        ...(import.meta.env.VITE_PUSHER_HOST ? {
+            wsHost: import.meta.env.VITE_PUSHER_HOST,
+            wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
+            wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
+            enabledTransports: ['ws', 'wss'],
+        } : {}),
+    });
+} else {
+    console.warn('Pusher App Key belum diisi di .env (PUSHER_APP_KEY)');
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     AOS.init({

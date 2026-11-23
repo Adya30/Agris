@@ -10,6 +10,9 @@
     <script>
         window.currentUserId = "{{ Auth::id() }}";
         window.isAdmin = true;
+        window.pusherKey = "{{ config('broadcasting.connections.pusher.key') }}";
+        window.pusherCluster = "{{ config('broadcasting.connections.pusher.options.cluster', 'ap1') }}";
+        window.pusherScheme = "{{ config('broadcasting.connections.pusher.options.scheme', 'https') }}";
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>

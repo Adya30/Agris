@@ -4,11 +4,11 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class KemitraanUpdated implements ShouldBroadcast
+class KemitraanUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -16,10 +16,13 @@ class KemitraanUpdated implements ShouldBroadcast
 
     public $status;
 
-    public function __construct($id, $status)
+    public $userId;
+
+    public function __construct($id, $status, $userId = null)
     {
         $this->id = $id;
         $this->status = $status;
+        $this->userId = $userId;
     }
 
     public function broadcastOn(): array
