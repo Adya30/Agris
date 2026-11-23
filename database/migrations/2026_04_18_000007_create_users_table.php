@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('email', 255)->unique();
             $table->string('password');
             $table->string('namaLengkap', 300)->nullable();
-            $table->string('noTelp', 20)->unique();
+            $table->string('noTelp', 20)->nullable()->unique();
             $table->longtext('fotoProfil')->nullable();
             $table->string('detailAlamat', 200)->nullable();
             $table->boolean('isAdmin')->default(false)->index();

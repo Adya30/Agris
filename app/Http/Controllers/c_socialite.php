@@ -26,7 +26,7 @@ class SocialAuthController extends Controller
             ['email' => $googleUser->email],
             [
                 'name' => $googleUser->name,
-                'noTelp' => '-',
+                'noTelp' => null,
             ]
         );
 

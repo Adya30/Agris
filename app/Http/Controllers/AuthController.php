@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -220,15 +221,28 @@ class AuthController extends Controller
             return redirect()->route('login')->with('error', 'Akun Google tidak memiliki alamat email yang valid.');
         }
 
-        $user = User::firstOrCreate(
-            ['email' => $email],
-            [
-                'namaLengkap' => Str::limit(strip_tags($googleUser->getName() ?: 'Pengguna Google'), 100),
-                'password' => Hash::make(Str::random(32)),
-                'noTelp' => '-',
-                'isAdmin' => false,
-            ]
-        );
+        try {
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'namaLengkap' => Str::limit(strip_tags($googleUser->getName() ?: 'Pengguna Google'), 100),
+                    'password' => Hash::make(Str::random(32)),
+                    'noTelp' => null,
+                    'isAdmin' => false,
+                ]
+            );
+        } catch (QueryException $e) {
+            // Fallback toleransi jika migrasi nullable belum dijalankan di cPanel
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'namaLengkap' => Str::limit(strip_tags($googleUser->getName() ?: 'Pengguna Google'), 100),
+                    'password' => Hash::make(Str::random(32)),
+                    'noTelp' => '08'.str_pad((string) random_int(10000000, 99999999), 10, '0', STR_PAD_LEFT),
+                    'isAdmin' => false,
+                ]
+            );
+        }
 
         Auth::login($user, true);
 
