@@ -420,6 +420,11 @@ class c_pesanan extends Controller
                                 'email' => Auth::user()->email,
                                 'phone' => Auth::user()->noTelp,
                             ],
+                            'callbacks' => [
+                                'finish' => route('agen.pesanan.show', ['id' => $pesanan->id, 'status' => 'success']),
+                                'unfinish' => route('agen.pesanan.show', ['id' => $pesanan->id]),
+                                'error' => route('agen.pesanan.show', ['id' => $pesanan->id, 'status' => 'error']),
+                            ],
                             'expiry' => [
                                 'duration' => 24,
                                 'unit' => 'hours',

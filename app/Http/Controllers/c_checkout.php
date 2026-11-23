@@ -171,6 +171,11 @@ class c_checkout extends Controller
                 'email' => $user->email,
                 'phone' => $user->noTelp,
             ],
+            'callbacks' => [
+                'finish' => url('/agen/pesanan'),
+                'unfinish' => url('/agen/pesanan'),
+                'error' => url('/agen/pesanan'),
+            ],
         ];
 
         return response()->json(['token' => Snap::getSnapToken($params)]);
