@@ -84,15 +84,18 @@
 
             <form id="formUploadMou" action="{{ route('kemitraan.store') }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
                 @csrf
-                <div id="dropzone" class="border-2 border-dashed border-gray-200 rounded-3xl p-10 text-center hover:border-[#58CC02] transition-all group relative">
-                    <input type="file" name="fileKemitraan" id="fileKemitraan" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" accept=".pdf,application/pdf" required>
+                <label for="fileKemitraan" id="dropzone" class="border-2 border-dashed border-gray-200 rounded-3xl p-10 text-center hover:border-[#58CC02] hover:bg-green-50/20 transition-all group relative block cursor-pointer">
+                    <input type="file" name="fileKemitraan" id="fileKemitraan" class="sr-only" accept=".pdf,application/pdf" required>
 
-                    <div id="uploadPlaceholder" class="relative z-10 pointer-events-none">
+                    <div id="uploadPlaceholder" class="relative z-10">
                         <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-50 transition-colors">
                             <i class="fa-solid fa-file-pdf text-2xl text-gray-400 group-hover:text-[#58CC02]"></i>
                         </div>
-                        <p class="text-gray-600 font-bold mb-1">Pilih file PDF</p>
-                        <p class="text-gray-400 text-xs">Klik atau seret file ke sini</p>
+                        <p class="text-gray-700 font-bold mb-1">Pilih file PDF</p>
+                        <p class="text-gray-400 text-xs mb-3">Klik di sini atau seret file PDF ke area ini</p>
+                        <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#58CC02]/10 text-[#58CC02] text-xs font-bold rounded-xl group-hover:bg-[#58CC02] group-hover:text-white transition-all">
+                            <i class="fa-solid fa-folder-open"></i> Cari Berkas PDF
+                        </span>
                     </div>
 
                     <div id="previewContainer" class="hidden relative z-30">
@@ -102,28 +105,32 @@
                                     <i class="fa-solid fa-file-lines text-xl"></i>
                                 </div>
                                 <div class="text-left">
-                                    <p id="previewName" class="text-sm font-bold text-gray-800 truncate max-w-37.5">document.pdf</p>
-                                    <p id="previewSize" class="text-[10px] text-gray-400">0 KB</p>
+                                    <p id="previewName" class="text-sm font-bold text-gray-800 truncate max-w-xs">document.pdf</p>
+                                    <p id="previewSize" class="text-[10px] text-gray-500 font-semibold">0 KB</p>
                                 </div>
                             </div>
-                            <button type="button" id="btnRemoveFile" class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer border-none bg-transparent">
-                                <i class="fa-solid fa-circle-xmark text-lg"></i>
+                            <button type="button" id="btnRemoveFile" class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer border-none bg-transparent p-2">
+                                <i class="fa-solid fa-circle-xmark text-xl"></i>
                             </button>
                         </div>
-                        <button type="button" id="btnViewPdf" class="inline-flex items-center gap-2 text-[#58CC02] text-xs font-bold hover:underline bg-transparent cursor-pointer border-none">
-                            <i class="fa-solid fa-eye"></i> Lihat Isi Dokumen (Preview)
-                        </button>
+                        <div class="flex items-center justify-center gap-4">
+                            <button type="button" id="btnViewPdf" class="inline-flex items-center gap-2 text-[#58CC02] text-xs font-bold hover:underline bg-transparent cursor-pointer border-none">
+                                <i class="fa-solid fa-eye"></i> Lihat Isi Dokumen
+                            </button>
+                            <span class="text-gray-300">|</span>
+                            <span class="text-xs text-gray-500 font-medium">Klik untuk mengganti berkas</span>
+                        </div>
                     </div>
-                </div>
+                </label>
 
-                <div id="errorMessage" class="hidden mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl items-center gap-3 text-red-600 text-sm">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
+                <div id="errorMessage" class="hidden mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 text-sm">
+                    <i class="fa-solid fa-triangle-exclamation shrink-0"></i>
                     <span id="errorText">Format file tidak didukung. Mohon unggah file dalam format PDF (Maks. 1MB).</span>
                 </div>
 
-                <div id="actionContainer" class="hidden mt-8">
-                    <button type="button" onclick="openModal('uploadModal')" class="w-full py-4 bg-[#58CC02] text-white font-black rounded-2xl shadow-lg shadow-green-100 uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer border-none">
-                        Kirim
+                <div class="mt-8">
+                    <button type="submit" id="btnSubmitDirect" disabled class="w-full py-4 bg-gray-200 text-gray-400 font-black rounded-2xl transition-all cursor-not-allowed border-none flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
+                        <i class="fa-solid fa-paper-plane"></i> Kirim Dokumen Kemitraan
                     </button>
                 </div>
             </form>
@@ -131,14 +138,12 @@
     </div>
 </div>
 
-<x-modal id="uploadModal" title="Konfirmasi" message="Yakin untuk mengajukan kemitraan?" confirmText="Iya" cancelText="Batal" confirmId="btnFinalSubmit" cancelId="btnCancelUpload" />
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('fileKemitraan');
         const uploadPlaceholder = document.getElementById('uploadPlaceholder');
         const previewContainer = document.getElementById('previewContainer');
-        const actionContainer = document.getElementById('actionContainer');
         const errorMessage = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
         const previewName = document.getElementById('previewName');
@@ -146,72 +151,115 @@
         const btnViewPdf = document.getElementById('btnViewPdf');
         const btnRemove = document.getElementById('btnRemoveFile');
         const form = document.getElementById('formUploadMou');
+        const btnSubmit = document.getElementById('btnSubmitDirect');
 
         let pdfUrl = null;
 
-        fileInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const file = this.files[0];
-                const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+        function setSubmitState(enabled) {
+            if (!btnSubmit) return;
+            if (enabled) {
+                btnSubmit.disabled = false;
+                btnSubmit.className = 'w-full py-4 bg-[#58CC02] text-white font-black rounded-2xl shadow-lg shadow-green-100 uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer border-none flex items-center justify-center gap-2 text-sm';
+            } else {
+                btnSubmit.disabled = true;
+                btnSubmit.className = 'w-full py-4 bg-gray-200 text-gray-400 font-black rounded-2xl transition-all cursor-not-allowed border-none flex items-center justify-center gap-2 uppercase tracking-widest text-sm';
+            }
+        }
 
-                if (!isPdf) {
-                    if (errorText) errorText.innerText = 'Format file tidak didukung. Mohon unggah file dalam format PDF.';
-                    errorMessage.classList.remove('hidden');
-                    this.value = '';
-                    return;
-                }
+        // Dukungan Drag and Drop
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.add('border-[#58CC02]', 'bg-green-50/40');
+            }, false);
+        });
 
-                if (file.size > 1024 * 1024) {
-                    if (errorText) errorText.innerText = 'Ukuran file dokumen MOU terlalu besar! Maksimal 1MB.';
-                    errorMessage.classList.remove('hidden');
-                    this.value = '';
-                    return;
-                }
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.remove('border-[#58CC02]', 'bg-green-50/40');
+            }, false);
+        });
 
-                errorMessage.classList.add('hidden');
-                previewName.innerText = file.name;
-                previewSize.innerText = (file.size / 1024).toFixed(1) + ' KB';
-
-                if (pdfUrl) URL.revokeObjectURL(pdfUrl);
-                pdfUrl = URL.createObjectURL(file);
-
-                uploadPlaceholder.classList.add('hidden');
-                previewContainer.classList.remove('hidden');
-                actionContainer.classList.remove('hidden');
-
-                // JANGAN gunakan class .hidden pada fileInput agar HTML5 validation tidak membatalkan submit
-                fileInput.classList.remove('z-20');
-                fileInput.classList.add('pointer-events-none', '-z-10');
+        dropzone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            if (dt && dt.files && dt.files.length > 0) {
+                fileInput.files = dt.files;
+                handleFileSelect(dt.files[0]);
             }
         });
 
-        btnViewPdf.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (pdfUrl) window.open(pdfUrl, '_blank');
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                handleFileSelect(this.files[0]);
+            }
         });
 
-        btnRemove.addEventListener('click', function(e) {
-            e.preventDefault();
+        function handleFileSelect(file) {
+            const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+
+            if (!isPdf) {
+                if (errorText) errorText.innerText = 'Format file tidak didukung. Mohon unggah file dalam format PDF.';
+                errorMessage.classList.remove('hidden');
+                errorMessage.classList.add('flex');
+                resetPreview();
+                return;
+            }
+
+            if (file.size > 1024 * 1024) {
+                if (errorText) errorText.innerText = 'Ukuran file dokumen MOU terlalu besar! Maksimal 1MB.';
+                errorMessage.classList.remove('hidden');
+                errorMessage.classList.add('flex');
+                resetPreview();
+                return;
+            }
+
+            errorMessage.classList.add('hidden');
+            errorMessage.classList.remove('flex');
+            previewName.innerText = file.name;
+            previewSize.innerText = (file.size / 1024).toFixed(1) + ' KB';
+
+            if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+            pdfUrl = URL.createObjectURL(file);
+
+            uploadPlaceholder.classList.add('hidden');
+            previewContainer.classList.remove('hidden');
+            setSubmitState(true);
+        }
+
+        function resetPreview() {
             fileInput.value = '';
             if (pdfUrl) {
                 URL.revokeObjectURL(pdfUrl);
                 pdfUrl = null;
             }
-            errorMessage.classList.add('hidden');
             uploadPlaceholder.classList.remove('hidden');
             previewContainer.classList.add('hidden');
-            actionContainer.classList.add('hidden');
+            setSubmitState(false);
+        }
 
-            fileInput.classList.remove('pointer-events-none', '-z-10');
-            fileInput.classList.add('z-20');
+        btnViewPdf.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (pdfUrl) window.open(pdfUrl, '_blank');
         });
 
-        document.getElementById('btnFinalSubmit').addEventListener('click', function() {
-            form.submit();
+        btnRemove.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            errorMessage.classList.add('hidden');
+            errorMessage.classList.remove('flex');
+            resetPreview();
         });
 
-        document.getElementById('btnCancelUpload').addEventListener('click', () => {
-            closeModal('uploadModal');
+        form.addEventListener('submit', function() {
+            if (btnSubmit && !btnSubmit.disabled) {
+                btnSubmit.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Mengunggah Dokumen...';
+                btnSubmit.classList.add('opacity-75', 'cursor-wait');
+                btnSubmit.disabled = true;
+            }
         });
 
         if (window.Echo) {

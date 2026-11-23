@@ -105,7 +105,7 @@ test('SecureImageFile accepts WhatsApp downloaded images with dots in timestamp 
     $validImage = UploadedFile::fake()->image('WhatsApp Image 2026-11-23 at 10.30.15.jpeg', 100, 100);
 
     $validator = Validator::make(['image' => $validImage], [
-        'image' => [new SecureImageFile(5120)],
+        'image' => [new SecureImageFile(1024)],
     ]);
 
     expect($validator->passes())->toBeTrue();
@@ -113,8 +113,46 @@ test('SecureImageFile accepts WhatsApp downloaded images with dots in timestamp 
     $jfifImage = UploadedFile::fake()->image('WhatsApp Image 2026-11-23 at 12.15.00.jfif', 100, 100);
 
     $jfifValidator = Validator::make(['image' => $jfifImage], [
-        'image' => [new SecureImageFile(5120)],
+        'image' => [new SecureImageFile(1024)],
     ]);
 
     expect($jfifValidator->passes())->toBeTrue();
+});
+
+test('SecureImageFile and SecurePdfFile accept binary data containing percent or bracket byte sequences', function () {
+    $validImage = UploadedFile::fake()->image('test_entropy.png', 50, 50);
+    $realContent = file_get_contents($validImage->getRealPath());
+    $entropyContent = $realContent."\n".chr(60).chr(37).'random_binary_stream_data';
+    $file = UploadedFile::fake()->createWithContent('entropy.png', $entropyContent);
+
+    $validator = Validator::make(['image' => $file], [
+        'image' => [new SecureImageFile(1024)],
+    ]);
+
+    expect($validator->passes())->toBeTrue();
+
+    $pdfContent = "%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\nstream\n".chr(60).chr(37)."binary stream\nendstream\n%%EOF";
+    $pdfFile = UploadedFile::fake()->createWithContent('document.pdf', $pdfContent);
+
+    $pdfValidator = Validator::make(['doc' => $pdfFile], [
+        'doc' => [new SecurePdfFile(1024)],
+    ]);
+
+    expect($pdfValidator->passes())->toBeTrue();
+});
+
+test('SecureImageFile and SecurePdfFile reject files exceeding 1MB limit', function () {
+    $largeImage = UploadedFile::fake()->create('large.jpg', 1500, 'image/jpeg');
+    $imageValidator = Validator::make(['image' => $largeImage], [
+        'image' => [new SecureImageFile(1024)],
+    ]);
+    expect($imageValidator->fails())->toBeTrue();
+    expect($imageValidator->errors()->first('image'))->toContain('maksimal 1MB');
+
+    $largePdf = UploadedFile::fake()->createWithContent('large.pdf', "%PDF-1.4\n".str_repeat('A', 1500 * 1024)."\n%%EOF");
+    $pdfValidator = Validator::make(['doc' => $largePdf], [
+        'doc' => [new SecurePdfFile(1024)],
+    ]);
+    expect($pdfValidator->fails())->toBeTrue();
+    expect($pdfValidator->errors()->first('doc'))->toContain('maksimal 1MB');
 });

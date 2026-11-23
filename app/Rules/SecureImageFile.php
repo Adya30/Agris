@@ -13,26 +13,10 @@ class SecureImageFile implements ValidationRule
 
     protected array $allowedExtensions;
 
-    protected array $allowedMimes;
-
-    public function __construct(int $maxSizeInKb = 10240, array $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'jfif', 'gif', 'bmp', 'heic', 'heif', 'svg'])
+    public function __construct(int $maxSizeInKb = 1024, array $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'jfif', 'gif', 'bmp', 'heic', 'heif', 'svg'])
     {
         $this->maxSizeInKb = $maxSizeInKb;
         $this->allowedExtensions = array_map('strtolower', $allowedExtensions);
-        $this->allowedMimes = [
-            'image/jpeg',
-            'image/png',
-            'image/webp',
-            'image/pjpeg',
-            'image/x-png',
-            'image/gif',
-            'image/bmp',
-            'image/x-ms-bmp',
-            'image/heic',
-            'image/heif',
-            'image/svg+xml',
-            'application/octet-stream',
-        ];
     }
 
     /**
@@ -42,88 +26,81 @@ class SecureImageFile implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (! $value instanceof UploadedFile || ! $value->isValid()) {
-            $fail('File gambar tidak valid atau rusak.');
+        if (! $value instanceof UploadedFile) {
+            $fail('File gambar tidak valid.');
+
+            return;
+        }
+
+        if (! $value->isValid()) {
+            $errorCode = $value->getError();
+            if ($errorCode === UPLOAD_ERR_INI_SIZE || $errorCode === UPLOAD_ERR_FORM_SIZE) {
+                $maxMb = round($this->maxSizeInKb / 1024);
+                $fail("Ukuran file gambar melebihi batas upload konfigurasi server (upload_max_filesize di php.ini). Batas aplikasi: {$maxMb}MB.");
+            } else {
+                $fail('File gambar gagal diunggah ke server (kode status: '.$errorCode.').');
+            }
 
             return;
         }
 
         // 1. Validasi ukuran file
         if ($value->getSize() > $this->maxSizeInKb * 1024) {
-            $fail("Ukuran gambar maksimal {$this->maxSizeInKb}KB.");
+            $maxMb = round($this->maxSizeInKb / 1024);
+            $fail("Ukuran gambar maksimal {$maxMb}MB.");
 
             return;
         }
 
         // 2. Validasi ekstensi nama file (case-insensitive)
-        $clientExt = strtolower($value->getClientOriginalExtension());
+        $clientExt = strtolower($value->getClientOriginalExtension() ?: '');
         if (! in_array($clientExt, $this->allowedExtensions, true)) {
             $fail('Format gambar hanya diperbolehkan: '.strtoupper(implode(', ', $this->allowedExtensions)).'.');
 
             return;
         }
 
-        // Cegah double extension attack (misal: image.php.png atau exploit.php.5.jpeg)
-        $clientName = strtolower($value->getClientOriginalName());
-        $dangerousExts = ['php', 'phtml', 'php3', 'php4', 'php5', 'php7', 'php8', 'phar', 'sh', 'pl', 'py', 'cgi', 'asp', 'aspx', 'jsp', 'exe', 'bat', 'cmd', 'js', 'vbs', 'html', 'htm', 'svg'];
-        $parts = explode('.', $clientName);
-        if (count($parts) > 2) {
-            // Periksa segmen ekstensi tersembunyi sebelum ekstensi file terakhir
-            $intermediateParts = array_slice($parts, 1, -1);
-            foreach ($intermediateParts as $part) {
-                if (in_array(trim($part), $dangerousExts, true)) {
-                    $fail('Nama file gambar mengandung ekstensi ganda yang mencurigakan.');
-
-                    return;
-                }
-            }
-        }
-
-        // 3. Validasi Mime-Type asli dari PHP Fileinfo
-        $mime = $value->getMimeType();
-        if (! in_array($mime, $this->allowedMimes, true)) {
-            $fail('Tipe file gambar tidak valid atau tidak didukung.');
+        // 3. Cegah double extension attack (misal: image.php.png atau shell.phtml.jpg)
+        $clientName = strtolower($value->getClientOriginalName() ?: '');
+        if (preg_match('/\.(php|phtml|phar|sh|exe|cgi|pl|py|asp|jsp)\.[a-z0-9]+$/i', $clientName)) {
+            $fail('Nama file gambar mengandung ekstensi ganda yang mencurigakan.');
 
             return;
         }
 
         $path = $value->getRealPath();
-        if (! $path || ! file_exists($path)) {
-            $fail('Gagal mengakses file gambar untuk verifikasi keamanan.');
-
-            return;
-        }
-
-        // 4. Deep Content Inspection: Deteksi Polyglot / WebShell Payload PHP & script injection di EXIF
-        $content = @file_get_contents($path);
-        if ($content !== false) {
-            $dangerousPatterns = [
-                '<?php', '<?=', '<script', '<%',
-            ];
-
-            foreach ($dangerousPatterns as $pattern) {
-                if (stripos($content, $pattern) !== false) {
-                    $fail('Gambar ditolak karena terdeteksi mengandung sisipan kode terlarang.');
+        if ($path && file_exists($path) && is_readable($path)) {
+            // 4. Verifikasi format raster (bukan SVG): pastikan berkas adalah gambar valid dan memiliki dimensi
+            if ($clientExt !== 'svg' && ! in_array($clientExt, ['heic', 'heif'], true)) {
+                $imageInfo = @getimagesize($path);
+                if ($imageInfo === false || empty($imageInfo[0]) || empty($imageInfo[1])) {
+                    $fail('File terdeteksi bukan file gambar valid atau file mengalami kerusakan.');
 
                     return;
                 }
             }
-        }
 
-        // 5. Verifikasi Integritas Gambar Asli via getimagesize()
-        if ($clientExt !== 'svg') {
-            $imageInfo = @getimagesize($path);
-            if (! $imageInfo || empty($imageInfo[0]) || empty($imageInfo[1])) {
-                $fail('File terdeteksi bukan file gambar valid atau file mengalami kerusakan.');
+            // 5. Pencegahan injeksi eksekusi PHP atau SVG XSS
+            $content = @file_get_contents($path);
+            if ($content !== false && strlen($content) > 0) {
+                if ($clientExt !== 'svg') {
+                    // Hanya blokir tag pembuka eksekusi PHP nyata; hindari false-positive substring pendek seperti <% pada binary stream
+                    if (stripos($content, '<?php') !== false || stripos($content, '<?=\s') !== false || stripos($content, '<?= ') !== false) {
+                        $fail('Gambar ditolak karena terdeteksi mengandung sisipan kode terlarang.');
 
-                return;
-            }
+                        return;
+                    }
+                } else {
+                    // Khusus file SVG (vektor XML): cegah XSS melalui script atau event handler berbahaya
+                    $svgDangerous = ['<script', 'javascript:', 'onload=', 'onerror=', 'onclick='];
+                    foreach ($svgDangerous as $pattern) {
+                        if (stripos($content, $pattern) !== false) {
+                            $fail('Berkas SVG ditolak karena mengandung kode script yang tidak aman.');
 
-            $imgMime = $imageInfo['mime'] ?? '';
-            if ($imgMime && ! in_array($imgMime, $this->allowedMimes, true)) {
-                $fail('Struktur internal file bukan format gambar yang valid.');
-
-                return;
+                            return;
+                        }
+                    }
+                }
             }
         }
     }

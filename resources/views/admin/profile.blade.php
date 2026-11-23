@@ -36,7 +36,7 @@
                         <input type="file" name="fotoProfil" id="fotoProfil" class="hidden" accept="image/*,.jpg,.jpeg,.png,.webp,.jfif">
                         <label for="fotoProfil" id="btnPilihFoto" class="hidden mt-3 px-4 py-1.5 border bg-[#58CC02] text-white rounded-lg text-xs font-bold cursor-pointer transition">Edit Foto</label>
                         <p id="infoFoto" class="hidden text-center pt-2 text-[10px] text-blue-500 leading-tight">
-                            Maks 5MB (.PNG, .JPG, .JPEG, .WEBP, .JFIF)
+                            Maks 1MB (.PNG, .JPG, .JPEG, .WEBP, .JFIF)
                         </p>
                         @error('fotoProfil')
                             <p class="text-red-500 text-xs mt-1 text-center font-semibold">{{ $message }}</p>
@@ -229,8 +229,8 @@
 
         document.getElementById('fotoProfil').addEventListener('change', function() {
             if (this.files && this.files[0]) {
-                if (this.files[0].size > 5 * 1024 * 1024) {
-                    alert('Ukuran foto profil maksimal 5MB.');
+                if (this.files[0].size > 1024 * 1024) {
+                    alert('Ukuran foto profil maksimal 1MB.');
                     this.value = '';
                     return;
                 }

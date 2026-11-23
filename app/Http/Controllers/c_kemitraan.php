@@ -40,7 +40,7 @@ class c_kemitraan extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'fileKemitraan' => ['required', new SecurePdfFile(10240)],
+            'fileKemitraan' => ['required', new SecurePdfFile(1024)],
         ], [
             'fileKemitraan.required' => 'Dokumen MOU wajib diunggah.',
         ]);
@@ -91,7 +91,7 @@ class c_kemitraan extends Controller
     public function uploadMou(Request $request, string $id)
     {
         $request->validate([
-            'fileKemitraan' => ['required', new SecurePdfFile(10240)],
+            'fileKemitraan' => ['required', new SecurePdfFile(1024)],
         ], [
             'fileKemitraan.required' => 'Dokumen MOU wajib diunggah.',
         ]);

@@ -248,8 +248,8 @@
             const handleFileUpload = (e) => {
                 const file = e.target.files[0];
                 if (file) {
-                    if (file.size > 5 * 1024 * 1024) {
-                        alert('Ukuran gambar chat maksimal 5MB.');
+                    if (file.size > 1024 * 1024) {
+                        alert('Ukuran gambar chat maksimal 1MB.');
                         e.target.value = '';
                         return;
                     }

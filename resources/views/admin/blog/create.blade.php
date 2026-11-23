@@ -31,7 +31,7 @@
                                 class="absolute inset-0 opacity-0 cursor-pointer"
                                 onchange="previewImage(this)">
                         </div>
-                        <p class="text-[10px] text-gray-400 mt-2 font-medium text-center">Format: JPG, JPEG, PNG, WEBP, JFIF (Maks. 5MB)</p>
+                        <p class="text-[10px] text-gray-400 mt-2 font-medium text-center">Format: JPG, JPEG, PNG, WEBP, JFIF (Maks. 1MB)</p>
                         <div id="clientError" class="hidden text-red-500 text-[11px] mt-1 font-semibold italic text-center"></div>
                         @error('fotoBlog')
                             <p class="text-red-500 text-[11px] mt-1 font-semibold italic text-center">{{ $message }}</p>
@@ -95,8 +95,8 @@
 
         if (input.files && input.files[0]) {
             const file = input.files[0];
-            if (file.size > 5 * 1024 * 1024) {
-                errorDiv.textContent = "Ukuran file terlalu besar! Maksimal 5MB.";
+            if (file.size > 1024 * 1024) {
+                errorDiv.textContent = "Ukuran file terlalu besar! Maksimal 1MB.";
                 errorDiv.classList.remove('hidden');
                 input.value = "";
                 return;
