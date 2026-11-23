@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Observers\KemitraanObserver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,7 +16,37 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        // Load custom application helpers
+        if (file_exists(app_path('Helpers/helpers.php'))) {
+            require_once app_path('Helpers/helpers.php');
+        }
+
+        // Production-safe fallback in case helpers.php is not yet deployed or autoload is not updated
+        if (! function_exists('storage_url')) {
+            function storage_url(?string $path, ?string $disk = null): ?string
+            {
+                if (blank($path)) {
+                    return null;
+                }
+
+                if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '//') || str_starts_with($path, 'data:')) {
+                    return $path;
+                }
+
+                $cleanPath = ltrim($path, '/');
+                if (str_starts_with($cleanPath, 'storage/')) {
+                    $cleanPath = substr($cleanPath, 8);
+                }
+
+                $targetDisk = $disk ?: config('filesystems.default', 'public');
+
+                try {
+                    return Storage::disk($targetDisk)->url($cleanPath);
+                } catch (\Throwable $e) {
+                    return asset('storage/'.$cleanPath);
+                }
+            }
+        }
     }
 
     public function boot(): void
