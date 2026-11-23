@@ -163,12 +163,24 @@
         <div class="w-full lg:w-1/3" data-aos="fade-up">
             <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">FAQ</h2>
             <p class="text-gray-500 mb-8 text-sm md:text-base">Kami merangkum hal yang sering ditanyakan oleh mitra kami.</p>
-            <div class="p-8 bg-slate-900 rounded-3xl text-white">
+            <?php
+                $adminUser = \App\Models\User::isAdmin(true)->first();
+                $rawPhone = $adminUser?->noTelp ?: '08123456789';
+                $cleanPhone = preg_replace('/[^0-9]/', '', $rawPhone);
+                $waPhone = str_starts_with($cleanPhone, '0') ? '62' . substr($cleanPhone, 1) : $cleanPhone;
+            ?>
+            <div class="p-8 bg-slate-900 rounded-3xl text-white shadow-xl">
                 <p class="font-bold mb-2 text-green-400">Butuh bantuan lain?</p>
-                <p class="text-xs opacity-70 mb-5">Tim support kami siap membantu anda.</p>
-                <a href="#" class="inline-flex items-center gap-2 text-green-400 font-bold hover:gap-3 transition-all">
-                    Contact Support <i class="fa-solid fa-headset"></i>
-                </a>
+                <p class="text-xs opacity-70 mb-5">Tim support kami siap membantu Anda melalui WhatsApp atau telepon langsung.</p>
+                <div class="flex flex-col gap-3">
+                    <a href="https://wa.me/<?php echo e($waPhone); ?>?text=Halo%20Admin%20Agris,%20saya%20butuh%20bantuan" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 text-green-400 font-bold hover:text-green-300 transition-all text-sm">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> <?php echo e($rawPhone); ?> (WhatsApp)
+                    </a>
+                    <a href="tel:<?php echo e($rawPhone); ?>" class="inline-flex items-center gap-2 text-gray-300 text-xs font-semibold hover:text-white transition-all">
+                        <i class="fa-solid fa-phone text-xs"></i> Hubungi Langsung: <?php echo e($rawPhone); ?>
+
+                    </a>
+                </div>
             </div>
         </div>
 

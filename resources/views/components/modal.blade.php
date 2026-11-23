@@ -8,25 +8,51 @@
     'cancelId' => 'closeModal'
 ])
 
+@php
+    $lowerId = strtolower($id);
+    $lowerTitle = strtolower($title);
+    $isDanger = str_contains($lowerId, 'hapus') || str_contains($lowerId, 'delete') || str_contains($lowerId, 'batal') || str_contains($lowerId, 'hentikan') || str_contains($lowerId, 'tolak') || str_contains($lowerId, 'error') || str_contains($lowerId, 'logout') || str_contains($lowerTitle, 'hapus') || str_contains($lowerTitle, 'batal') || str_contains($lowerTitle, 'keluar');
+    $isWarning = str_contains($lowerId, 'stok') || str_contains($lowerId, 'berat') || str_contains($lowerId, 'kurang') || str_contains($lowerId, 'mitra') || str_contains($lowerTitle, 'stok') || str_contains($lowerTitle, 'kurang') || str_contains($lowerTitle, 'perhatian') || str_contains($lowerTitle, 'belum');
+    $isSuccess = str_contains($lowerId, 'diterima') || str_contains($lowerId, 'sukses') || str_contains($lowerId, 'berhasil') || str_contains($lowerId, 'aktif') || str_contains($lowerTitle, 'diterima') || str_contains($lowerTitle, 'berhasil');
+
+    if ($isDanger) {
+        $iconClass = (str_contains($lowerId, 'hapus') || str_contains($lowerId, 'delete')) ? 'fa-solid fa-trash-can' : ((str_contains($lowerId, 'logout') || str_contains($lowerTitle, 'keluar')) ? 'fa-solid fa-right-from-bracket' : 'fa-solid fa-triangle-exclamation');
+        $badgeClass = 'bg-red-50 text-red-500 border border-red-100 ring-8 ring-red-50/60 shadow-sm';
+        $confirmBtnClass = 'bg-red-500 hover:bg-red-600 shadow-red-200';
+    } elseif ($isWarning) {
+        $iconClass = 'fa-solid fa-circle-exclamation';
+        $badgeClass = 'bg-amber-50 text-amber-500 border border-amber-100 ring-8 ring-amber-50/60 shadow-sm';
+        $confirmBtnClass = 'bg-amber-500 hover:bg-amber-600 shadow-amber-200';
+    } elseif ($isSuccess) {
+        $iconClass = 'fa-solid fa-circle-check';
+        $badgeClass = 'bg-emerald-50 text-emerald-600 border border-emerald-100 ring-8 ring-emerald-50/60 shadow-sm';
+        $confirmBtnClass = 'bg-[#0f8629] hover:bg-[#0c6b20] shadow-emerald-200';
+    } else {
+        $iconClass = 'fa-solid fa-circle-question';
+        $badgeClass = 'bg-green-50 text-[#58CC02] border border-green-100 ring-8 ring-green-50/60 shadow-sm';
+        $confirmBtnClass = 'bg-[#58CC02] hover:bg-[#46a302] shadow-green-100';
+    }
+@endphp
+
 <div id="{{ $id }}" class="fixed inset-0 z-300 hidden items-center justify-center p-4 overflow-x-hidden overflow-y-auto outline-none focus:outline-none modal-container">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 modal-overlay" data-modal-id="{{ $id }}"></div>
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 modal-overlay" data-modal-id="{{ $id }}"></div>
 
     <div id="content-{{ $id }}" class="relative bg-white rounded-[2.5rem] p-8 md:p-10 max-w-sm w-full shadow-2xl text-center border border-gray-100 transition-all duration-300 transform scale-95 opacity-0">
-        <div class="w-20 h-20 bg-green-100 text-[#58CC02] rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-sm">
-            <i class="fa-solid fa-question"></i>
+        <div class="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-3xl {{ $badgeClass }} transition-transform duration-300">
+            <i class="{{ $iconClass }}"></i>
         </div>
 
-        <h3 class="text-2xl font-black text-gray-800 mb-2">{{ $title }}</h3>
-        <p class="text-gray-500 font-medium mb-8 leading-relaxed">
+        <h3 class="text-2xl font-black text-slate-800 mb-2 tracking-tight">{{ $title }}</h3>
+        <p class="text-slate-500 text-sm font-medium mb-8 leading-relaxed">
             {{ $message }}
         </p>
 
         <div class="flex gap-3">
-            <button type="button" id="{{ $cancelId }}" class="flex-1 py-4 bg-red-500 hover:bg-red-400 text-white font-bold rounded-2xl transition-all active:scale-95 shadow-md">
+            <button type="button" id="{{ $cancelId }}" class="flex-1 py-3.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition-all active:scale-95 border border-slate-200/80 text-sm cursor-pointer">
                 {{ $cancelText }}
             </button>
 
-            <button type="button" id="{{ $confirmId }}" class="flex-1 py-4 bg-[#58CC02] hover:bg-[#4fb802] text-white font-bold rounded-2xl transition-all shadow-lg shadow-green-100 active:scale-95 btn-confirm-modal">
+            <button type="button" id="{{ $confirmId }}" class="flex-1 py-3.5 px-4 {{ $confirmBtnClass }} text-white font-bold rounded-2xl transition-all shadow-md active:scale-95 text-sm cursor-pointer btn-confirm-modal">
                 {{ $confirmText }}
             </button>
         </div>

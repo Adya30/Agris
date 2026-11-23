@@ -9,6 +9,7 @@ use App\Models\Provinsi;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 
@@ -47,16 +48,26 @@ class AdminSeeder extends Seeder
             );
         }
 
-        User::create([
-            'namaLengkap' => 'Admin Utama',
-            'email' => 'agrisagroindustri@gmail.com',
-            'password' => Hash::make('admin123'),
-            'noTelp' => '08123456789',
-            'isActive' => true,
-            'isAdmin' => true,
-            'detailAlamat' => 'Jl. Manyar Gg. Kelapa, Puring',
-            'desaId' => $desaId,
-        ]);
+        $logoSource = public_path('images/icon.svg');
+        $profileTargetDir = storage_path('app/public/profile_photos');
+        if (File::exists($logoSource)) {
+            File::ensureDirectoryExists($profileTargetDir);
+            File::copy($logoSource, $profileTargetDir.'/icon.svg');
+        }
+
+        User::updateOrCreate(
+            ['email' => 'agrisagroindustri@gmail.com'],
+            [
+                'namaLengkap' => 'Admin Utama',
+                'password' => Hash::make('admin123'),
+                'noTelp' => '08123456789',
+                'fotoProfil' => 'profile_photos/icon.svg',
+                'isActive' => true,
+                'isAdmin' => true,
+                'detailAlamat' => 'Jl. Manyar Gg. Kelapa, Puring',
+                'desaId' => $desaId,
+            ]
+        );
     }
 
     private function getBiteshipAreaId($namaKecamatan)

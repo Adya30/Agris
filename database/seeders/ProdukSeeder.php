@@ -11,26 +11,6 @@ class ProdukSeeder extends Seeder
 {
     public function run(): void
     {
-        $existingStorageImages = [];
-        $storageDir = storage_path('app/public/produk');
-        if (File::isDirectory($storageDir)) {
-            $files = File::files($storageDir);
-            foreach ($files as $file) {
-                $existingStorageImages[] = 'produk/'.$file->getFilename();
-            }
-        }
-
-        $pickImage = function (string $preferredImage, int $index) use ($existingStorageImages) {
-            if (File::exists(storage_path('app/public/'.$preferredImage))) {
-                return $preferredImage;
-            }
-            if (! empty($existingStorageImages)) {
-                return $existingStorageImages[$index % count($existingStorageImages)];
-            }
-
-            return $preferredImage;
-        };
-
         $products = [
             [
                 'namaProduk' => 'Beras Pandan Wangi Super Premium (5 Kg)',
@@ -100,7 +80,7 @@ class ProdukSeeder extends Seeder
                 'stok' => 95,
                 'harga' => 285000.00,
                 'deskripsi' => 'Beras Ciherang berpenampilan bening menyerupai kristal. Tekstur nasi pulen sedang, tidak mudah lembek, dan tahan basi hingga seharian penuh.',
-                'preferredFoto' => 'produk/eRXcPpXWuZDF5y14Pb8u4GE4cwE5JbXZ7vqNUnP4.png',
+                'preferredFoto' => 'produk/mNWkHwVxJuJ1VKs68ucEK3OWfCbsEbwkecggWkfq.png',
             ],
             [
                 'namaProduk' => 'Beras Ciherang Kristal (25 Kg)',
@@ -110,7 +90,7 @@ class ProdukSeeder extends Seeder
                 'stok' => 130,
                 'harga' => 350000.00,
                 'deskripsi' => 'Kemasan 25 kg beras Ciherang mutu B. Cocok untuk warung makan, kantin, dan konsumsi harian keluarga dengan harga yang ramah di kantong.',
-                'preferredFoto' => 'produk/fpuFLFD4iEspuEfe6cdrvagsVGq5eK7ECS6NcPO4.png',
+                'preferredFoto' => 'produk/wz7V5jWsjiwfKfmtgEoe4ul1EA6625zhPvTJV4vl.png',
             ],
             [
                 'namaProduk' => 'Beras IR64 Sawah Subur (25 Kg)',
@@ -150,7 +130,7 @@ class ProdukSeeder extends Seeder
                 'stok' => 70,
                 'harga' => 590000.00,
                 'deskripsi' => 'Kemasan 5 kg benih jagung manis bersertifikat resmi. Daya tumbuh di atas 85% dengan potensi hasil panen melimpah hingga 15-18 ton per hektar.',
-                'preferredFoto' => 'produk/AkL1PztxRvb22WkEq0bcqAYK7IiUARFR1NHESTHz.jpg',
+                'preferredFoto' => 'produk/eRXcPpXWuZDF5y14Pb8u4GE4cwE5JbXZ7vqNUnP4.png',
             ],
             [
                 'namaProduk' => 'Jagung Pipil Kering Pakan Ternak (10 Kg)',
@@ -160,12 +140,12 @@ class ProdukSeeder extends Seeder
                 'stok' => 160,
                 'harga' => 95000.00,
                 'deskripsi' => 'Jagung pipil kering bersih kadar air rendah di bawah 14%. Sumber nutrisi dan energi terbaik untuk pakan ternak unggas, ayam petelur, dan burung.',
-                'preferredFoto' => 'produk/J343Gz5FmAChiOsMH8uY0qabymGny3gEodVGInoC.png',
+                'preferredFoto' => 'produk/Qe5uobi5GoDaKTtaP4eoXcddEsFgmFYGWQdc7isg.png',
             ],
         ];
 
-        Produk::withoutEvents(function () use ($products, $pickImage) {
-            foreach ($products as $index => $item) {
+        Produk::withoutEvents(function () use ($products) {
+            foreach ($products as $item) {
                 $kategori = KategoriProduk::where('jenisKategori', $item['jenisKategori'])
                     ->where('mutu', $item['mutu'])
                     ->where('karung', $item['karung'])
@@ -181,7 +161,9 @@ class ProdukSeeder extends Seeder
                     );
                 }
 
-                $foto = $pickImage($item['preferredFoto'], $index);
+                $foto = File::exists(storage_path('app/public/'.$item['preferredFoto']))
+                    ? $item['preferredFoto']
+                    : 'produk/xrm97uLdQUCqBWPH8o3a8ZO1yv7oYjh0YYUMgNel.png';
 
                 Produk::updateOrCreate(
                     ['namaProduk' => $item['namaProduk']],
