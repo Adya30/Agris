@@ -108,7 +108,7 @@ class c_produk extends Controller
             'karung' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
             'harga' => 'required|numeric|min:0',
-            'fotoProduk' => ['nullable', new SecureImageFile(5120)],
+            'fotoProduk' => ['nullable', new SecureImageFile(10240)],
             'deskripsi' => 'nullable|string',
         ], [
             'required' => 'Data harus diisi!',
@@ -159,7 +159,7 @@ class c_produk extends Controller
             'karung' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
             'harga' => 'required|numeric|min:0',
-            'fotoProduk' => ['nullable', new SecureImageFile(5120)],
+            'fotoProduk' => ['nullable', new SecureImageFile(10240)],
             'deskripsi' => 'nullable|string',
         ], [
             'required' => 'Data wajib diisi!',

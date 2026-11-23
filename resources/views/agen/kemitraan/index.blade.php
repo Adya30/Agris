@@ -120,13 +120,7 @@
 
 <script>
     function checkProfileAndRedirect(targetUrl) {
-        const isComplete = @json(!empty(Auth::user()->namaLengkap) && !empty(Auth::user()->noTelp) && !empty(Auth::user()->desaId) && !empty(Auth::user()->detailAlamat));
-
-        if (isComplete) {
-            window.location.href = targetUrl;
-        } else {
-            openModal('modalLengkapiProfil');
-        }
+        window.location.href = targetUrl;
     }
 
     document.addEventListener('DOMContentLoaded', function() {

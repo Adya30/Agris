@@ -15,7 +15,7 @@ class SecureImageFile implements ValidationRule
 
     protected array $allowedMimes;
 
-    public function __construct(int $maxSizeInKb = 5120, array $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'jfif'])
+    public function __construct(int $maxSizeInKb = 10240, array $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'jfif', 'gif', 'bmp', 'heic', 'heif', 'svg'])
     {
         $this->maxSizeInKb = $maxSizeInKb;
         $this->allowedExtensions = array_map('strtolower', $allowedExtensions);
@@ -25,6 +25,13 @@ class SecureImageFile implements ValidationRule
             'image/webp',
             'image/pjpeg',
             'image/x-png',
+            'image/gif',
+            'image/bmp',
+            'image/x-ms-bmp',
+            'image/heic',
+            'image/heif',
+            'image/svg+xml',
+            'application/octet-stream',
         ];
     }
 
@@ -104,19 +111,20 @@ class SecureImageFile implements ValidationRule
         }
 
         // 5. Verifikasi Integritas Gambar Asli via getimagesize()
-        // Fungsi ini memeriksa header biner, dimensi (width/height), dan struktur gambar
-        $imageInfo = @getimagesize($path);
-        if (! $imageInfo || empty($imageInfo[0]) || empty($imageInfo[1])) {
-            $fail('File terdeteksi bukan file gambar valid atau file mengalami kerusakan.');
+        if ($clientExt !== 'svg') {
+            $imageInfo = @getimagesize($path);
+            if (! $imageInfo || empty($imageInfo[0]) || empty($imageInfo[1])) {
+                $fail('File terdeteksi bukan file gambar valid atau file mengalami kerusakan.');
 
-            return;
-        }
+                return;
+            }
 
-        $detectedMime = $imageInfo['mime'] ?? '';
-        if (! in_array($detectedMime, $this->allowedMimes, true)) {
-            $fail('Struktur internal file bukan format gambar yang valid.');
+            $imgMime = $imageInfo['mime'] ?? '';
+            if ($imgMime && ! in_array($imgMime, $this->allowedMimes, true)) {
+                $fail('Struktur internal file bukan format gambar yang valid.');
 
-            return;
+                return;
+            }
         }
     }
 }

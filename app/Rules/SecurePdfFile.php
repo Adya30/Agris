@@ -11,7 +11,7 @@ class SecurePdfFile implements ValidationRule
 {
     protected int $maxSizeInKb;
 
-    public function __construct(int $maxSizeInKb = 1024)
+    public function __construct(int $maxSizeInKb = 10240)
     {
         $this->maxSizeInKb = $maxSizeInKb;
     }
@@ -66,8 +66,7 @@ class SecurePdfFile implements ValidationRule
             return;
         }
 
-        // 4. Validasi Magic Bytes (File Signature PDF)
-        // Standar PDF ISO 32000: bytes 0..4 WAJIB diawali '%PDF-' (0x25, 0x50, 0x44, 0x46, 0x2D)
+        // 4. Validasi Header PDF & Inspeksi Konten
         $path = $value->getRealPath();
         if (! $path || ! file_exists($path)) {
             $fail('Gagal mengakses file untuk validasi keamanan.');
@@ -75,26 +74,14 @@ class SecurePdfFile implements ValidationRule
             return;
         }
 
-        $handle = @fopen($path, 'rb');
-        if (! $handle) {
-            $fail('Gagal membaca file untuk verifikasi struktur PDF.');
-
-            return;
-        }
-
-        $header = fread($handle, 5);
-        if ($header !== '%PDF-') {
-            fclose($handle);
+        $content = @file_get_contents($path);
+        if ($content === false || ! str_contains(substr($content, 0, 1024), '%PDF-')) {
             $fail('Header file tidak sesuai dengan standar dokumen PDF resmi.');
 
             return;
         }
 
-        // 5. Deep Content Inspection: Deteksi skrip terlarang / webshell PHP & HTML
-        // Baca isi file untuk memeriksa pola injeksi skrip/payload yang dapat dieksekusi server/browser
-        $content = fread($handle, 1024 * 1024);
-        fclose($handle);
-
+        // 5. Deep Content Inspection: Deteksi skrip terlarang / webshell PHP & eksekusi terlarang
         $dangerousPatterns = [
             '<?php', '<?=', '<script', '<%',
             '/Launch', '/JavaScript',

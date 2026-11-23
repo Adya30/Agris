@@ -39,11 +39,11 @@ class c_profile extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'noTelp' => 'required|numeric|digits_between:4,15|unique:users,noTelp,'.$user->id,
+            'noTelp' => 'nullable|numeric|digits_between:4,15|unique:users,noTelp,'.$user->id,
             'namaLengkap' => $user->isAdmin ? 'nullable|string|max:255' : 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
             'detailAlamat' => 'nullable|string',
-            'fotoProfil' => ['nullable', new SecureImageFile(5120)],
+            'fotoProfil' => ['nullable', new SecureImageFile(10240)],
             'current_password' => 'required_with:password',
             'password' => 'nullable|min:8',
             'desaId' => 'nullable',

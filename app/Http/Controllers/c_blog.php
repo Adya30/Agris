@@ -41,7 +41,7 @@ class c_blog extends Controller
         $request->validate([
             'judulBlog' => 'required|max:200',
             'isiBlog' => 'required',
-            'fotoBlog' => ['nullable', new SecureImageFile(5120)],
+            'fotoBlog' => ['nullable', new SecureImageFile(10240)],
         ], [
             'required' => 'Data harus diisi!',
         ]);
@@ -96,7 +96,7 @@ class c_blog extends Controller
         $request->validate([
             'judulBlog' => 'required|max:200',
             'isiBlog' => 'required',
-            'fotoBlog' => ['nullable', new SecureImageFile(5120)],
+            'fotoBlog' => ['nullable', new SecureImageFile(10240)],
         ], [
             'required' => 'Data harus diisi!',
         ]);

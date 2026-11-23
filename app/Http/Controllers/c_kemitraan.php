@@ -29,9 +29,6 @@ class c_kemitraan extends Controller
     public function create()
     {
         $user = Auth::user();
-        if (empty($user->namaLengkap) || empty($user->noTelp) || empty($user->desaId) || empty($user->detailAlamat)) {
-            return redirect()->route($user->isAdmin ? 'admin.profile' : 'agen.profile')->with('modalIncomplete', true);
-        }
         $kemitraan = Kemitraan::userId($user->id)->first();
         if ($kemitraan && ! in_array($kemitraan->statusPengajuan, ['Ditolak', 'Menunggu Upload MOU'])) {
             return redirect()->route('kemitraan.index');
@@ -43,7 +40,7 @@ class c_kemitraan extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'fileKemitraan' => ['required', new SecurePdfFile(1024)],
+            'fileKemitraan' => ['required', new SecurePdfFile(10240)],
         ], [
             'fileKemitraan.required' => 'Dokumen MOU wajib diunggah.',
         ]);
@@ -94,7 +91,7 @@ class c_kemitraan extends Controller
     public function uploadMou(Request $request, string $id)
     {
         $request->validate([
-            'fileKemitraan' => ['required', new SecurePdfFile(1024)],
+            'fileKemitraan' => ['required', new SecurePdfFile(10240)],
         ], [
             'fileKemitraan.required' => 'Dokumen MOU wajib diunggah.',
         ]);
