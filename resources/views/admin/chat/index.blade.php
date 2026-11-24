@@ -135,7 +135,7 @@
     </div>
 </div>
 
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="{{ asset('js/vue.global.js') }}"></script>
 <script>
     const { createApp, ref, onMounted, nextTick, computed } = Vue;
     createApp({

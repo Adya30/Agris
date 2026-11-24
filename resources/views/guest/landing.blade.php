@@ -153,14 +153,11 @@
                 $waPhone = str_starts_with($cleanPhone, '0') ? '62' . substr($cleanPhone, 1) : $cleanPhone;
             @endphp
             <div class="p-6 sm:p-8 bg-slate-900 rounded-2xl sm:rounded-3xl text-white shadow-xl">
-                <p class="font-bold mb-2 text-green-400">Butuh bantuan lain?</p>
-                <p class="text-xs opacity-70 mb-5">Tim support kami siap membantu Anda melalui WhatsApp atau telepon langsung.</p>
-                <div class="flex flex-col gap-3">
+                <p class="font-bold mb-2 text-green-400">Contact Us</p>
+                <p class="text-xs opacity-70 mb-5">Tim support kami siap membantu Anda menjawab pertanyaan atau informasi lebih lanjut.</p>
+                <div>
                     <a href="https://wa.me/{{ $waPhone }}?text=Halo%20Admin%20Agris,%20saya%20butuh%20bantuan" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 text-green-400 font-bold hover:text-green-300 transition-all text-sm">
-                        <i class="fa-brands fa-whatsapp text-lg"></i> {{ $rawPhone }} (WhatsApp)
-                    </a>
-                    <a href="tel:{{ $rawPhone }}" class="inline-flex items-center gap-2 text-gray-300 text-xs font-semibold hover:text-white transition-all">
-                        <i class="fa-solid fa-phone text-xs"></i> Hubungi Langsung: {{ $rawPhone }}
+                        <i class="fa-brands fa-whatsapp text-lg"></i> {{ $rawPhone }}
                     </a>
                 </div>
             </div>
@@ -168,10 +165,10 @@
 
         <div class="w-full lg:w-2/3 space-y-4" data-aos="fade-up">
             @foreach($faqs as $faq)
-            <div class="faq-item bg-white rounded-2xl border border-gray-200/90 shadow-xs hover:border-green-300 hover:shadow-md transition-all duration-300 overflow-hidden">
+            <div class="faq-item bg-white rounded-2xl border border-gray-200/90 shadow-xs hover:border-gray-300 transition-all duration-200 overflow-hidden">
                 <button type="button" class="faq-btn w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer transition-colors duration-200 select-none group focus:outline-none">
-                    <span class="faq-question font-bold text-slate-800 text-sm md:text-base group-hover:text-green-700 transition-colors duration-200 pr-4 leading-snug">{{ $faq['q'] }}</span>
-                    <div class="faq-icon-wrapper shrink-0 w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-slate-600 group-hover:bg-green-50 group-hover:text-green-600 transition-all duration-300">
+                    <span class="faq-question font-bold text-slate-800 text-sm md:text-base group-hover:text-slate-900 transition-colors duration-200 pr-4 leading-snug">{{ $faq['q'] }}</span>
+                    <div class="faq-icon-wrapper shrink-0 w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-slate-600 group-hover:bg-gray-200 transition-all duration-200">
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300"></i>
                     </div>
                 </button>
@@ -206,16 +203,14 @@
                     const otherContent = otherItem.querySelector('.faq-content');
                     const otherIcon = otherItem.querySelector('.fa-chevron-down');
                     const otherWrapper = otherItem.querySelector('.faq-icon-wrapper');
-                    const otherQ = otherItem.querySelector('.faq-question');
 
                     otherContent.classList.add("hidden");
                     if (otherIcon) otherIcon.style.transform = "rotate(0deg)";
                     if (otherWrapper) {
-                        otherWrapper.classList.remove('bg-green-600', 'text-white');
+                        otherWrapper.classList.remove('bg-gray-200', 'text-slate-800');
                         otherWrapper.classList.add('bg-gray-100', 'text-slate-600');
                     }
-                    if (otherQ) otherQ.classList.remove('text-green-700');
-                    otherItem.classList.remove('border-green-500', 'ring-2', 'ring-green-500/15', 'shadow-md');
+                    otherItem.classList.remove('border-gray-300', 'bg-slate-50/30');
                 }
             });
 
@@ -223,16 +218,14 @@
                 content.classList.remove("hidden");
                 icon.style.transform = "rotate(180deg)";
                 iconWrapper.classList.remove('bg-gray-100', 'text-slate-600');
-                iconWrapper.classList.add('bg-green-600', 'text-white');
-                question.classList.add('text-green-700');
-                item.classList.add('border-green-500', 'ring-2', 'ring-green-500/15', 'shadow-md');
+                iconWrapper.classList.add('bg-gray-200', 'text-slate-800');
+                item.classList.add('border-gray-300', 'bg-slate-50/30');
             } else {
                 content.classList.add("hidden");
                 icon.style.transform = "rotate(0deg)";
-                iconWrapper.classList.remove('bg-green-600', 'text-white');
+                iconWrapper.classList.remove('bg-gray-200', 'text-slate-800');
                 iconWrapper.classList.add('bg-gray-100', 'text-slate-600');
-                question.classList.remove('text-green-700');
-                item.classList.remove('border-green-500', 'ring-2', 'ring-green-500/15', 'shadow-md');
+                item.classList.remove('border-gray-300', 'bg-slate-50/30');
             }
         });
     });

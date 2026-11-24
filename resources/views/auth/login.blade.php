@@ -82,8 +82,8 @@
 
             <a href="{{ route('google.login') }}"
                class="w-full flex items-center justify-center border border-gray-500 rounded-full py-3 hover:bg-gray-200 transition">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg"
-                     class="w-5 h-5 mr-2">
+                <img src="{{ asset('images/google-color.svg') }}"
+                     class="w-5 h-5 mr-2" alt="Google">
                 Login with Google
             </a>
 
