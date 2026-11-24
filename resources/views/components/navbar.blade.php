@@ -42,17 +42,17 @@
         </div>
     </div>
 
-    <div id="mobile-menu" class="hidden md:hidden bg-[#0B2B26] border-t border-white/10 absolute w-full left-0">
-        <div class="px-6 pt-6 pb-12 space-y-5 font-medium text-gray-300">
-            <a href="#home" class="block hover:text-white transition border-b border-white/5 pb-3">Beranda</a>
-            <a href="#about" class="block hover:text-white transition border-b border-white/5 pb-3">Tentang</a>
-            <a href="#produk" class="block hover:text-white transition border-b border-white/5 pb-3">Blog</a>
-            <a href="#kontak" class="block hover:text-white transition border-b border-white/5 pb-3">Kontak</a>
-            <div class="pt-6 grid grid-cols-2 gap-4">
-                <a href="{{ route('login') }}" class="flex items-center justify-center py-3 rounded-xl border border-white/20 text-white font-bold hover:bg-white/5">
+    <div id="mobile-menu" class="hidden md:hidden bg-[#0B2B26]/95 backdrop-blur-xl border-t border-white/10 absolute w-full left-0 shadow-2xl transition-all duration-300">
+        <div class="px-6 pt-5 pb-8 space-y-4 font-medium text-gray-200">
+            <a href="{{ route('landing') }}" class="block hover:text-[#10b981] transition border-b border-white/5 pb-3">Beranda</a>
+            <a href="{{ route('about') }}" class="block hover:text-[#10b981] transition border-b border-white/5 pb-3">Tentang</a>
+            <a href="{{ route('guest.blog.index') }}" class="block hover:text-[#10b981] transition border-b border-white/5 pb-3">Blog</a>
+            <a href="{{ route('contact') }}" class="block hover:text-[#10b981] transition border-b border-white/5 pb-3">Kontak</a>
+            <div class="pt-4 grid grid-cols-2 gap-3">
+                <a href="{{ route('login') }}" class="flex items-center justify-center py-2.5 rounded-xl border border-white/20 text-white font-bold hover:bg-white/10 transition">
                     Login
                 </a>
-                <a href="{{ route('register') }}" class="flex items-center justify-center py-3 rounded-xl bg-[#58CC02] text-white font-bold shadow-lg">
+                <a href="{{ route('register') }}" class="flex items-center justify-center py-2.5 rounded-xl bg-[#0eb833] hover:bg-[#0ed038] text-white font-bold shadow-lg shadow-green-900/30 transition">
                     Daftar
                 </a>
             </div>
